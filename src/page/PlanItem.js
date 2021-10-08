@@ -2,6 +2,7 @@ import React from "react";
 import {Row,Col,Table,Button,Progress,Modal} from 'antd'
 import Road from "../component/road";
 import PlanDetail from "../component/PlanDetail";
+import PlanDetailEdit from "../component/PlanDetailEdit";
 
 
 class PlanTable extends React.Component{
@@ -137,7 +138,9 @@ class PlanTable extends React.Component{
                         title={"Plan Update"}
                         width={1800}
                     >
-
+                        <PlanDetailEdit
+                            ID={this.state.planDetailId}
+                        />
                     </Modal>
                 </Row>
             </div>
