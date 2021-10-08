@@ -1,0 +1,69 @@
+.Collector{
+    width: 33%;
+    float: left;
+    border: 3px solid white !important;
+}
+.Collector .ant-select:not(.ant-select-customize-input) .ant-select-selector{
+    border: 1px solid #f0f0f0;
+}
+.Collector input{
+    border: 1px solid #F0F0F0;
+}
+.Collector textarea{
+    border: 1px solid #F0F0F0;
+    width: 100%;
+}
+.Collector .ant-card-body{
+    padding: 0px !important;
+}
+.Collector .ant-card-head{
+    padding: 0px !important;
+}
+.Collector .ant-card-head-title{
+    padding: 0px !important;
+}
+.Collector .ant-card-head-title input{
+    height: 47px;
+}
+.Collector .ant-select{
+    width: 100% !important;
+}
+
+.Collector .new .ant-select-selector{
+    background-color: #EAEDF2 !important;
+}
+
+.Collector .solved .ant-select-selector{
+    background-color: #F6FFED !important;
+}
+
+.Collector .give_up .ant-select-selector{
+    background-color: #FFFBE6 !important;
+}
+
+.Collector .archived .ant-select-selector{
+    background-color: #E6F7FF !important;
+}
+.Collector .init .ant-select-selector{
+    background-color: #FFF2F0 !important;
+}
+.Collector .actions .ant-card-grid{
+    padding: 0px;
+    height: 32px;
+    text-align: center;
+}
+
+.Collector .actions .icons{
+    padding-top: 5px;
+    cursor: pointer;
+}
+
+.Collector .subPoint{
+
+}
+.Collector .subPoint .icons{
+    cursor: pointer;
+}
+.Collector .subPoint .icons:hover{
+    color: #52C41A;
+}

@@ -1,0 +1,23 @@
+.po_index{
+
+}
+.po_index h1{
+    margin-bottom: 0px !important;
+    color: white;
+}
+.po_index .ant-layout-content{
+    padding-top: 50px;
+}
+.po_index input{
+    width: 98%;
+    border: 1px solid #F0F2F5;
+    height: 32px;
+    border-radius: 23px;
+}
+.po_index button{
+    border-radius: 23px;
+}
+
+.po_index .ant-layout, .ant-layout *{
+    height: 100%;
+}
