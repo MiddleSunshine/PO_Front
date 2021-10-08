@@ -6,6 +6,8 @@ import Willing from "../page/Willing";
 import PointEditor from "../page/PointEditor";
 import Image from "../page/Image";
 import Plan from '../page/Plan.js';
+import PlanTable from "../page/PlanItem";
+import PlanDetailEdit from "../component/PlanDetailEdit";
 
 interface router {
     path: string,
@@ -14,6 +16,14 @@ interface router {
 }
 
 const routers: Array<router> = [
+    {
+        path:"/planItem/:id",
+        component:PlanDetailEdit
+    },
+    {
+        path:"/planTable",
+        component:PlanTable
+    },
     {
         path:"/plan",
         component:Plan
