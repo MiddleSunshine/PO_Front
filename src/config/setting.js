@@ -4,8 +4,8 @@ var config = {
     common_road: [
     ],
     statusMap:[
-        {value:"new",label:"New"},
-        {value:"solved",label:"Solved"},
+        {value:"new",label:"Processing"},
+        {value:"solved",label:"Finished"},
         {value:"give_up",label:"Give Up"},
         {value:"archived",label:"Archived"}
     ],

@@ -1,43 +1,48 @@
 import React from "react";
-import {Row,Col,Table,Button,Progress,Modal} from 'antd'
+import {Row,Col,Table,Button,Progress,Modal,Tabs} from 'antd'
 import Road from "../component/road";
 import PlanDetail from "../component/PlanDetail";
 import PlanDetailEdit from "../component/PlanDetailEdit";
 
+const { TabPane } = Tabs;
 
 class PlanTable extends React.Component{
     constructor(props) {
         super(props);
         this.state={
-            dataSource:[
+            plans:[
                 {
                     ID:1,
                     AddTime:"2021-10-08 00:00:00",
                     Plan:"Plan",
                     Completion:90,
                     status:"Processing"
+                },
+                {
+                    ID:2,
+                    AddTime:"2021-10-08 00:00:00",
+                    Plan:"Plan 2",
+                    Completion:90,
+                    status:"Processing"
                 }
             ],
             planEditId:0,
-            planDetailId:0,
-            planItemModalVisible:false,
-            planModalVisible:true,
+            planModalVisible:false,
+            activeTabID:0
         }
         this.hiddenModal=this.hiddenModal.bind(this);
+        this.showModal=this.showModal.bind(this);
     }
-    hiddenModal(type){
-        switch (type){
-            case "planItem":
-                this.setState({
-                    planItemModalVisible:false
-                });
-                break;
-            case "plan":
-                this.setState({
-                    planModalVisible:false
-                });
-                break;
-        }
+    hiddenModal(){
+        this.setState({
+            planModalVisible:false
+        });
+    }
+    showModal(ID){
+        this.setState({
+            planEditId:ID,
+            planModalVisible:true
+        });
     }
     render() {
         return(
@@ -57,84 +62,56 @@ class PlanTable extends React.Component{
                 </Row>
                 <hr/>
                 <Row>
+                    <Col span={3}>
+                        <Button
+                            onClick={()=>{
+                                this.showModal(0);
+                            }}
+                        >
+                            New Plan
+                        </Button>
+                    </Col>
+                    <Col span={3}>
+                        <Button
+                            onClick={()=>{
+                                this.showModal(this.state.activeTabID);
+                            }}
+                        >
+                            Edit Plan
+                        </Button>
+                    </Col>
+
+                </Row>
+                <hr/>
+                <Row>
                     <Col span={24}>
-                        <Table
-                            columns={[
-                                {
-                                    title:"ID",
-                                    dataIndex:"ID",
-                                    key:"ID"
-                                },
-                                {
-                                    title: "Create Time",
-                                    dataIndex:"AddTime",
-                                    key:"AddTime"
-                                },
-                                {
-                                    title:"Plan",
-                                    dataIndex:"Plan",
-                                    key: "Plan"
-                                },
-                                {
-                                    title:"Status",
-                                    dataIndex:"status"
-                                },
-                                {
-                                    title:"Completion",
-                                    render:(text,record,index)=>{
-                                        return(
-                                            <Progress
-                                                key={index}
-                                                type={"circle"}
-                                                percent={record.Completion}
-                                                width={60}
-                                            />
-                                        )
-                                    }
-                                },
-                                {
-                                    title:"Option",
-                                    render:(text,record,index)=>{
-                                        return(
-                                            <div>
-                                                <Button
-                                                    type={"primary"}
-                                                >
-                                                    Edit
-                                                </Button>
-                                                &nbsp;&nbsp;&nbsp;
-                                                <Button
-                                                    type={"primary"}
-                                                >
-                                                    Detail
-                                                </Button>
-                                            </div>
-                                        )
-                                    }
-                                }
-                            ]}
-                            dataSource={this.state.dataSource}
-                        />
+                        <Tabs
+                            onChange={(activeKey)=>{
+                                this.setState({
+                                    activeTabID:activeKey
+                                });
+                            }}
+                        >
+                            {
+                                this.state.plans.map((Item)=>{
+                                    return <TabPane
+                                        tab={Item.Plan}
+                                        key={Item.ID}
+                                    >
+                                        <PlanDetail
+                                            ID={Item.ID}
+                                        />
+                                    </TabPane>;
+                                })
+                            }
+                        </Tabs>
                     </Col>
                 </Row>
                 <Row>
                     <Modal
-                        visible={this.state.planItemModalVisible}
-                        width={1800}
-                        onOk={()=>this.hiddenModal("planItem")}
-                        onCancel={()=>this.hiddenModal("planItem")}
-                        title={"Plan Detail"}
-                    >
-                        <PlanDetail
-                            ID={this.state.planDetailId}
-                        />
-                    </Modal>
-                </Row>
-                <Row>
-                    <Modal
                         visible={this.state.planModalVisible}
-                        onOk={()=>this.hiddenModal("plan")}
-                        onCancel={()=>this.hiddenModal("plan")}
+                        onOk={()=>this.hiddenModal()}
+                        onCancel={()=>this.hiddenModal()}
                         title={"Plan Update"}
                         width={1800}
                     >
