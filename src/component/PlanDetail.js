@@ -10,28 +10,16 @@ import SimpleMDE from "react-simplemde-editor";
 import "../css/PlanDetail.css"
 import moment from "moment";
 import confirm from "antd/es/modal/confirm";
+import {requestApi} from "../config/functions";
+import {message} from "antd/es";
 
 
 class PlanDetail extends React.Component{
     constructor(props) {
         super(props);
         this.state={
-            dataSource:[
-                {
-                    ID:1,
-                    Name:"Plan Item 1",
-                    AddTime:"2021.10.08 00:00:00",
-                    FinishTime:"",
-                    PPID:0
-                },
-                {
-                    ID:0,
-                    Name:"Plan Item 0",
-                    AddTime:"2021.10.08 00:00:00",
-                    FinishTime:"2021.10.08 00:00:00",
-                    PPID:1
-                }
-            ],
+            PID:props.ID,
+            dataSource:[],
             modalVisible:false,
             editPlanItemId:0,
             editPlan:{}
@@ -63,11 +51,41 @@ class PlanDetail extends React.Component{
         });
     }
     savePlanItem(plan){
-
+        requestApi(
+            "/index.php?action=PlanItem&method=Save",
+            {
+                method:"post",
+                mode:"cors",
+                body:JSON.stringify(plan)
+            }
+        ).then((res)=>{
+            res.json().then((json)=>{
+                if(json.Status==1){
+                    message.success("Save Success");
+                    this.hideModal();
+                }else{
+                    message.error("Save Error");
+                }
+            })
+                .then(()=>{
+                    this.getPlanTable(this.state.PID);
+                })
+        })
     }
-    getPlanTable(){
-
+    getPlanTable(PID){
+        requestApi("/index.php?action=PlanItem&method=GetPlanItems&PID="+PID)
+            .then((res)=>{
+                res.json().then((json)=>{
+                    this.setState({
+                        dataSource:json.Data
+                    })
+                })
+            })
     }
+    componentDidMount() {
+        this.getPlanTable(this.state.PID)
+    }
+
     deletePlanItem(plan){
         confirm({
             onOk:()=>{
@@ -109,7 +127,12 @@ class PlanDetail extends React.Component{
                                     return(
                                         <PlusCircleOutlined
                                             onClick={()=>{
-                                                this.showModal({PPID:record.ID});
+                                                this.showModal(
+                                                    {
+                                                        PPID:record.ID,
+                                                        PID: this.state.PID
+                                                    }
+                                                );
                                             }}
                                         />
                                     )
