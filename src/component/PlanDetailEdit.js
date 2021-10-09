@@ -1,5 +1,5 @@
 import React from "react";
-import {Row, Col, Form, Input, Select, Button} from 'antd';
+import {Form, Input, Select, Button} from 'antd';
 import config from "../config/setting";
 import SimpleMDE from "react-simplemde-editor";
 

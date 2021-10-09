@@ -1,9 +1,12 @@
 import React from "react";
-import {Row,Col,Table,Button,Progress,Modal,Tabs} from 'antd'
+import {Row,Col,Button,Modal,Tabs} from 'antd'
 import Road from "../component/road";
 import PlanDetail from "../component/PlanDetail";
 import PlanDetailEdit from "../component/PlanDetailEdit";
-
+import {
+    FileDoneOutlined,
+    FormOutlined
+} from '@ant-design/icons';
 const { TabPane } = Tabs;
 
 class PlanTable extends React.Component{
@@ -67,6 +70,8 @@ class PlanTable extends React.Component{
                             onClick={()=>{
                                 this.showModal(0);
                             }}
+                            type={"primary"}
+                            icon={<FileDoneOutlined />}
                         >
                             New Plan
                         </Button>
@@ -76,6 +81,8 @@ class PlanTable extends React.Component{
                             onClick={()=>{
                                 this.showModal(this.state.activeTabID);
                             }}
+                            type={"primary"}
+                            icon={<FormOutlined />}
                         >
                             Edit Plan
                         </Button>
