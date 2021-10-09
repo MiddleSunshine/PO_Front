@@ -3,7 +3,6 @@ import {
     Calendar,
     Badge,
     Modal,
-    Switch,
     Row,
     Col,
     Form,
@@ -11,9 +10,8 @@ import {
     Input,
     DatePicker,
     message,
-    Table,
     Tooltip,
-    Timeline
+    Timeline, Button
 } from 'antd';
 import Road from './road';
 import SimpleMDE from "react-simplemde-editor";
@@ -36,7 +34,8 @@ class Schedule extends React.Component {
             modalVisible: false,
             newModalVisible: false,
             filterYear: "",
-            filterMonth: ""
+            filterMonth: "",
+            filterPlanIDs:""
         };
         this.dayRender = this.dayRender.bind(this);
         this.closeModal = this.closeModal.bind(this);
@@ -193,7 +192,8 @@ class Schedule extends React.Component {
                 mode: "cors",
                 body: JSON.stringify({
                     Year: this.state.filterYear,
-                    Month: this.state.filterMonth
+                    Month: this.state.filterMonth,
+                    PlanIDs:this.state.filterPlanIDs
                 })
             }
         )
@@ -211,33 +211,48 @@ class Schedule extends React.Component {
             <Road/>
             <hr/>
             <Row>
-                <Col span={2}>
-                    Show Point
+                <Col span={1}>
+                    Plan
                 </Col>
-                <Col span={2}>
-                    <Switch
-                        checkedChildren="Show"
-                        unCheckedChildren="Hide"
-                    />
+                <Col span={6}>
+                    <Select
+                        showSearch={true}
+                        mode="multiple"
+                        style={{ width: '100%' }}
+                        onChange={(selectedPlanIds)=>{
+                            (async ()=>{})()
+                                .then(()=>{
+                                    this.setState({
+                                        filterPlanIDs:selectedPlanIds
+                                    })
+                                }).then(()=>{
+                                    this.getCalendarData()
+                            })
+                        }}
+                    >
+                        {this.state.activePlans.map((Item)=>{
+                            return(
+                                <Select.Option
+                                    value={Item.ID}
+                                    key={Item.ID}
+                                >
+                                    {Item.Name}
+                                </Select.Option>
+                            )
+                        })}
+                    </Select>
                 </Col>
-                <Col span={2}>
-                    Show Plan
-                </Col>
-                <Col span={2}>
-                    <Switch
-                        checkedChildren="Show"
-                        unCheckedChildren="Hide"
-                    />
-                </Col>
+                {/*<Col span={2} offset={1}>*/}
+                {/*    <Button*/}
+                {/*        type={"primary"}*/}
+                {/*    >*/}
+                {/*        Search*/}
+                {/*    </Button>*/}
+                {/*</Col>*/}
             </Row>
             <hr/>
             <Calendar
                 dateCellRender={this.dayRender}
-                onSelect={(date) => {
-
-                }}
-                onChange={(date) => {
-                }}
                 onPanelChange={(date, mode) => {
                     if (mode == 'month') {
                         (async () => {
