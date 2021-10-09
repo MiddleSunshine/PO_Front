@@ -130,11 +130,12 @@ class Schedule extends React.Component {
     }
 
     openNewPlanItemModal(date,planItem={}) {
+        let temp={
+            ...planItem,
+            FinishTime:date.format(dateFormat).toString()
+        }
         this.setState({
-            planItem: {
-                FinishTime: date.format(dateFormat).toString(),
-                ...planItem
-            },
+            planItem: temp,
             newModalVisible: true
         })
     }
@@ -149,9 +150,6 @@ class Schedule extends React.Component {
 
     savePlanItem() {
         let planItem = this.state.planItem;
-        if (!planItem.FinishTime) {
-            planItem.FinishTime = moment().format(dateFormat).toString();
-        }
         requestApi("/index.php?action=PlanItem&method=SaveWithoutPPID", {
             method: "post",
             mode: "cors",
@@ -311,7 +309,21 @@ class Schedule extends React.Component {
                                 color={Item.FinishTime ? "green" : "blue"}
                             >
                                 <Row>
-                                    <Col span={9}>
+                                    <Col
+                                        span={9}
+                                        onClick={()=>{
+                                            (async ()=>{})()
+                                                .then(()=>{
+                                                    this.closeModal()
+                                                })
+                                                .then(()=>{
+                                                    this.openNewPlanItemModal(
+                                                        moment(Item.FinishTime,dateFormat),
+                                                        Item
+                                                    );
+                                                })
+                                        }}
+                                    >
                                         {Item.Name}
                                     </Col>
                                     <Col span={1}>
