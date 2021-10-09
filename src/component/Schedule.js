@@ -75,7 +75,11 @@ class Schedule extends React.Component {
                             key={Item.ID}
                             onClick={(e) => {
                                 e.stopPropagation();
-                                this.openModal(date);
+                                if (Item.ID==0){
+                                    this.openModal(date);
+                                }else{
+                                    this.openNewPlanItemModal(dateMoment,Item)
+                                }
                             }}
                         >
                             <Tooltip
@@ -125,13 +129,13 @@ class Schedule extends React.Component {
         });
     }
 
-    openNewPlanItemModal(date) {
+    openNewPlanItemModal(date,planItem={}) {
         this.setState({
             planItem: {
-                FinishTime: date.format(dateFormat).toString()
+                FinishTime: date.format(dateFormat).toString(),
+                ...planItem
             },
-            newModalVisible: true,
-            dateChangeType: "day"
+            newModalVisible: true
         })
     }
 
