@@ -29,28 +29,48 @@ class Schedule extends React.Component {
         this.handleModalInputChange=this.handleModalInputChange.bind(this);
         this.savePlanItem=this.savePlanItem.bind(this);
         this.getActivePlans=this.getActivePlans.bind(this);
+        this.getCalendarData=this.getCalendarData.bind(this);
+    }
+
+    componentWillMount() {
+
     }
 
     componentDidMount() {
-        this.getActivePlans();
+        (async ()=>{})()
+            .then(()=>{
+                this.getActivePlans();
+            })
+            .then(()=>{
+                this.getCalendarData();
+            })
     }
 
     dayRender(dateMoment) {
-        let date = dateMoment.format(dateFormat);
-        return <div>
-            <Row>
-                <Col span={24}>
-                    <Button
-                        onClick={(e) => {
+        let date = dateMoment.format("YYYY-MM-DD").toString();
+        if (this.state.plans[date]){
+            let plans=this.state.plans[date];
+            if (this.state.plans[date].length>3){
+                plans.splice(3,100,{ID:0,Name:"..."})
+            }
+            return plans.map((Item)=>{
+                return(
+                    <div
+                        key={Item.ID}
+                        onClick={(e)=>{
                             e.stopPropagation();
-                            // todo 这里编辑历史任务
                         }}
                     >
-
-                    </Button>
-                </Col>
-            </Row>
-        </div>
+                        <Badge
+                            text={Item.Name}
+                            status={"success"}
+                        />
+                    </div>
+                )
+            })
+        }else{
+            return null;
+        }
     }
 
     closeModal() {
@@ -119,6 +139,17 @@ class Schedule extends React.Component {
                 res.json().then((json)=>{
                     this.setState({
                         activePlans:json.Data
+                    })
+                })
+            })
+    }
+
+    getCalendarData(){
+        requestApi("/index.php?action=PlanItem&method=CalendarData")
+            .then((res)=>{
+                res.json().then((json)=>{
+                    this.setState({
+                        plans:json.Data.List
                     })
                 })
             })
