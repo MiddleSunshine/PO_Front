@@ -1,15 +1,19 @@
 import React from "react";
-import {Form, Input, Select, Button} from 'antd';
+import {Form, Input, Select, Button, message} from 'antd';
 import config from "../config/setting";
 import SimpleMDE from "react-simplemde-editor";
+import {requestApi} from "../config/functions";
 
 class PlanDetailEdit extends React.Component{
     constructor(props) {
         super(props);
         this.state={
-            plan:{}
+            plan:{},
+            prePlanID:0,
         }
         this.handleChange=this.handleChange.bind(this);
+        this.getPoint=this.getPoint.bind(this);
+        this.savePlan=this.savePlan.bind(this);
     }
     handleChange(key,value){
         let plan=this.state.plan;
@@ -17,6 +21,44 @@ class PlanDetailEdit extends React.Component{
         this.setState({
             plan:plan
         });
+    }
+    getPoint(ID){
+        requestApi("/index.php?action=Plan&method=Detail&id="+ID)
+            .then((res)=>{
+                res.json().then((json)=>{
+                    this.setState({
+                        plan:json.Data
+                    })
+                })
+            });
+    }
+    componentWillReceiveProps(nextProps, nextContext) {
+        if (nextProps.ID!=this.state.prePlanID){
+            (async ()=>{})().then(()=>{
+                this.getPoint(nextProps.ID);
+            }).then(()=>{
+                this.setState({
+                    prePlanID:nextProps.ID
+                })
+            })
+        }
+    }
+
+    savePlan(){
+        requestApi("/index.php?action=Plan&method=Save",{
+            method:"post",
+            mode:"cors",
+            body:JSON.stringify(this.state.plan)
+        })
+            .then((res)=>{
+                res.json().then((json)=>{
+                    if (json.Status==1){
+                        message.success("Save Success");
+                    }else{
+                        message.error("Save Failed!")
+                    }
+                })
+            })
     }
     render() {
         return <div className="container">
@@ -64,9 +106,9 @@ class PlanDetailEdit extends React.Component{
                     label={"Note"}
                 >
                     <SimpleMDE
-                        value={this.state.plan.note}
+                        value={this.state.plan.Note}
                         onChange={(value)=>{
-                            this.handleChange('note',value)
+                            this.handleChange('Note',value)
                         }}
                     />
                 </Form.Item>
@@ -93,6 +135,7 @@ class PlanDetailEdit extends React.Component{
                 >
                     <Button
                         type={"primary"}
+                        onClick={()=>this.savePlan()}
                     >
                         Save
                     </Button>

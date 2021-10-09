@@ -1,5 +1,5 @@
 import React from "react";
-import {Row,Col,Button,Modal,Tabs,PageHeader} from 'antd'
+import {Row, Col, Button, Modal, Tabs, PageHeader, message} from 'antd'
 import Road from "../component/road";
 import PlanDetail from "../component/PlanDetail";
 import PlanDetailEdit from "../component/PlanDetailEdit";
@@ -16,23 +16,7 @@ class PlanTable extends React.Component{
     constructor(props) {
         super(props);
         this.state={
-            plans:[
-                {
-                    ID:1,
-                    AddTime:"2021-10-08 00:00:00",
-                    Plan:"Plan",
-                    Completion:90,
-                    status:"Processing",
-                    Note:"# hello world"
-                },
-                {
-                    ID:2,
-                    AddTime:"2021-10-08 00:00:00",
-                    Plan:"Plan 2",
-                    Completion:90,
-                    status:"Processing"
-                }
-            ],
+            plans:[],
             planEditId:0,
             planModalVisible:false,
             activeTabID:0,
@@ -69,6 +53,9 @@ class PlanTable extends React.Component{
                         });
                     }
                 })
+                    .then(()=>{
+                        message.success("Page Load Success!")
+                    })
             })
     }
     componentDidMount() {
@@ -155,7 +142,7 @@ class PlanTable extends React.Component{
                             {
                                 this.state.plans.map((Item)=>{
                                     return <TabPane
-                                        tab={Item.Plan}
+                                        tab={Item.Name}
                                         key={Item.ID}
                                     >
                                         <PlanDetail
@@ -176,7 +163,7 @@ class PlanTable extends React.Component{
                         width={1800}
                     >
                         <PlanDetailEdit
-                            ID={this.state.planDetailId}
+                            ID={this.state.activeTabID}
                         />
                     </Modal>
                 </Row>
