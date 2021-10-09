@@ -20,6 +20,7 @@ class PlanDetail extends React.Component{
         this.state={
             PID:props.ID,
             dataSource:[],
+            completion:0,
             modalVisible:false,
             editPlanItemId:0,
             editPlan:{}
@@ -77,7 +78,8 @@ class PlanDetail extends React.Component{
             .then((res)=>{
                 res.json().then((json)=>{
                     this.setState({
-                        dataSource:json.Data
+                        dataSource:json.Data.Table,
+                        completion:json.Data.Completion
                     })
                 })
             })
@@ -113,12 +115,14 @@ class PlanDetail extends React.Component{
                     <Table
                         size={"small"}
                         title={(currentPageData)=>{
-                            return <div>
-                                <Progress
-                                    percent={20}
-                                    status={"active"}
-                                />
-                            </div>
+                            return <Row>
+                                <Col span={23}>
+                                    <Progress
+                                        percent={this.state.completion}
+                                        status={"active"}
+                                    />
+                                </Col>
+                            </Row>
                         }}
                         columns={[
                             {
