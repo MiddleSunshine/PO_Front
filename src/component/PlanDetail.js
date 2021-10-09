@@ -224,6 +224,12 @@ class PlanDetail extends React.Component{
                                         </div>
                                     )
                                 }
+                            },
+                            {
+                                title:"No",
+                                render:(text,record,index)=>{
+                                    return (index+1)
+                                }
                             }
                         ]}
                         dataSource={this.state.dataSource}
