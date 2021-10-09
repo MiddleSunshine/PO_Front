@@ -1,12 +1,16 @@
 import React from "react";
 import {Row, Col, Table, Checkbox, Progress, Button, Modal, Form, Input, DatePicker, Select, Tooltip} from "antd";
 import MarkdownPreview from '@uiw/react-markdown-preview';
-import {PlusCircleOutlined} from '@ant-design/icons';
+import {
+    PlusCircleOutlined,
+    InfoCircleOutlined
+} from '@ant-design/icons';
 import SimpleMDE from "react-simplemde-editor";
 
 import "../css/PlanDetail.css"
 import moment from "moment";
-import debug from "../page/debug";
+import confirm from "antd/es/modal/confirm";
+
 
 class PlanDetail extends React.Component{
     constructor(props) {
@@ -36,6 +40,8 @@ class PlanDetail extends React.Component{
         this.hideModal=this.hideModal.bind(this);
         this.handleModalChange=this.handleModalChange.bind(this);
         this.savePlanItem=this.savePlanItem.bind(this);
+        this.deletePlanItem=this.deletePlanItem.bind(this);
+        this.getPlanTable=this.getPlanTable.bind(this);
     }
     showModal(planItem){
         this.setState({
@@ -58,6 +64,28 @@ class PlanDetail extends React.Component{
     }
     savePlanItem(plan){
 
+    }
+    getPlanTable(){
+
+    }
+    deletePlanItem(plan){
+        confirm({
+            onOk:()=>{
+                (async ()=>{})().then(()=>{
+                    plan.Deleted=1;
+                    this.setState({
+                        editPlanItemId:plan.ID,
+                        editPlan:plan
+                    })
+                }).then(()=>{
+                    this.savePlanItem(this.state.editPlan);
+                }).then(()=>{
+                    this.getPlanTable();
+                })
+            },
+            icon:<InfoCircleOutlined style={{color:"#FF4D50"}} />,
+            content:"Are You Sure To Delete This Plan Item ?"
+        })
     }
     render() {
         let dateFormat="YYYY-MM-DD HH:mm:ss";
@@ -160,6 +188,9 @@ class PlanDetail extends React.Component{
                                                 ghost={true}
                                                 type={"link"}
                                                 danger={true}
+                                                onClick={()=>{
+                                                    this.deletePlanItem(record);
+                                                }}
                                             >
                                                 Delete
                                             </Button>
