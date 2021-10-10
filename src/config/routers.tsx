@@ -6,6 +6,7 @@ import Willing from "../page/Willing";
 import PointEditor from "../page/PointEditor";
 import Image from "../page/Image";
 import Plan from '../page/Plan.js';
+import PlanTable from "../page/PlanTable";
 
 interface router {
     path: string,
@@ -14,6 +15,10 @@ interface router {
 }
 
 const routers: Array<router> = [
+    {
+        path:"/planTable",
+        component:PlanTable
+    },
     {
         path:"/plan",
         component:Plan
