@@ -9,7 +9,8 @@ class Road extends React.Component {
                 {label: "Index", value: "/"},
                 {label: "Willings", value: '/willing'},
                 {label: "Report", value: '/report'},
-                {label: "Plan",value:"/plan"}
+                {label: "Plan",value:"/planTable"},
+                {label: "Schedule",value:"/plan"},
             ]
         };
     }

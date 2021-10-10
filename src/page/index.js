@@ -96,7 +96,7 @@ class Index extends React.Component {
                         </Col>
                     </Row>
                     <Row style={{paddingTop:"5px"}}>
-                        <Col offset={8} span={2}>
+                        <Col offset={6} span={2}>
                             <Button
                                 type={"link"}
                                 href={"./points/0"}
@@ -130,6 +130,24 @@ class Index extends React.Component {
                                 target={"_blank"}
                             >
                                 Willing
+                            </Button>
+                        </Col>
+                        <Col span={2}>
+                            <Button
+                                type={"link"}
+                                href={"./planTable"}
+                                target={"_blank"}
+                            >
+                                Plan
+                            </Button>
+                        </Col>
+                        <Col span={2}>
+                            <Button
+                                type={"link"}
+                                href={"./plan"}
+                                target={"_blank"}
+                            >
+                                Schedule
                             </Button>
                         </Col>
                     </Row>
