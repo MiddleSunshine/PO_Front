@@ -83,10 +83,10 @@ class Schedule extends React.Component {
                             }}
                         >
                             <Tooltip
-                                title={Item.Plan_Name}
+                                title={Item.Name}
                             >
                                 <Badge
-                                    text={Item.Name}
+                                    text={Item.Name.length>8?(Item.Name.substring(0,7)+"..."):Item.Name}
                                     status={Item.FinishTime ? "success" : "processing"}
                                 />
                             </Tooltip>
@@ -253,24 +253,26 @@ class Schedule extends React.Component {
                 {/*</Col>*/}
             </Row>
             <hr/>
-            <Calendar
-                dateCellRender={this.dayRender}
-                onPanelChange={(date, mode) => {
-                    if (mode == 'month') {
-                        (async () => {
-                        })()
-                            .then(() => {
-                                this.setState({
-                                    filterYear: date.format("YYYY").toString(),
-                                    filterMonth: date.format("MM").toString(),
-                                })
-                            }).then(() => {
-                            this.getCalendarData()
-                        })
-                    }
+            <div>
+                <Calendar
+                    dateCellRender={this.dayRender}
+                    onPanelChange={(date, mode) => {
+                        if (mode == 'month') {
+                            (async () => {
+                            })()
+                                .then(() => {
+                                    this.setState({
+                                        filterYear: date.format("YYYY").toString(),
+                                        filterMonth: date.format("MM").toString(),
+                                    })
+                                }).then(() => {
+                                this.getCalendarData()
+                            })
+                        }
 
-                }}
-            />
+                    }}
+                />
+            </div>
             <Modal
                 visible={this.state.modalVisible}
                 title={"Date : " + this.state.plan.selectedDate}
@@ -284,13 +286,13 @@ class Schedule extends React.Component {
                     >
                         <Row>
                             <Col span={9}>
-                                Plan Item Name
+                                Plan Name
                             </Col>
                             <Col span={1}>
                                 /
                             </Col>
                             <Col span={9}>
-                                Plan Name
+                                Plan Item Name
                             </Col>
                             <Col span={1}>
                                 /
@@ -309,7 +311,14 @@ class Schedule extends React.Component {
                                 color={Item.FinishTime ? "green" : "blue"}
                             >
                                 <Row>
+                                    <Col span={9}>
+                                        {Item.Plan_Name}
+                                    </Col>
+                                    <Col span={1}>
+                                        /
+                                    </Col>
                                     <Col
+                                        style={{cursor:"pointer"}}
                                         span={9}
                                         onClick={()=>{
                                             (async ()=>{})()
@@ -325,12 +334,6 @@ class Schedule extends React.Component {
                                         }}
                                     >
                                         {Item.Name}
-                                    </Col>
-                                    <Col span={1}>
-                                        /
-                                    </Col>
-                                    <Col span={9}>
-                                        {Item.Plan_Name}
                                     </Col>
                                     <Col span={1}>
                                         /
