@@ -7,6 +7,7 @@ import PointEditor from "../page/PointEditor";
 import Image from "../page/Image";
 import Plan from '../page/Plan.js';
 import PlanTable from "../page/PlanTable";
+import PointTable from "../page/PointTable";
 
 interface router {
     path: string,
@@ -38,6 +39,10 @@ const routers: Array<router> = [
     {
         path:"/point/edit/:pid",
         component:PointEditor
+    },
+    {
+        path:"/pointTable/:pid",
+        component:PointTable
     },
     {
         path:"/points/:pid",
