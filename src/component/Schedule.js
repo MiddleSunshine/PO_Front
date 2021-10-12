@@ -75,6 +75,9 @@ class Schedule extends React.Component {
                             key={Item.ID}
                             onClick={(e) => {
                                 e.stopPropagation();
+                                if (!Item.FinishTime && Item.ID!=0){
+                                    return false;
+                                }
                                 if (Item.ID==0){
                                     this.openModal(date);
                                 }else{
