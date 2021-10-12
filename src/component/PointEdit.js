@@ -1,9 +1,9 @@
 import React from "react";
-import {Form, Input, Select, Button, message, Switch} from "antd";
+import {Form, Input, Select, Button, message, Switch,Row,Col} from "antd";
 import SimpleMDE from "react-simplemde-editor";
 import "easymde/dist/easymde.min.css";
 import config from "../config/setting";
-import {requestApi} from "../config/functions";
+import {openLocalMarkdownFile, requestApi} from "../config/functions";
 import MarkdownPreview from '@uiw/react-markdown-preview';
 
 const {Option}=Select;
@@ -30,11 +30,13 @@ class PointEdit extends React.Component{
             fileContent:"",
             localFilePath:'',
             editFile:false,
-            fileChanged:false
+            fileChanged:false,
+            disableEdieFile:false,
         }
         this.getPointDetail=this.getPointDetail.bind(this);
         this.handleChange=this.handleChange.bind(this);
         this.savePoint=this.savePoint.bind(this);
+        this.openFileByTypora=this.openFileByTypora.bind(this);
     }
     componentDidMount() {
         if (this.props.ID>0){
@@ -51,11 +53,18 @@ class PointEdit extends React.Component{
                         fileContent:json.Data.FileContent,
                         localFilePath:json.Data.LocalFilePath
                     })
+                    return json.Data.Point.keyword;
+                }).then((keyword)=>{
+                    document.title=keyword ?? "Point Edit";
                 })
             })
     }
 
     savePoint(){
+        if (this.state.fileContent && !this.state.point.file){
+            message.error("Please set the file name !");
+            return false;
+        }
         requestApi("/index.php?action=Points&method=SaveWithFile",{
             mode:"cors",
             method:"post",
@@ -94,6 +103,23 @@ class PointEdit extends React.Component{
             point:point
         });
     }
+
+    openFileByTypora(){
+        if(!this.state.point.file){
+            message.error("Please Input The File Name");
+            return false;
+        }
+        (async ()=>{})()
+            .then(()=>{
+                this.setState({
+                    fileContent:'',
+                    disableEdieFile:true
+                });
+            }).then(()=>{
+                openLocalMarkdownFile(this.state.localFilePath+this.state.point.file+".md",true);
+        });
+    }
+
     render() {
         let info='New Point';
         if (this.state.point.ID){
@@ -169,10 +195,24 @@ class PointEdit extends React.Component{
                     <Form.Item
                         label={"File"}
                     >
-                        <Input
-                            value={this.state.point.file}
-                            onChange={(e)=>this.handleChange(e.target.value,"file")}
-                        />
+                        <Row>
+                            <Col span={19}>
+                                <Input
+                                    value={this.state.point.file}
+                                    onChange={(e)=>this.handleChange(e.target.value,"file")}
+                                />
+                            </Col>
+                            <Col offset={1} span={4}>
+                                <Button
+                                    type={"primary"}
+                                    onClick={()=>{
+                                        this.openFileByTypora();
+                                    }}
+                                >
+                                    Open In Typora
+                                </Button>
+                            </Col>
+                        </Row>
                     </Form.Item>
                     <Form.Item
                         label={"Url"}
@@ -207,16 +247,9 @@ class PointEdit extends React.Component{
                             <Option value={'1'}>Deleted</Option>
                         </Select>
                     </Form.Item>
-                    <Form.Item
-                        label={"LocalFilePath"}
-                    >
-                        {/*这个值只是做展示的，不需要修改，也不需要保存*/}
-                        <Input
-                            value={this.state.localFilePath}
-                        />
-                    </Form.Item>
-                    <Form.Item
-                        label={<Button
+                    {
+                        !this.state.disableEdieFile && <Form.Item
+                            label={<Button
                                 type={"primary"}
                                 onClick={()=>{
                                     this.setState({
@@ -224,29 +257,30 @@ class PointEdit extends React.Component{
                                     })
                                 }}
                             >
+                                {
+                                    this.state.editFile
+                                        ?"Save File"
+                                        :"Edit File"
+                                }
+                            </Button>}
+                        >
                             {
                                 this.state.editFile
-                                    ?"Save File"
-                                    :"Edit File"
+                                    ?<SimpleMDE
+                                        value={this.state.fileContent}
+                                        onChange={(value)=>{
+                                            this.setState({
+                                                fileChanged:true,
+                                                fileContent:value
+                                            })
+                                        }}
+                                    />
+                                    :<MarkdownPreview
+                                        source={this.state.fileContent}
+                                    />
                             }
-                        </Button>}
-                    >
-                        {
-                            this.state.editFile
-                                ?<SimpleMDE
-                                    value={this.state.fileContent}
-                                    onChange={(value)=>{
-                                        this.setState({
-                                            fileChanged:true,
-                                            fileContent:value
-                                        })
-                                    }}
-                                />
-                                :<MarkdownPreview
-                                    source={this.state.fileContent}
-                                />
-                        }
-                    </Form.Item>
+                        </Form.Item>
+                    }
                     <Form.Item
                         label={"Option"}
                     >
