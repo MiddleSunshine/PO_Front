@@ -92,7 +92,10 @@ class Collector extends React.Component{
                         this.setState({
                             parentPoint:json.Data
                         })
-                    })
+                        return json.Data.keyword;
+                    }).then((keyword)=>{
+                        document.title="T:"+keyword
+                    });
                 })
         }
     }

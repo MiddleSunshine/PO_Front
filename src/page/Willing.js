@@ -23,6 +23,7 @@ class Willing extends React.Component{
     }
     componentDidMount() {
         this.getWillingList();
+        document.title="Willing";
     }
 
     switchModal(open=true){

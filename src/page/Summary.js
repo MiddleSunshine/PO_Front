@@ -20,7 +20,7 @@ class Summary extends React.Component{
     }
     componentDidMount() {
         this.getData(this.state.pid).then(()=>{
-
+            document.title="Summary";
         })
     }
 

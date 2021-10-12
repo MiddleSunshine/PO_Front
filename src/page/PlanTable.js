@@ -60,6 +60,7 @@ class PlanTable extends React.Component{
     }
     componentDidMount() {
         this.getTable();
+        document.title="Plan Table";
     }
 
     render() {
