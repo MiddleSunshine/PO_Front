@@ -280,6 +280,23 @@ class PlanDetail extends React.Component{
                             />
                         </Form.Item>
                         <Form.Item
+                            label={"Full Day"}
+                        >
+                            <Select
+                                value={this.state.editPlan.Full_Day}
+                                onChange={(value)=>{
+                                    this.handleModalChange('Full_Day',value);
+                                }}
+                            >
+                                <Select.Option value={'Yes'}>
+                                    Full Day
+                                </Select.Option>
+                                <Select.Option value={'No'}>
+                                    Part Of Day
+                                </Select.Option>
+                            </Select>
+                        </Form.Item>
+                        <Form.Item
                             label={"Note"}
                         >
                             <SimpleMDE

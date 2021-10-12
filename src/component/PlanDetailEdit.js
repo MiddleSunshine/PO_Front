@@ -103,6 +103,23 @@ class PlanDetailEdit extends React.Component{
                     </Select>
                 </Form.Item>
                 <Form.Item
+                    label={"Display In Table"}
+                >
+                    <Select
+                        value={this.state.plan.Display_In_Table}
+                        onChange={(value)=>{
+                            this.handleChange('Display_In_Table',value)
+                        }}
+                    >
+                        <Select.Option value={'Yes'}>
+                            Yes
+                        </Select.Option>
+                        <Select.Option value={'No'}>
+                            No
+                        </Select.Option>
+                    </Select>
+                </Form.Item>
+                <Form.Item
                     label={"Note"}
                 >
                     <SimpleMDE
@@ -127,6 +144,23 @@ class PlanDetailEdit extends React.Component{
                         </Select.Option>
                         <Select.Option value={'hidden'}>
                             Hidden
+                        </Select.Option>
+                    </Select>
+                </Form.Item>
+                <Form.Item
+                    label={"Plan Item Full Day Default"}
+                >
+                    <Select
+                        value={this.state.plan.Full_Day_Default}
+                        onChange={(value)=>{
+                            this.handleChange('Full_Day_Default',value)
+                        }}
+                    >
+                        <Select.Option value={'Yes'}>
+                            Full Day
+                        </Select.Option>
+                        <Select.Option value={'No'}>
+                            Part Day
                         </Select.Option>
                     </Select>
                 </Form.Item>
