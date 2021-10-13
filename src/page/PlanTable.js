@@ -1,5 +1,5 @@
 import React from "react";
-import {Row, Col, Button, Modal, Tabs, PageHeader, message} from 'antd'
+import {Row, Col, Button, Modal, Tabs, PageHeader, message, Switch} from 'antd'
 import Road from "../component/road";
 import PlanDetail from "../component/PlanDetail";
 import PlanDetailEdit from "../component/PlanDetailEdit";
@@ -37,8 +37,8 @@ class PlanTable extends React.Component{
             planModalVisible:true
         });
     }
-    getTable(){
-        requestApi("/index.php?action=Plan&method=List")
+    getTable(displayInTable='Yes'){
+        requestApi("/index.php?action=Plan&method=List&DisplayInTable="+displayInTable)
             .then((res)=>{
                 res.json().then((json)=>{
                     this.setState({
@@ -60,6 +60,7 @@ class PlanTable extends React.Component{
     }
     componentDidMount() {
         this.getTable();
+        document.title="Plan Table";
     }
 
     render() {
@@ -69,7 +70,10 @@ class PlanTable extends React.Component{
                     <Road />
                 </Row>
                 <hr/>
-                <Row>
+                <Row
+                    justify={"start"}
+                    align={"middle"}
+                >
                     <Col span={3}>
                         <Button
                             onClick={()=>{
@@ -92,7 +96,20 @@ class PlanTable extends React.Component{
                             Edit Plan
                         </Button>
                     </Col>
-
+                    <Col span={3}>
+                        <Switch
+                            checkedChildren={"Only Show Display"}
+                            unCheckedChildren={"Show Hidden"}
+                            defaultChecked
+                            onChange={(checked,e)=>{
+                                if (checked){
+                                    this.getTable()
+                                }else{
+                                    this.getTable('No')
+                                }
+                            }}
+                        />
+                    </Col>
                 </Row>
                 <hr/>
                 <Row>
