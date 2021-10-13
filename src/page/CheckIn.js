@@ -1,5 +1,5 @@
 import React from "react";
-import {Button, Col, message, Row} from "antd";
+import {Button, Col, message, Row, Table} from "antd";
 import Road from "../component/road";
 import {requestApi} from "../config/functions";
 
@@ -7,10 +7,12 @@ class CheckIn extends React.Component{
     constructor(props) {
         super(props);
         this.state={
-
+            dataSource:[],
+            amount:0
         }
         this.startWork=this.startWork.bind(this);
         this.endWork=this.endWork.bind(this);
+        this.getTableData=this.getTableData.bind(this);
     }
     startWork(){
         requestApi("/index.php?action=ClockIn&method=StartWork")
@@ -36,6 +38,24 @@ class CheckIn extends React.Component{
                 })
             })
     }
+    getTableData(){
+        requestApi("/index.php?action=ClockIn&method=List")
+            .then((res)=>{
+                res.json().then((json)=>{
+                    this.setState({
+                        dataSource:json.Data.List,
+                        amount:json.Data.Amount
+                    })
+                })
+            })
+            .then(()=>{
+                document.title="Clock In";
+            })
+    }
+    componentDidMount() {
+        this.getTableData()
+    }
+
     render() {
         return <div className="container">
             <Row>
@@ -64,8 +84,47 @@ class CheckIn extends React.Component{
                     </Button>
                 </Col>
             </Row>
+            <hr/>
             <Row>
-                这里做数据统计
+                <Col span={24}>
+                    <h3>Amount : {this.state.amount} mins</h3>
+                </Col>
+            </Row>
+            <hr/>
+            <Row>
+                <Col span={24}>
+                    <Table
+                        pagination={false}
+                        dataSource={this.state.dataSource}
+                        columns={[
+                            {
+                                title:"Date",
+                                render:(record,text,index)=>{
+                                    return record.Month+"-"+record.Day
+                                }
+                            },
+                            {
+                                title:"Start Work",
+                                dataIndex:"working_hours",
+                                key:"ID"
+                            },
+                            {
+                                title:"Finish Work",
+                                dataIndex:"off_work_time",
+                                key:"ID"
+                            },
+                            {
+                                title:"Result",
+                                render:(record,text,index)=>{
+                                    return <div>
+                                        {record.Result} mins
+                                    </div>;
+                                }
+                            }
+                        ]}
+                    />
+                </Col>
+
             </Row>
         </div>
     }
