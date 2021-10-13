@@ -16,7 +16,7 @@ import {
 import Road from './road';
 import SimpleMDE from "react-simplemde-editor";
 import moment from "moment";
-import {requestApi} from "../config/functions";
+import {now, requestApi} from "../config/functions";
 
 var dateFormat = "YYYY-MM-DD HH:mm:ss";
 
@@ -89,7 +89,7 @@ class Schedule extends React.Component {
                                 title={Item.Name}
                             >
                                 <Badge
-                                    text={Item.Name.length>8?(Item.Name.substring(0,7)+"..."):Item.Name}
+                                    text={Item.Name.length>8?(Item.Name.substring(0,6)+"..."):Item.Name}
                                     status={Item.FinishTime ? "success" : "processing"}
                                 />
                             </Tooltip>
@@ -410,7 +410,7 @@ class Schedule extends React.Component {
                     >
                         <DatePicker
                             showTime={true}
-                            defaultValue={this.state.planItem.FinishTime ? moment(this.state.planItem.FinishTime, dateFormat) : moment()}
+                            defaultValue={this.state.planItem.FinishTime ? moment(this.state.planItem.FinishTime, dateFormat) : now()}
                             onChange={(date, dateString) => {
                                 this.handleModalInputChange(
                                     'FinishTime',

@@ -8,6 +8,7 @@ import Image from "../page/Image";
 import Plan from '../page/Plan.js';
 import PlanTable from "../page/PlanTable";
 import PointTable from "../page/PointTable";
+import CheckIn from "../page/CheckIn";
 
 interface router {
     path: string,
@@ -16,6 +17,10 @@ interface router {
 }
 
 const routers: Array<router> = [
+    {
+        path:"/clock_in",
+        component:CheckIn
+    },
     {
         path:"/planTable",
         component:PlanTable

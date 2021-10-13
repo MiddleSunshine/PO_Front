@@ -1,5 +1,5 @@
 import React from "react";
-import {Card, Row, Timeline, Col, Drawer, Button} from "antd";
+import {Card, Row, Timeline, Col, Drawer, Button, Badge} from "antd";
 import Road from "../component/road";
 import {requestApi} from "../config/functions";
 import PointEdit from "../component/PointEdit";
@@ -107,6 +107,7 @@ class PointTable extends React.Component{
                                                 return(
                                                     <Timeline.Item
                                                         key={insideIndex}
+                                                        dot={<Badge />}
                                                     >
                                                         <span
                                                             onClick={()=>{
