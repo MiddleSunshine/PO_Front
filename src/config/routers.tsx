@@ -9,6 +9,8 @@ import Plan from '../page/Plan.js';
 import PlanTable from "../page/PlanTable";
 import PointTable from "../page/PointTable";
 import CheckIn from "../page/CheckIn";
+import Debug from "../page/debug";
+import GTD from "../page/GTD";
 
 interface router {
     path: string,
@@ -17,6 +19,14 @@ interface router {
 }
 
 const routers: Array<router> = [
+    {
+        path:"/GTD",
+        component:GTD
+    },
+    {
+        path:"/debug",
+        component:Debug
+    },
     {
         path:"/clock_in",
         component:CheckIn
