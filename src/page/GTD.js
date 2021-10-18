@@ -3,7 +3,11 @@ import {Card, Checkbox, Col, Layout, Row} from "antd";
 import {DndProvider, useDrag, useDrop} from "react-dnd";
 import {HTML5Backend} from "react-dnd-html5-backend";
 import {
-    MenuOutlined
+    MenuOutlined,
+    ProfileOutlined,
+    FireOutlined,
+    RightOutlined,
+    DownOutlined
 } from '@ant-design/icons';
 
 
@@ -13,11 +17,19 @@ const Items={
     CardItem:'CardItem'
 }
 
+const offsetUpdateType={
+    SubChild:"SubChild",
+    SameParent:"SameParent"
+};
+
 function CheckBoxPart(props){
     const [collect,drop]=useDrop(()=>({
         accept:Items.CardItem,
         drop:(Item,monitor)=>{
-            props.onDrop(Item.ID,props.ID)
+            return {
+                offsetUpdateType:offsetUpdateType.SameParent,
+                ...props.todoItem
+            };
         }
     }))
     return (
@@ -33,10 +45,13 @@ function ContentPart(props){
     const [collect,drop]=useDrop(()=>({
         accept:Items.CardItem,
         drop:(Item,monitor)=>{
-            props.onDrop(Item.ID,props.ID);
+            return {
+                offsetUpdateType:offsetUpdateType.SubChild,
+                ...props.todoItem
+            };
         }
     }))
-    const [content,updateContent]=useState(props.Content)
+    const [content,updateContent]=useState(props.todoItem.Content)
     const [type,updateType]=useState('Preview')
     return (
         <Row
@@ -65,33 +80,60 @@ function ContentPart(props){
 
 function TodoItem(props){
     const [todoItem,updateTodoItem]=useState(props.TodoItem);
-    let contentSpan=22-todoItem.offset;
     const [collect,drag,dragPreview]=useDrag(()=>({
         type:Items.CardItem,
         item:{ID:todoItem.ID},
+
+        end:(item,monitor)=>{
+            let parentTodoItem=monitor.getDropResult();
+            if (!parentTodoItem){
+                return false;
+            }
+            let newOffset=todoItem.offset;
+            switch (parentTodoItem.offsetUpdateType){
+                case offsetUpdateType.SameParent:
+                    newOffset=parentTodoItem.offset;
+                    break;
+                case offsetUpdateType.SubChild:
+                    newOffset=parentTodoItem.offset+1;
+                    break;
+            }
+            updateTodoItem({
+                ...todoItem,
+                offset:newOffset
+            });
+        }
     }));
+    let contentSpan=20-todoItem.offset;
     return(
         <Row
             ref={drag}
         >
-            <Col span={1}>
-                <MenuOutlined />
-            </Col>
             <Col
                 span={1}
                 offset={todoItem.offset}
             >
+                {props.leftSideIcon}
+            </Col>
+            <Col span={1}>
                 <CheckBoxPart
-                    onDrop={props.onCheckBoxDrop}
-                    ID={todoItem.ID}
+                    todoItem={todoItem}
                 />
             </Col>
             <Col span={contentSpan}>
-                <ContentPart
-                    onDrop={props.onCheckBoxDrop}
-                    ID={todoItem.ID}
-                    Content={todoItem.Content}
-                />
+                <Row>
+                    <Col span={24}>
+                        <ContentPart
+                            todoItem={todoItem}
+                        />
+                    </Col>
+                </Row>
+            </Col>
+            <Col span={1}>
+                <ProfileOutlined />
+            </Col>
+            <Col span={1}>
+                <FireOutlined />
             </Col>
         </Row>
     )
@@ -104,12 +146,15 @@ function CardContainer(props){
             title={TodoList.Category}
         >
             {TodoList.children.map((Item,index)=>{
+                let icon='';
+                if (TodoList.children[index+1] && TodoList.children[index+1].offset>Item.offset){
+                    icon=<RightOutlined />
+                }
                 return(
                     <TodoItem
                         key={index}
                         TodoItem={Item}
-                        onInputDrop={props.onInputDrop}
-                        onCheckBoxDrop={props.onCheckBoxDrop}
+                        leftSideIcon={icon}
                     />
                 )
             })}
@@ -134,7 +179,12 @@ class GTD extends React.Component{
                         {
                             ID:2,
                             Content:"子内容2",
-                            offset: 1
+                            offset: 1,
+                        },
+                        {
+                            ID:3,
+                            Content:"子内容3",
+                            offset: 2
                         }
                     ]
                 }
