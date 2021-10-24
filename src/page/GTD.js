@@ -16,6 +16,7 @@ import Hotkeys from 'react-hot-keys'
 import GTDCategory from "../component/GTDCategory";
 import "../css/GTD.css"
 import moment from "moment";
+import MarkdownPreview from "@uiw/react-markdown-preview";
 
 const DISPLAY_HIDDEN='none';
 const DISPLAY_FLEX='flex';
@@ -376,93 +377,116 @@ class GTD extends React.Component{
                                                             this.updateActiveGTD(GTD,index,insideIndex);
                                                         }}
                                                     >
-                                                        <Col
-                                                            span={1}
-                                                            offset={GTD.offset}
-                                                            draggable={true}
-                                                            onDragStart={(e)=>this.onDragStart(
-                                                                e,GTD.ID,
-                                                                GTD.CategoryID,
-                                                                'Same',
-                                                                index,
-                                                                insideIndex
-                                                            )}
-                                                            onClick={(e)=>{
-                                                                e.preventDefault();
-                                                                if (nextGTD){
-                                                                    this.hideSubGTD(
-                                                                        nextGTD.Display==DISPLAY_FLEX,
+                                                        <Col span={24}>
+                                                            <Row>
+                                                                <Col
+                                                                    span={1}
+                                                                    offset={GTD.offset}
+                                                                    draggable={true}
+                                                                    onDragStart={(e)=>this.onDragStart(
+                                                                        e,GTD.ID,
+                                                                        GTD.CategoryID,
+                                                                        'Same',
                                                                         index,
                                                                         insideIndex
-                                                                    );
-                                                                }
-                                                            }}
-                                                        >
-                                                            {leftIcon}
-                                                        </Col>
-                                                        <Col
-                                                            span={1}
-                                                        >
-                                                            <div
-                                                                className={"CheckBox"}
-                                                                onClick={()=>{
-                                                                    this.UpdateFinishTime(GTD.ID);
-                                                                }}
-                                                            >
-                                                                {
-                                                                    GTD.FinishTime?<CheckOutlined />:''
-                                                                }
-                                                            </div>
-                                                        </Col>
-                                                        <Col
-                                                            span={ContentSpan}
-                                                            draggable={true}
-                                                            onDragStart={(e)=>this.onDragStart(
-                                                                e,GTD.ID,
-                                                                GTD.CategoryID,
-                                                                'Sub',
-                                                                index,
-                                                                insideIndex
-                                                            )}
-                                                            onClick={()=>{
-                                                                this.setState({
-                                                                    editGTDContentID:GTD.ID
-                                                                })
-                                                            }}
-                                                            onBlur={()=>{
-                                                                (async ()=>{})()
-                                                                    .then(()=>{
-                                                                        this.Update(this.state.activeGTD);
-                                                                    })
-                                                                    .then(()=>{
-                                                                        this.setState({
-                                                                            editGTDContentID:0
-                                                                        })
-                                                                    })
-                                                            }}
-                                                        >
-                                                            {
-                                                                this.state.editGTDContentID==GTD.ID
-                                                                    ?<Input
-                                                                        autoFocus={true}
-                                                                        value={this.state.activeGTD.Content}
-                                                                        onChange={(e)=>{
-                                                                            this.setState({
-                                                                                activeGTD:{
-                                                                                    ...this.state.activeGTD,
-                                                                                    Content:e.target.value
-                                                                                }
-                                                                            })
+                                                                    )}
+                                                                    onClick={(e)=>{
+                                                                        e.preventDefault();
+                                                                        if (nextGTD){
+                                                                            this.hideSubGTD(
+                                                                                nextGTD.Display==DISPLAY_FLEX,
+                                                                                index,
+                                                                                insideIndex
+                                                                            );
+                                                                        }
+                                                                    }}
+                                                                >
+                                                                    {leftIcon}
+                                                                </Col>
+                                                                <Col
+                                                                    span={1}
+                                                                >
+                                                                    <div
+                                                                        className={"CheckBox"}
+                                                                        onClick={()=>{
+                                                                            this.UpdateFinishTime(GTD.ID);
                                                                         }}
-                                                                    /> :GTD.FinishTime?
-                                                                        <span style={{textDecoration:"line-through"}}>{GTD.Content}</span>
-                                                                        :GTD.Content
+                                                                    >
+                                                                        {
+                                                                            GTD.FinishTime?<CheckOutlined />:''
+                                                                        }
+                                                                    </div>
+                                                                </Col>
+                                                                <Col
+                                                                    span={ContentSpan}
+                                                                    draggable={true}
+                                                                    onDragStart={(e)=>this.onDragStart(
+                                                                        e,GTD.ID,
+                                                                        GTD.CategoryID,
+                                                                        'Sub',
+                                                                        index,
+                                                                        insideIndex
+                                                                    )}
+                                                                    onClick={()=>{
+                                                                        this.setState({
+                                                                            editGTDContentID:GTD.ID
+                                                                        })
+                                                                    }}
+                                                                    onBlur={()=>{
+                                                                        (async ()=>{})()
+                                                                            .then(()=>{
+                                                                                this.Update(this.state.activeGTD);
+                                                                            })
+                                                                            .then(()=>{
+                                                                                this.setState({
+                                                                                    editGTDContentID:0
+                                                                                })
+                                                                            })
+                                                                    }}
+                                                                >
+                                                                    {
+                                                                        this.state.editGTDContentID==GTD.ID
+                                                                            ?<Input
+                                                                                autoFocus={true}
+                                                                                value={this.state.activeGTD.Content}
+                                                                                onChange={(e)=>{
+                                                                                    this.setState({
+                                                                                        activeGTD:{
+                                                                                            ...this.state.activeGTD,
+                                                                                            Content:e.target.value
+                                                                                        }
+                                                                                    })
+                                                                                }}
+                                                                            /> :GTD.FinishTime?
+                                                                                <span style={{textDecoration:"line-through"}}>{GTD.Content}</span>
+                                                                                :GTD.Content
+                                                                    }
+                                                                </Col>
+                                                                <Col
+                                                                    span={1}
+                                                                >
+                                                                    <ProfileOutlined
+                                                                        onClick={()=>{
+                                                                            let GTDs=this.state.GTDs;
+                                                                            GTDs[index].GTDS[insideIndex].ShowNote=!GTDs[index].GTDS[insideIndex].ShowNote;
+                                                                            this.setState({
+                                                                                GTDs:GTDs
+                                                                            });
+                                                                        }}
+                                                                    />
+                                                                </Col>
+                                                            </Row>
+                                                            {
+                                                                GTD.ShowNote
+                                                                    ?<Row>
+                                                                        <Col span={24}>
+                                                                            <MarkdownPreview
+                                                                                source={GTD.note}
+                                                                            />
+                                                                        </Col>
+                                                                    </Row>
+                                                                    :""
                                                             }
-                                                        </Col>
-                                                        <Col
-                                                            span={1}
-                                                        >
-                                                            <ProfileOutlined />
                                                         </Col>
                                                     </Row>
                                                 )
