@@ -6,14 +6,25 @@ import {
     CaretRightOutlined,
     MenuUnfoldOutlined,
     PlusOutlined,
-    DeleteOutlined,
-    FormOutlined
+    FormOutlined,
+    ClearOutlined,
+    CheckOutlined,
+    ProfileOutlined
 } from '@ant-design/icons'
 import TodoItem from "../component/TodoItem";
+import Hotkeys from 'react-hot-keys'
 import GTDCategory from "../component/GTDCategory";
+import "../css/GTD.css"
+import moment from "moment";
 
 const DISPLAY_HIDDEN='none';
 const DISPLAY_FLEX='flex';
+
+const OPTION_SAME='Same';
+const OPTION_SUB='Sub';
+
+const ACTIVE_TYPE_TODOITEM='GTD';
+const ACTIVE_TYPE_CATEGORY='Category';
 
 class GTD extends React.Component{
     constructor(props) {
@@ -26,7 +37,10 @@ class GTD extends React.Component{
             activeGTDInsideIndex:0,
             editGTDContentID:0,
             todoItemDrawerVisible:false,
-            activeType:""
+            activeCategory:{},
+            categoryDrawerVisible:true,
+            activeType:"",
+
         }
         this.SyncData=this.SyncData.bind(this);
         this.onDragStart=this.onDragStart.bind(this);
@@ -36,6 +50,8 @@ class GTD extends React.Component{
         this.hideSubGTD=this.hideSubGTD.bind(this);
         this.updateActiveGTD=this.updateActiveGTD.bind(this);
         this.closeDrawer=this.closeDrawer.bind(this);
+        this.onKeyDown=this.onKeyDown.bind(this);
+        this.UpdateFinishTime=this.UpdateFinishTime.bind(this);
     }
     componentDidMount() {
         this.SyncData();
@@ -124,7 +140,7 @@ class GTD extends React.Component{
             activeGTD:GTD,
             activeGTDOutsideIndex:outsideIndex,
             activeGTDInsideIndex:insideIndex,
-            activeType:"GTD"
+            activeType:ACTIVE_TYPE_TODOITEM
         });
     }
 
@@ -149,11 +165,64 @@ class GTD extends React.Component{
             })
     }
 
+    UpdateOffset(ID,PID,Option){
+        requestApi("/index.php?action=GTD&method=RecordOffset",{
+            method:"post",
+            mode:"cors",
+            body:JSON.stringify({
+                ID:ID,
+                PID:PID,
+                Option:Option
+            })
+        })
+            .then((res)=>{
+                res.json().then((json)=>{
+                    if (json.Status==1){
+                        this.SyncData();
+                    }
+                })
+            })
+    }
+
+    UpdateFinishTime(ID){
+        requestApi("/index.php?action=GTD&method=UpdateFinishTime&ID="+ID)
+            .then((res)=>{
+                res.json().then((json)=>{
+                    if (json.Status==1){
+                        this.SyncData();
+                    }else{
+                        message.error("Update FinishTime Error")
+                    }
+                })
+            }).catch((error)=>{
+                message.error("System Error");
+        })
+    }
+
+    NewTodoItem(ID,CategoryID){
+        requestApi("/index.php?action=GTD&method=CreateNewGTD",{
+            method:"post",
+            mode:"cors",
+            body:JSON.stringify({
+                PID:ID,
+                CategoryID:CategoryID
+            })
+        })
+            .then((res)=>{
+                res.json().then((json)=>{
+                    if (json.Status==1){
+                        this.SyncData();
+                    }
+                })
+            })
+    }
+
     closeDrawer(){
         (async ()=>{})()
             .then(()=>{
                 this.setState({
-                    todoItemDrawerVisible:false
+                    todoItemDrawerVisible:false,
+                    categoryDrawerVisible:false
                 })
             })
             .then(()=>{
@@ -161,207 +230,278 @@ class GTD extends React.Component{
             })
     }
 
-    render() {
-        return <div className="container">
-            <Row>
-                <Col span={1}>
-                    <MenuUnfoldOutlined />
-                </Col>
-                <Col span={1}>
-                    <PlusOutlined />
-                </Col>
-                <Col span={5}>
-                    <Input />
-                </Col>
-                <Col span={1}>
-                    <DeleteOutlined />
-                </Col>
-                <Col span={1}>
-                    Category
-                </Col>
-                <Col span={1}>
-                    <Switch />
-                </Col>
-                <Col span={1}>
-                    TodoItem
-                </Col>
-                <Col span={1}>
-                    <Switch />
-                </Col>
-                <Col span={1}>
-                    Focus
-                </Col>
-                <Col span={1}>
-                    <Switch />
-                </Col>
-                <Col span={1}>
-                    <FormOutlined
-                        onClick={()=>{
-                            switch (this.state.activeType){
-                                case "GTD":
-                                    this.setState({
-                                        todoItemDrawerVisible:true
-                                    });
-                                    break;
-                                case "Category":
+    onKeyDown(keyName,e,handler){
+        let parentGTD=this.state.GTDs[this.state.activeGTDOutsideIndex].GTDS[this.state.activeGTDInsideIndex-1];
+        switch (keyName){
+            case "shift+n":
+                switch (this.state.activeType){
+                    case ACTIVE_TYPE_TODOITEM:
+                        if (this.state.activeGTD.ID){
+                            this.NewTodoItem(
+                                this.state.activeGTD.ID,
+                                this.state.activeGTD.CategoryID
+                            );
+                        }
+                        break;
+                    case ACTIVE_TYPE_CATEGORY:
+                        break;
+                }
+                break;
+            case "shift+[":
+                if (!this.state.activeGTD.ID){
+                    return false;
+                }
+                this.UpdateOffset(this.state.activeGTD.ID,parentGTD.ID,OPTION_SAME);
+                break;
+            case "shift+]":
+                if (!this.state.activeGTD.ID){
+                    return false;
+                }
+                this.UpdateOffset(this.state.activeGTD.ID,parentGTD.ID,OPTION_SUB);
+                break;
+        }
+    }
 
-                            }
-                        }}
-                    />
-                </Col>
-            </Row>
-            <Divider> GTD </Divider>
-            <Row>
-                <Col span={4}>
-                    <Row>
-                        <Col span={24}>
-                            {this.state.Categories.map((Item,index)=>{
-                                return(
-                                    <Row>
-                                        <Col span={4}>
-                                            <Checkbox />
-                                        </Col>
-                                        <Col span={20}>
-                                            {Item.Category}
-                                        </Col>
-                                    </Row>
-                                )
-                            })}
-                        </Col>
-                    </Row>
-                </Col>
-                <Col span={20}>
-                    {
-                        this.state.GTDs.map((Category,index)=>{
-                            return (
-                                <Card
-                                    title={Category.Category}
-                                >
-                                    {
-                                        Category.GTDS.map((GTD,insideIndex)=>{
-                                            let ContentSpan=20-GTD.offset;
-                                            let leftIcon='';
-                                            let nextGTD=Category.GTDS[insideIndex+1];
-                                            if (nextGTD && nextGTD.offset>GTD.offset){
-                                                if (nextGTD.Display==DISPLAY_HIDDEN){
-                                                    leftIcon=<CaretRightOutlined/>
-                                                }else{
-                                                    leftIcon=<CaretDownOutlined/>
+    render() {
+        return <Hotkeys
+            keyName={"shift+n,shift+[,shift+]"}
+            onKeyDown={(keyName,e,handler)=>{
+                this.onKeyDown(keyName,e,handler);
+            }}
+        >
+            <div className="container GTD">
+                <Row
+                    align={"middle"}
+                    justify={"space-around"}
+                >
+                    <Col span={1}>
+                        <MenuUnfoldOutlined />
+                    </Col>
+                    <Col span={1}>
+                        <PlusOutlined />
+                    </Col>
+                    <Col span={5}>
+                        <Input />
+                    </Col>
+                    <Col span={1}>
+                        <ClearOutlined
+                            onClick={()=>{
+                                this.SyncData();
+                            }}
+                        />
+                    </Col>
+                    <Col span={1}>
+                        Category
+                    </Col>
+                    <Col span={1}>
+                        <Switch />
+                    </Col>
+                    <Col span={1}>
+                        TodoItem
+                    </Col>
+                    <Col span={1}>
+                        <Switch />
+                    </Col>
+                    <Col span={1}>
+                        Focus
+                    </Col>
+                    <Col span={1}>
+                        <Switch />
+                    </Col>
+                    <Col span={1}>
+                        <FormOutlined
+                            onClick={()=>{
+                                switch (this.state.activeType){
+                                    case ACTIVE_TYPE_TODOITEM:
+                                        this.setState({
+                                            todoItemDrawerVisible:true
+                                        });
+                                        break;
+                                    case "Category":
+
+                                }
+                            }}
+                        />
+                    </Col>
+                </Row>
+                <Divider> GTD </Divider>
+                <Row>
+                    <Col span={4}>
+                        <Row>
+                            <Col span={24}>
+                                {this.state.Categories.map((Item,index)=>{
+                                    return(
+                                        <Row>
+                                            <Col span={4}>
+                                                <Checkbox />
+                                            </Col>
+                                            <Col span={20}>
+                                                {Item.Category}
+                                            </Col>
+                                        </Row>
+                                    )
+                                })}
+                            </Col>
+                        </Row>
+                    </Col>
+                    <Col span={20}>
+                        {
+                            this.state.GTDs.map((Category,index)=>{
+                                return (
+                                    <Card
+                                        title={Category.Category}
+                                    >
+                                        {
+                                            Category.GTDS.map((GTD,insideIndex)=>{
+                                                let ContentSpan=21-GTD.offset;
+                                                let leftIcon='';
+                                                let nextGTD=Category.GTDS[insideIndex+1];
+                                                if (nextGTD && nextGTD.offset>GTD.offset){
+                                                    if (nextGTD.Display==DISPLAY_HIDDEN){
+                                                        leftIcon=<CaretRightOutlined/>
+                                                    }else{
+                                                        leftIcon=<CaretDownOutlined/>
+                                                    }
                                                 }
-                                            }
-                                            if (!GTD.Display){
-                                                GTD.Display=DISPLAY_FLEX;
-                                            }
-                                            return (
-                                                <Row
-                                                    style={{display:GTD.Display}}
-                                                    key={insideIndex}
-                                                    onDrop={(e)=>this.onDrop(e,GTD.ID,GTD.CategoryID)}
-                                                    onDragOver={(e)=>this.onDragOver(e,index,insideIndex)}
-                                                    onClick={()=>{
-                                                        this.updateActiveGTD(GTD,index,insideIndex);
-                                                    }}
-                                                >
-                                                    <Col
-                                                        span={1}
-                                                        offset={GTD.offset}
-                                                        draggable={true}
-                                                        onDragStart={(e)=>this.onDragStart(
-                                                            e,GTD.ID,
-                                                            GTD.CategoryID,
-                                                            'Same',
-                                                            index,
-                                                            insideIndex
-                                                        )}
-                                                        onClick={(e)=>{
-                                                            e.preventDefault();
-                                                            this.hideSubGTD(
-                                                                nextGTD.Display==DISPLAY_FLEX,
+                                                if (!GTD.Display){
+                                                    GTD.Display=DISPLAY_FLEX;
+                                                }
+                                                return (
+                                                    <Row
+                                                        style={{display:GTD.Display,color:GTD.FinishTime?"#6C6C6C":"#262626",paddingBottom:"5px",paddingTop:"5px",fontWeight:this.state.activeGTD.ID==GTD.ID?"bolder":"normal"}}
+                                                        key={insideIndex}
+                                                        onDrop={(e)=>this.onDrop(e,GTD.ID,GTD.CategoryID)}
+                                                        onDragOver={(e)=>this.onDragOver(e,index,insideIndex)}
+                                                        onClick={()=>{
+                                                            this.updateActiveGTD(GTD,index,insideIndex);
+                                                        }}
+                                                    >
+                                                        <Col
+                                                            span={1}
+                                                            offset={GTD.offset}
+                                                            draggable={true}
+                                                            onDragStart={(e)=>this.onDragStart(
+                                                                e,GTD.ID,
+                                                                GTD.CategoryID,
+                                                                'Same',
                                                                 index,
                                                                 insideIndex
-                                                            );
-                                                        }}
-                                                    >
-                                                        {leftIcon}
-                                                    </Col>
-                                                    <Col
-                                                        span={1}
-                                                    >
-                                                        <Checkbox />
-                                                    </Col>
-                                                    <Col
-                                                        span={ContentSpan}
-                                                        draggable={true}
-                                                        onDragStart={(e)=>this.onDragStart(
-                                                            e,GTD.ID,
-                                                            GTD.CategoryID,
-                                                            'Sub',
-                                                            index,
-                                                            insideIndex
-                                                        )}
-                                                        onClick={()=>{
-                                                            this.setState({
-                                                                editGTDContentID:GTD.ID
-                                                            })
-                                                        }}
-                                                        onBlur={()=>{
-                                                            (async ()=>{
-
-                                                            })()
-                                                                .then(()=>{
-                                                                    this.Update(this.state.activeGTD);
-                                                                })
-                                                                .then(()=>{
-                                                                    this.setState({
-                                                                        editGTDContentID:0
-                                                                    })
-                                                                })
-                                                        }}
-                                                    >
-                                                        {
-                                                            this.state.editGTDContentID==GTD.ID
-                                                            ?<Input
-                                                                value={this.state.activeGTD.Content}
-                                                                onChange={(e)=>{
-                                                                    this.setState({
-                                                                        activeGTD:{
-                                                                            ...this.state.activeGTD,
-                                                                            Content:e.target.value
-                                                                        }
-                                                                    })
+                                                            )}
+                                                            onClick={(e)=>{
+                                                                e.preventDefault();
+                                                                if (nextGTD){
+                                                                    this.hideSubGTD(
+                                                                        nextGTD.Display==DISPLAY_FLEX,
+                                                                        index,
+                                                                        insideIndex
+                                                                    );
+                                                                }
+                                                            }}
+                                                        >
+                                                            {leftIcon}
+                                                        </Col>
+                                                        <Col
+                                                            span={1}
+                                                        >
+                                                            <div
+                                                                className={"CheckBox"}
+                                                                onClick={()=>{
+                                                                    this.UpdateFinishTime(GTD.ID);
                                                                 }}
-                                                                /> :GTD.Content
-                                                        }
-                                                    </Col>
-                                                </Row>
-                                            )
-                                        })
-                                    }
-                                </Card>
-                            )
-                        })
-                    }
-                </Col>
-            </Row>
-            <Row>
-                <Drawer
-                    visible={this.state.todoItemDrawerVisible}
-                    width={800}
-                    onClose={()=>{
-                        this.closeDrawer();
-                    }}
-                >
-                    <TodoItem
-                        ID={this.state.activeGTD.ID}
-                    />
-                </Drawer>
-            </Row>
-            <Row>
-                <Drawer>
-                    <GTDCategory />
-                </Drawer>
-            </Row>
-        </div>
+                                                            >
+                                                                {
+                                                                    GTD.FinishTime?<CheckOutlined />:''
+                                                                }
+                                                            </div>
+                                                        </Col>
+                                                        <Col
+                                                            span={ContentSpan}
+                                                            draggable={true}
+                                                            onDragStart={(e)=>this.onDragStart(
+                                                                e,GTD.ID,
+                                                                GTD.CategoryID,
+                                                                'Sub',
+                                                                index,
+                                                                insideIndex
+                                                            )}
+                                                            onClick={()=>{
+                                                                this.setState({
+                                                                    editGTDContentID:GTD.ID
+                                                                })
+                                                            }}
+                                                            onBlur={()=>{
+                                                                (async ()=>{})()
+                                                                    .then(()=>{
+                                                                        this.Update(this.state.activeGTD);
+                                                                    })
+                                                                    .then(()=>{
+                                                                        this.setState({
+                                                                            editGTDContentID:0
+                                                                        })
+                                                                    })
+                                                            }}
+                                                        >
+                                                            {
+                                                                this.state.editGTDContentID==GTD.ID
+                                                                    ?<Input
+                                                                        autoFocus={true}
+                                                                        value={this.state.activeGTD.Content}
+                                                                        onChange={(e)=>{
+                                                                            this.setState({
+                                                                                activeGTD:{
+                                                                                    ...this.state.activeGTD,
+                                                                                    Content:e.target.value
+                                                                                }
+                                                                            })
+                                                                        }}
+                                                                    /> :GTD.FinishTime?
+                                                                        <span style={{textDecoration:"line-through"}}>{GTD.Content}</span>
+                                                                        :GTD.Content
+                                                            }
+                                                        </Col>
+                                                        <Col
+                                                            span={1}
+                                                        >
+                                                            <ProfileOutlined />
+                                                        </Col>
+                                                    </Row>
+                                                )
+                                            })
+                                        }
+                                    </Card>
+                                )
+                            })
+                        }
+                    </Col>
+                </Row>
+                <Row>
+                    <Drawer
+                        visible={this.state.todoItemDrawerVisible}
+                        width={800}
+                        onClose={()=>{
+                            this.closeDrawer();
+                        }}
+                    >
+                        <TodoItem
+                            ID={this.state.activeGTD.ID}
+                        />
+                    </Drawer>
+                </Row>
+                <Row>
+                    <Drawer
+                        visible={this.state.categoryDrawerVisible}
+                        width={800}
+                        onClose={()=>{
+                            this.closeDrawer();
+                        }}
+                    >
+                        <GTDCategory
+                            ID={this.state.activeCategory.ID}
+                        />
+                    </Drawer>
+                </Row>
+            </div>
+        </Hotkeys>
     }
 }
 
