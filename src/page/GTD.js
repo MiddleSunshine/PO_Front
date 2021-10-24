@@ -1,10 +1,16 @@
 import React from "react";
 import {requestApi} from "../config/functions";
-import {Row, Col, Card, Checkbox, message} from "antd";
+import {Row, Col, Card, Checkbox, message, Input, Drawer, Divider, Switch} from "antd";
 import {
     CaretDownOutlined,
-    CaretRightOutlined
+    CaretRightOutlined,
+    MenuUnfoldOutlined,
+    PlusOutlined,
+    DeleteOutlined,
+    FormOutlined
 } from '@ant-design/icons'
+import TodoItem from "../component/TodoItem";
+import GTDCategory from "../component/GTDCategory";
 
 const DISPLAY_HIDDEN='none';
 const DISPLAY_FLEX='flex';
@@ -14,7 +20,13 @@ class GTD extends React.Component{
         super(props);
         this.state={
             Categories:[],
-            GTDs:[]
+            GTDs:[],
+            activeGTD:{},
+            activeGTDOutsideIndex:0,
+            activeGTDInsideIndex:0,
+            editGTDContentID:0,
+            todoItemDrawerVisible:false,
+            activeType:""
         }
         this.SyncData=this.SyncData.bind(this);
         this.onDragStart=this.onDragStart.bind(this);
@@ -22,6 +34,8 @@ class GTD extends React.Component{
         this.onDrop=this.onDrop.bind(this);
         this.updateSameCategory=this.updateSameCategory.bind(this);
         this.hideSubGTD=this.hideSubGTD.bind(this);
+        this.updateActiveGTD=this.updateActiveGTD.bind(this);
+        this.closeDrawer=this.closeDrawer.bind(this);
     }
     componentDidMount() {
         this.SyncData();
@@ -105,14 +119,116 @@ class GTD extends React.Component{
         });
     }
 
+    updateActiveGTD(GTD,outsideIndex,insideIndex){
+        this.setState({
+            activeGTD:GTD,
+            activeGTDOutsideIndex:outsideIndex,
+            activeGTDInsideIndex:insideIndex,
+            activeType:"GTD"
+        });
+    }
+
+    Update(GTD){
+        requestApi("/index.php?action=GTD&method=Update",{
+            method:"post",
+            mode:"cors",
+            body:JSON.stringify(GTD)
+        })
+            .then((res)=>{
+                res.json().then((json)=>{
+                    if (json.Status!=1){
+                        message.error(json.Message);
+                    }
+                    return json.Status;
+                })
+                    .then((Status)=>{
+                        if (Status==1){
+                            this.SyncData();
+                        }
+                    })
+            })
+    }
+
+    closeDrawer(){
+        (async ()=>{})()
+            .then(()=>{
+                this.setState({
+                    todoItemDrawerVisible:false
+                })
+            })
+            .then(()=>{
+                this.SyncData();
+            })
+    }
+
     render() {
         return <div className="container">
             <Row>
+                <Col span={1}>
+                    <MenuUnfoldOutlined />
+                </Col>
+                <Col span={1}>
+                    <PlusOutlined />
+                </Col>
+                <Col span={5}>
+                    <Input />
+                </Col>
+                <Col span={1}>
+                    <DeleteOutlined />
+                </Col>
+                <Col span={1}>
+                    Category
+                </Col>
+                <Col span={1}>
+                    <Switch />
+                </Col>
+                <Col span={1}>
+                    TodoItem
+                </Col>
+                <Col span={1}>
+                    <Switch />
+                </Col>
+                <Col span={1}>
+                    Focus
+                </Col>
+                <Col span={1}>
+                    <Switch />
+                </Col>
+                <Col span={1}>
+                    <FormOutlined
+                        onClick={()=>{
+                            switch (this.state.activeType){
+                                case "GTD":
+                                    this.setState({
+                                        todoItemDrawerVisible:true
+                                    });
+                                    break;
+                                case "Category":
 
+                            }
+                        }}
+                    />
+                </Col>
             </Row>
+            <Divider> GTD </Divider>
             <Row>
                 <Col span={4}>
-
+                    <Row>
+                        <Col span={24}>
+                            {this.state.Categories.map((Item,index)=>{
+                                return(
+                                    <Row>
+                                        <Col span={4}>
+                                            <Checkbox />
+                                        </Col>
+                                        <Col span={20}>
+                                            {Item.Category}
+                                        </Col>
+                                    </Row>
+                                )
+                            })}
+                        </Col>
+                    </Row>
                 </Col>
                 <Col span={20}>
                     {
@@ -142,6 +258,9 @@ class GTD extends React.Component{
                                                     key={insideIndex}
                                                     onDrop={(e)=>this.onDrop(e,GTD.ID,GTD.CategoryID)}
                                                     onDragOver={(e)=>this.onDragOver(e,index,insideIndex)}
+                                                    onClick={()=>{
+                                                        this.updateActiveGTD(GTD,index,insideIndex);
+                                                    }}
                                                 >
                                                     <Col
                                                         span={1}
@@ -180,8 +299,39 @@ class GTD extends React.Component{
                                                             index,
                                                             insideIndex
                                                         )}
+                                                        onClick={()=>{
+                                                            this.setState({
+                                                                editGTDContentID:GTD.ID
+                                                            })
+                                                        }}
+                                                        onBlur={()=>{
+                                                            (async ()=>{
+
+                                                            })()
+                                                                .then(()=>{
+                                                                    this.Update(this.state.activeGTD);
+                                                                })
+                                                                .then(()=>{
+                                                                    this.setState({
+                                                                        editGTDContentID:0
+                                                                    })
+                                                                })
+                                                        }}
                                                     >
-                                                        {GTD.Content}
+                                                        {
+                                                            this.state.editGTDContentID==GTD.ID
+                                                            ?<Input
+                                                                value={this.state.activeGTD.Content}
+                                                                onChange={(e)=>{
+                                                                    this.setState({
+                                                                        activeGTD:{
+                                                                            ...this.state.activeGTD,
+                                                                            Content:e.target.value
+                                                                        }
+                                                                    })
+                                                                }}
+                                                                /> :GTD.Content
+                                                        }
                                                     </Col>
                                                 </Row>
                                             )
@@ -192,6 +342,24 @@ class GTD extends React.Component{
                         })
                     }
                 </Col>
+            </Row>
+            <Row>
+                <Drawer
+                    visible={this.state.todoItemDrawerVisible}
+                    width={800}
+                    onClose={()=>{
+                        this.closeDrawer();
+                    }}
+                >
+                    <TodoItem
+                        ID={this.state.activeGTD.ID}
+                    />
+                </Drawer>
+            </Row>
+            <Row>
+                <Drawer>
+                    <GTDCategory />
+                </Drawer>
             </Row>
         </div>
     }
