@@ -38,7 +38,7 @@ class GTD extends React.Component{
             activeGTDOutsideIndex:0,
             activeGTDInsideIndex:0,
             editGTDContentID:0,
-            todoItemDrawerVisible:true,
+            todoItemDrawerVisible:false,
             activeCategory:{},
             categoryDrawerVisible:false,
             activeType:"",

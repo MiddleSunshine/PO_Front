@@ -1,6 +1,6 @@
 import React from "react";
 import {requestApi} from "../config/functions";
-import {Button, DatePicker, Drawer, Form, message} from "antd";
+import {Button, DatePicker, Drawer, Form, message, Select} from "antd";
 import TextArea from "antd/es/input/TextArea";
 import SimpleMDE from "react-simplemde-editor";
 import MarkdownPreview from '@uiw/react-markdown-preview';
@@ -17,10 +17,15 @@ class TodoItem extends React.Component{
             ID:props.ID,
             editMode:true,
             preID:props.ID,
-            labelVisible:true
+            labelVisible:false,
+            Labels:[],
+            selectedLabels:[]
         }
         this.getGTD=this.getGTD.bind(this);
         this.saveGTD=this.saveGTD.bind(this);
+        this.getLabels=this.getLabels.bind(this);
+        this.getLabelConnection=this.getLabelConnection.bind(this);
+        this.SaveLabelConnection=this.SaveLabelConnection.bind(this);
     }
 
     componentDidMount() {
@@ -31,7 +36,7 @@ class TodoItem extends React.Component{
         if (nextProps.ID==this.state.preID){
             return false;
         }
-        (async ()=>{})
+        (async ()=>{})()
             .then(()=>{
                 this.getGTD(nextProps.ID);
             })
@@ -40,6 +45,20 @@ class TodoItem extends React.Component{
                     ID:nextProps.ID,
                     preID:nextProps.ID
                 });
+            })
+    }
+
+    switchDrawer(open){
+        (async ()=>{})()
+            .then(()=>{
+                this.setState({
+                    labelVisible:open
+                })
+            })
+            .then(()=>{
+                if (!open){
+                    this.getLabels();
+                }
             })
     }
 
@@ -53,11 +72,18 @@ class TodoItem extends React.Component{
                         })
                     })
                 })
+                .then(()=>{
+                    this.getLabels();
+                })
+                .then(()=>{
+                    this.getLabelConnection();
+                })
         }else{
             this.setState({
                 GTD:{}
             })
         }
+
     }
 
     saveGTD(){
@@ -75,8 +101,46 @@ class TodoItem extends React.Component{
                     }
                 })
             })
+            .then(()=>{
+                this.SaveLabelConnection();
+            })
             .catch((error)=>{
                 message.error("Error !!!")
+            })
+    }
+
+    getLabelConnection(){
+        requestApi("/index.php?action=GTDLabelConnection&method=GetGTDLabel&ID"+this.state.GTD.ID)
+            .then((res)=>{
+                res.json().then((json)=>{
+                    this.setState({
+                        selectedLabels:json.Data.Connection
+                    })
+                })
+            })
+    }
+
+    SaveLabelConnection(){
+        if (this.state.GTD.ID){
+            requestApi("/index.php?action=GTDLabelConnection&method=UpdateConnection",{
+                method:"post",
+                mode:"cors",
+                body:JSON.stringify({
+                    GTD_ID:this.state.GTD.ID,
+                    Label_ID:this.state.selectedLabels
+                })
+            })
+        }
+    }
+
+    getLabels(){
+        requestApi("/index.php?action=GTDLabel&method=List")
+            .then((res)=>{
+                res.json().then((json)=>{
+                    this.setState({
+                        Labels:json.Data.List
+                    })
+                })
             })
     }
 
@@ -173,11 +237,33 @@ class TodoItem extends React.Component{
                     <Form.Item
                         label={<Button
                             type={"primary"}
+                            onClick={()=>{
+                                this.switchDrawer(!this.state.labelVisible);
+                            }}
                         >
                             Edit Label
                         </Button>}
                     >
-
+                        <Select
+                            mode={"multiple"}
+                            showSearch={true}
+                            onChange={(newValue)=>{
+                                this.setState({
+                                    selectedLabels:newValue
+                                });
+                            }}
+                            value={this.state.selectedLabels}
+                        >
+                            {
+                                this.state.Labels.map((labelItem,insideIndex)=>{
+                                    return(
+                                        <Select.Option value={labelItem.ID} style={{backgroundColor:labelItem.Color}}>
+                                            {labelItem.Label}
+                                        </Select.Option>
+                                    )
+                                })
+                            }
+                        </Select>
                     </Form.Item>
                     <Form.Item
                         label={"FinishTime"}
@@ -199,6 +285,9 @@ class TodoItem extends React.Component{
                 <div>
                     <Drawer
                         visible={this.state.labelVisible}
+                        onClose={()=>{
+                            this.switchDrawer(false)
+                        }}
                     >
                         <Label />
                     </Drawer>
