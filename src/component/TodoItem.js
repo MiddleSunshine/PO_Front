@@ -76,7 +76,7 @@ class TodoItem extends React.Component{
                     this.getLabels();
                 })
                 .then(()=>{
-                    this.getLabelConnection();
+                    this.getLabelConnection(ID);
                 })
         }else{
             this.setState({
@@ -109,12 +109,16 @@ class TodoItem extends React.Component{
             })
     }
 
-    getLabelConnection(){
-        requestApi("/index.php?action=GTDLabelConnection&method=GetGTDLabel&ID"+this.state.GTD.ID)
+    getLabelConnection(GTD_ID){
+        requestApi("/index.php?action=GTDLabelConnection&method=GetGTDLabel&ID="+GTD_ID)
             .then((res)=>{
                 res.json().then((json)=>{
+                    let seletcedLabels=[];
+                    json.Data.Connection.map((Item)=>{
+                        seletcedLabels.push(Item.Label_ID)
+                    });
                     this.setState({
-                        selectedLabels:json.Data.Connection
+                        selectedLabels:seletcedLabels
                     })
                 })
             })

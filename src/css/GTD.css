@@ -1,7 +1,9 @@
 .GTD{
 
 }
-
+.GTD .ant-layout-header{
+    background-color: #F0F2F5;
+}
 .GTD .CheckBox{
     border: 2px solid #383838;
     border-radius: 50%;
