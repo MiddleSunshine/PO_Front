@@ -38,7 +38,7 @@ class GTD extends React.Component{
             activeGTDOutsideIndex:0,
             activeGTDInsideIndex:0,
             editGTDContentID:0,
-            todoItemDrawerVisible:false,
+            todoItemDrawerVisible:true,
             activeCategory:{},
             categoryDrawerVisible:false,
             activeType:"",
@@ -257,6 +257,9 @@ class GTD extends React.Component{
                         }
                         break;
                     case ACTIVE_TYPE_CATEGORY:
+                        if (this.state.activeCategory.ID){
+                            this.NewTodoItem(0,this.state.activeCategory.ID);
+                        }
                         break;
                 }
                 break;
@@ -332,7 +335,13 @@ class GTD extends React.Component{
                         <MenuUnfoldOutlined />
                     </Col>
                     <Col span={1}>
-                        <PlusOutlined />
+                        <PlusOutlined
+                            onClick={()=>{
+                                if (this.state.activeCategory.ID){
+                                    this.NewTodoItem(0,this.state.activeCategory.ID);
+                                }
+                            }}
+                        />
                     </Col>
                     <Col span={5}>
                         <Input />

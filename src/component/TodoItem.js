@@ -1,10 +1,11 @@
 import React from "react";
 import {requestApi} from "../config/functions";
-import {Button, DatePicker, Form, message} from "antd";
+import {Button, DatePicker, Drawer, Form, message} from "antd";
 import TextArea from "antd/es/input/TextArea";
 import SimpleMDE from "react-simplemde-editor";
 import MarkdownPreview from '@uiw/react-markdown-preview';
 import moment from "moment";
+import Label from "./Label";
 
 var dateFormat = "YYYY-MM-DD HH:mm:ss";
 
@@ -15,7 +16,8 @@ class TodoItem extends React.Component{
             GTD:{},
             ID:props.ID,
             editMode:true,
-            preID:props.ID
+            preID:props.ID,
+            labelVisible:true
         }
         this.getGTD=this.getGTD.bind(this);
         this.saveGTD=this.saveGTD.bind(this);
@@ -169,6 +171,15 @@ class TodoItem extends React.Component{
                         />
                     </Form.Item>
                     <Form.Item
+                        label={<Button
+                            type={"primary"}
+                        >
+                            Edit Label
+                        </Button>}
+                    >
+
+                    </Form.Item>
+                    <Form.Item
                         label={"FinishTime"}
                     >
                         <DatePicker
@@ -185,6 +196,13 @@ class TodoItem extends React.Component{
                         />
                     </Form.Item>
                 </Form>
+                <div>
+                    <Drawer
+                        visible={this.state.labelVisible}
+                    >
+                        <Label />
+                    </Drawer>
+                </div>
             </div>
         );
     }
