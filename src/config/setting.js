@@ -19,7 +19,8 @@ var config = {
     willingStatus:[
         {value:"new",label:"New"},
         {value:"exchanged",label: "Exchanged"}
-    ]
+    ],
+    DateTimeStampFormat:"YYYY-MM-DD HH:mm:ss"
 }
 
 export default config

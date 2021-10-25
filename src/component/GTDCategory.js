@@ -1,10 +1,15 @@
 import React from "react";
-import {Button, DatePicker, Form, Input} from "antd";
+import {Button, DatePicker, Form, Input, message, Select} from "antd";
 import {requestApi} from "../config/functions";
 import SimpleMDE from "react-simplemde-editor";
 import MarkdownPreview from "@uiw/react-markdown-preview";
 
 var dateFormat = "YYYY-MM-DD HH:mm:ss";
+
+const CATEGORY_STATUS_MAP=[
+    {label:"Active",value:"Processing"},
+    {label:"Archived",value:"Archived"}
+];
 
 class GTDCategory extends React.Component{
     constructor(props) {
@@ -38,6 +43,25 @@ class GTDCategory extends React.Component{
         }
     }
 
+    SaveCategory(){
+        requestApi("/index.php?action=GTDCategory&method=UpdateCategory",{
+            method:"post",
+            mode:"cors",
+            body:JSON.stringify(this.state.Category)
+        })
+            .then((res)=>{
+                res.json().then((json)=>{
+                    if (json.Status==1){
+                        message.success("Save Success");
+                    }else{
+                        message.warn("Save Failed");
+                    }
+                })
+            }).catch((error)=>{
+                message.error("System Error");
+        })
+    }
+
     getCategory(ID){
         requestApi("/index.php?action=GTDCategory&method=Detail&id="+ID)
             .then((res)=>{
@@ -66,6 +90,9 @@ class GTDCategory extends React.Component{
                         label={
                             <Button
                                 type={"primary"}
+                                onClick={()=>{
+                                    this.SaveCategory();
+                                }}
                             >
                                 Save
                             </Button>
@@ -77,6 +104,26 @@ class GTDCategory extends React.Component{
                                 this.handleChange('Category',e.target.value);
                             }}
                         />
+                    </Form.Item>
+                    <Form.Item
+                        label={"Status"}
+                    >
+                        <Select
+                            value={this.state.Category.Status}
+                            onChange={(newValue)=>{
+                                this.handleChange('Status',newValue);
+                            }}
+                        >
+                            {
+                                CATEGORY_STATUS_MAP.map((Item,index)=>{
+                                    return(
+                                        <Select.Option value={Item.value}>
+                                            {Item.label}
+                                        </Select.Option>
+                                    )
+                                })
+                            }
+                        </Select>
                     </Form.Item>
                     <Form.Item
                         label={<Button
