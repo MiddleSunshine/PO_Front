@@ -1,6 +1,21 @@
 import React from "react";
 import {requestApi} from "../config/functions";
-import {Row, Col, Card, Checkbox, message, Input, Drawer, Divider, Switch, Modal, Button, Tag,Layout,Menu,Breadcrumb} from "antd";
+import {
+    Row,
+    Col,
+    Card,
+    Checkbox,
+    message,
+    Input,
+    Drawer,
+    Divider,
+    Switch,
+    Modal,
+    Button,
+    Tag,
+    Layout,
+    Collapse
+} from "antd";
 import {
     CaretDownOutlined,
     CaretRightOutlined,
@@ -29,6 +44,15 @@ const OPTION_SUB='Sub';
 
 const ACTIVE_TYPE_TODOITEM='GTD';
 const ACTIVE_TYPE_CATEGORY='Category';
+
+var hotKeysMap=[
+    {hotkey:"shift+n",label:"快速创建子任务"},
+    {hotkey:"shift+[",label:"向左缩进"},
+    {hotkey:"shift+]",label:"向右缩进"},
+    {hotkey:"shift+e",label:"编辑当前激活行"},
+    {hotkey:"shift+up",label:"向上移动激活行"},
+    {hotkey:"shift+down",label:"向下移动激活行"},
+];
 
 class GTD extends React.Component{
     constructor(props) {
@@ -61,6 +85,9 @@ class GTD extends React.Component{
         this.updateActiveCategory=this.updateActiveCategory.bind(this);
         this.createNewCategory=this.createNewCategory.bind(this);
         this.RecordNewCategory=this.RecordNewCategory.bind(this);
+        this.startEditData=this.startEditData.bind(this);
+        this.moveActiveRecord=this.moveActiveRecord.bind(this);
+        this.handleCategoryCheckBoxChange=this.handleCategoryCheckBoxChange.bind(this);
     }
     componentDidMount() {
         this.SyncData();
@@ -82,6 +109,18 @@ class GTD extends React.Component{
                     })
                 })
             })
+    }
+
+    handleCategoryCheckBoxChange(CategoryID,e=true){
+        let GTDs=this.state.GTDs;
+        GTDs.map((Item)=>{
+            if(Item.ID==CategoryID){
+                Item.Display=e.target.checked;
+            }
+        });
+        this.setState({
+            GTDs:GTDs
+        });
     }
 
     updateSameCategory(CategoryID,ID,PID,Option){
@@ -159,6 +198,61 @@ class GTD extends React.Component{
             activeCategory:Category,
             activeType:ACTIVE_TYPE_CATEGORY
         });
+    }
+
+    moveActiveRecord(up=true){
+        switch (this.state.activeType){
+            case ACTIVE_TYPE_TODOITEM:
+                if (this.state.activeGTD){
+                    let newInsideIndex=parseInt(this.state.activeGTDInsideIndex)+(up?-1:+1);
+                    let newOutsideIndex=parseInt(this.state.activeGTDOutsideIndex);
+                    // 向上越过边界，到达上一个Category
+                    if(newInsideIndex<0){
+                        newOutsideIndex--;
+                        if (newOutsideIndex<0){
+                            newOutsideIndex=0;
+                        }
+                        newInsideIndex=newInsideIndex=this.state.GTDs[newOutsideIndex].GTDS.length-1;
+                    }else if (!this.state.GTDs[this.state.activeGTDOutsideIndex].GTDS[newInsideIndex]){
+                        // 向下越界，到达下一个Category
+                        newInsideIndex=0;
+                        newOutsideIndex++;
+                        if (!this.state.GTDs[newOutsideIndex]){
+                            newOutsideIndex=this.state.activeGTDOutsideIndex;
+                        }
+                    }
+                    let newActiveGTD=this.state.GTDs[newOutsideIndex].GTDS[newInsideIndex];
+                    if (newActiveGTD){
+                        this.setState({
+                            activeGTD:newActiveGTD,
+                            activeGTDOutsideIndex:newOutsideIndex,
+                            activeGTDInsideIndex:newInsideIndex
+                        })
+                    }else{
+                        message.warn("Code Error");
+                    }
+                }
+                break;
+            case ACTIVE_TYPE_CATEGORY:
+                debugger
+                if (this.state.activeCategory){
+                    let newActiveCategoryIndex=0;
+                    this.state.GTDs.map((Item,outsideIndex)=>{
+                        if (Item.ID==this.state.activeCategory.ID){
+                            newActiveCategoryIndex=outsideIndex+(up?-1:1);
+                        }
+                    });
+                    if (newActiveCategoryIndex<0){
+                        newActiveCategoryIndex=0;
+                    }else if (!this.state.GTDs[newActiveCategoryIndex]){
+                        newActiveCategoryIndex=this.state.GTDs.length-1;
+                    }
+                    this.setState({
+                        activeCategory:this.state.GTDs[newActiveCategoryIndex]
+                    });
+                }
+                break;
+        }
     }
 
     Update(GTD){
@@ -247,6 +341,29 @@ class GTD extends React.Component{
             })
     }
 
+    startEditData(){
+        switch (this.state.activeType){
+            case ACTIVE_TYPE_TODOITEM:
+                if (this.state.activeGTD.ID){
+                    this.setState({
+                        todoItemDrawerVisible:true
+                    });
+                }else{
+                    message.warn("Please Choose GTD Item");
+                }
+                break;
+            case "Category":
+                if(this.state.activeCategory.ID){
+                    this.setState({
+                        categoryDrawerVisible:true
+                    });
+                }else{
+                    message.warn("Please Choose Category")
+                }
+                break;
+        }
+    }
+
     onKeyDown(keyName,e,handler){
         let parentGTD=this.state.GTDs[this.state.activeGTDOutsideIndex].GTDS[this.state.activeGTDInsideIndex-1];
         switch (keyName){
@@ -278,6 +395,15 @@ class GTD extends React.Component{
                     return false;
                 }
                 this.UpdateOffset(this.state.activeGTD.ID,parentGTD.ID,OPTION_SUB);
+                break;
+            case "shift+e":
+                this.startEditData();
+                break;
+            case "shift+up":
+                this.moveActiveRecord();
+                break;
+            case "shift+down":
+                this.moveActiveRecord(false);
                 break;
         }
     }
@@ -340,91 +466,75 @@ class GTD extends React.Component{
 
     render() {
         return <Hotkeys
-            keyName={"shift+n,shift+[,shift+]"}
+            keyName={"shift+n,shift+[,shift+],shift+e,shift+up,shift+down"}
             onKeyDown={(keyName,e,handler)=>{
                 this.onKeyDown(keyName,e,handler);
             }}
         >
             <div className="GTD">
-                <Layout>
-                    <Header
-                        style={{ position: 'fixed', zIndex: 1, width: '100%' }}
-                    >
-                        <Row
-                            align={"middle"}
-                            justify={"space-around"}
-                        >
-                            <Col span={1}>
-                                <MenuUnfoldOutlined
-                                    style={{cursor:"pointer"}}
-                                    onClick={()=>{
-                                        this.setState({
-                                            displayCategory:!this.state.displayCategory
-                                        })
-                                    }}
-                                />
-                            </Col>
-                            <Col span={1}>
-                                <PlusOutlined
-                                    onClick={()=>{
-                                        if (this.state.activeCategory.ID){
-                                            this.NewTodoItem(0,this.state.activeCategory.ID);
-                                        }
-                                    }}
-                                />
-                            </Col>
-                            <Col span={5}>
-                                <Input
-                                    style={{maxHeight:"30px"}}
-                                />
-                            </Col>
-                            <Col span={1}>
-                                <ClearOutlined
-                                    onClick={()=>{
-                                        this.SyncData();
-                                    }}
-                                />
-                            </Col>
-                            <Col span={1}>
-                                Category
-                            </Col>
-                            <Col span={1}>
-                                <Switch />
-                            </Col>
-                            <Col span={1}>
-                                TodoItem
-                            </Col>
-                            <Col span={1}>
-                                <Switch />
-                            </Col>
-                            <Col span={1}>
-                                Focus
-                            </Col>
-                            <Col span={1}>
-                                <Switch />
-                            </Col>
-                            <Col span={1}>
-                                <FormOutlined
-                                    onClick={()=>{
-                                        switch (this.state.activeType){
-                                            case ACTIVE_TYPE_TODOITEM:
-                                                this.setState({
-                                                    todoItemDrawerVisible:true
-                                                });
-                                                break;
-                                            case "Category":
-                                                this.setState({
-                                                    categoryDrawerVisible:true
-                                                });
-                                                break;
-                                        }
-                                    }}
-                                />
-                            </Col>
-                        </Row>
-                    </Header>
-                    <div style={{height:"64px"}}></div>
-                    <Content style={{paddingLeft:"10px",paddingRight:"10px"}}>
+                <Row
+                    align={"middle"}
+                    justify={"space-around"}
+                >
+                    <Col span={1}>
+                        <MenuUnfoldOutlined
+                            style={{cursor:"pointer"}}
+                            onClick={()=>{
+                                this.setState({
+                                    displayCategory:!this.state.displayCategory
+                                })
+                            }}
+                        />
+                    </Col>
+                    <Col span={1}>
+                        <PlusOutlined
+                            onClick={()=>{
+                                if (this.state.activeCategory.ID){
+                                    this.NewTodoItem(0,this.state.activeCategory.ID);
+                                }
+                            }}
+                        />
+                    </Col>
+                    <Col span={5}>
+                        <Input
+                            style={{maxHeight:"30px"}}
+                        />
+                    </Col>
+                    <Col span={1}>
+                        <ClearOutlined
+                            onClick={()=>{
+                                this.SyncData();
+                            }}
+                        />
+                    </Col>
+                    <Col span={1}>
+                        Category
+                    </Col>
+                    <Col span={1}>
+                        <Switch />
+                    </Col>
+                    <Col span={1}>
+                        TodoItem
+                    </Col>
+                    <Col span={1}>
+                        <Switch />
+                    </Col>
+                    <Col span={1}>
+                        Focus
+                    </Col>
+                    <Col span={1}>
+                        <Switch />
+                    </Col>
+                    <Col span={1}>
+                        <FormOutlined
+                            onClick={()=>{
+                                this.startEditData();
+                            }}
+                        />
+                    </Col>
+                </Row>
+                <Row>
+                    <Col offset={1} span={22}>
                         <Divider> {this.state.activeType?this.state.activeType:"Welcome"} </Divider>
                         <Row
                             align={"top"}
@@ -440,8 +550,8 @@ class GTD extends React.Component{
                                                         <Col span={4}>
                                                             <Checkbox
                                                                 defaultChecked={true}
-                                                                onChange={()=>{
-
+                                                                onChange={(checked)=>{
+                                                                    this.handleCategoryCheckBoxChange(Item.ID,checked);
                                                                 }}
                                                             />
                                                         </Col>
@@ -463,13 +573,28 @@ class GTD extends React.Component{
                                             </Row>
                                         </Col>
                                     </Row>
+                                    <Row style={{marginTop:"10px"}}>
+                                        <Collapse>
+                                            {hotKeysMap.map((Item,hotkeysIndex)=>{
+                                                return <Collapse.Panel key={hotkeysIndex} header={Item.hotkey}>
+                                                    {Item.label}
+                                                </Collapse.Panel>
+                                            })}
+                                        </Collapse>
+
+                                    </Row>
                                 </Col>:''
                             }
                             <Col span={this.state.displayCategory?20:24}>
                                 {
                                     this.state.GTDs.map((Category,index)=>{
+                                        let CategoryDisplay="block";
+                                        if(Category.Display!=undefined && !Category.Display){
+                                            CategoryDisplay='none';
+                                        }
                                         return (
                                             <Card
+                                                style={{display:CategoryDisplay}}
                                                 title={
                                                     <Row>
                                                         <Col span={24}>
@@ -626,7 +751,9 @@ class GTD extends React.Component{
                                                                                         }}
                                                                                     /> :GTD.FinishTime?
                                                                                         <span style={{textDecoration:"line-through"}}>{GTD.Content}</span>
-                                                                                        :GTD.Content
+                                                                                        :GTD.Content?
+                                                                                            <span>{GTD.Content}</span>
+                                                                                            :<span style={{color:"gray"}}>Plese input the content</span>
                                                                             }
                                                                         </Col>
                                                                         <Col
@@ -694,57 +821,55 @@ class GTD extends React.Component{
                                 }
                             </Col>
                         </Row>
-                    </Content>
-                    <Footer>
-                        <Row>
-                            <Drawer
-                                visible={this.state.todoItemDrawerVisible}
-                                width={800}
-                                onClose={()=>{
-                                    this.closeDrawer();
-                                }}
-                            >
-                                <TodoItem
-                                    ID={this.state.activeGTD.ID}
-                                />
-                            </Drawer>
-                        </Row>
-                        <Row>
-                            <Drawer
-                                visible={this.state.categoryDrawerVisible}
-                                width={800}
-                                onClose={()=>{
-                                    this.closeDrawer();
-                                }}
-                            >
-                                <GTDCategory
-                                    ID={this.state.activeCategory.ID}
-                                />
-                            </Drawer>
-                        </Row>
-                        <Row>
-                            <Modal
-                                visible={this.state.createNewModalVisible}
-                                title={"Create New Category"}
-                                onCancel={()=>{
-                                    this.createNewCategory(false);
-                                }}
-                                onOk={()=>{
-                                    this.RecordNewCategory();
-                                }}
-                            >
-                                <Input
-                                    value={this.state.NewCategoryName}
-                                    onChange={(e)=>{
-                                        this.setState({
-                                            NewCategoryName:e.target.value
-                                        })
-                                    }}
-                                />
-                            </Modal>
-                        </Row>
-                    </Footer>
-                </Layout>
+                    </Col>
+                </Row>
+                <Row>
+                    <Drawer
+                        visible={this.state.todoItemDrawerVisible}
+                        width={800}
+                        onClose={()=>{
+                            this.closeDrawer();
+                        }}
+                    >
+                        <TodoItem
+                            ID={this.state.activeGTD.ID}
+                        />
+                    </Drawer>
+                </Row>
+                <Row>
+                    <Drawer
+                        visible={this.state.categoryDrawerVisible}
+                        width={800}
+                        onClose={()=>{
+                            this.closeDrawer();
+                        }}
+                    >
+                        <GTDCategory
+                            ID={this.state.activeCategory.ID}
+                        />
+                    </Drawer>
+                </Row>
+                <Row>
+                    <Modal
+                        visible={this.state.createNewModalVisible}
+                        title={"Create New Category"}
+                        onCancel={()=>{
+                            this.createNewCategory(false);
+                        }}
+                        onOk={()=>{
+                            this.RecordNewCategory();
+                        }}
+                    >
+                        <Input
+                            value={this.state.NewCategoryName}
+                            onChange={(e)=>{
+                                this.setState({
+                                    NewCategoryName:e.target.value
+                                })
+                            }}
+                        />
+                    </Modal>
+                </Row>
             </div>
         </Hotkeys>
     }
