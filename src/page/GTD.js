@@ -70,7 +70,8 @@ class GTD extends React.Component{
             activeType:"",
             createNewModalVisible:false,
             NewCategoryName:"",
-            displayCategory:true
+            displayCategory:true,
+            focusMode:false
         }
         this.SyncData=this.SyncData.bind(this);
         this.onDragStart=this.onDragStart.bind(this);
@@ -523,7 +524,17 @@ class GTD extends React.Component{
                         Focus
                     </Col>
                     <Col span={1}>
-                        <Switch />
+                        <Switch
+                            onChange={(checked)=>{
+                                // FIXME 这里的代码有问题
+                                this.setState({
+                                    focusMode:checked
+                                });
+                                if (!checked){
+                                    this.SyncData();
+                                }
+                            }}
+                        />
                     </Col>
                     <Col span={1}>
                         <FormOutlined
@@ -581,7 +592,6 @@ class GTD extends React.Component{
                                                 </Collapse.Panel>
                                             })}
                                         </Collapse>
-
                                     </Row>
                                 </Col>:''
                             }
@@ -592,6 +602,7 @@ class GTD extends React.Component{
                                         if(Category.Display!=undefined && !Category.Display){
                                             CategoryDisplay='none';
                                         }
+                                        let focusModeEnd=false;
                                         return (
                                             <Card
                                                 style={{display:CategoryDisplay}}
@@ -648,6 +659,17 @@ class GTD extends React.Component{
                                                         }
                                                         if (!GTD.Display){
                                                             GTD.Display=DISPLAY_FLEX;
+                                                        }
+                                                        if (this.state.focusMode && insideIndex>0){
+                                                            if (GTD.offset<=this.state.GTDs[0].GTDS[0].offset && !focusModeEnd){
+                                                                GTD.Display=DISPLAY_HIDDEN;
+                                                                if (GTD.offset==0){
+                                                                    focusModeEnd=true;
+                                                                }
+                                                            }
+                                                            if (focusModeEnd){
+                                                                GTD.Display=DISPLAY_HIDDEN;
+                                                            }
                                                         }
                                                         return (
                                                             <Row
