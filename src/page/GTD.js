@@ -823,15 +823,18 @@ class GTD extends React.Component{
                                                                         <Col
                                                                             span={1}
                                                                         >
-                                                                            <ProfileOutlined
-                                                                                onClick={()=>{
-                                                                                    let GTDs=this.state.GTDs;
-                                                                                    GTDs[index].GTDS[insideIndex].ShowNote=!GTDs[index].GTDS[insideIndex].ShowNote;
-                                                                                    this.setState({
-                                                                                        GTDs:GTDs
-                                                                                    });
-                                                                                }}
-                                                                            />
+                                                                            {GTD.note
+                                                                                ?<ProfileOutlined
+                                                                                    onClick={()=>{
+                                                                                        let GTDs=this.state.GTDs;
+                                                                                        GTDs[index].GTDS[insideIndex].ShowNote=!GTDs[index].GTDS[insideIndex].ShowNote;
+                                                                                        this.setState({
+                                                                                            GTDs:GTDs
+                                                                                        });
+                                                                                    }}
+                                                                                />
+                                                                                :''
+                                                                            }
                                                                         </Col>
                                                                     </Row>
                                                                     {

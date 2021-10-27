@@ -11,6 +11,7 @@ import PointTable from "../page/PointTable";
 import CheckIn from "../page/CheckIn";
 import Debug from "../page/debug";
 import GTD from "../page/GTD";
+import GTDHistory from "../page/GTDHistory";
 
 interface router {
     path: string,
@@ -19,6 +20,10 @@ interface router {
 }
 
 const routers: Array<router> = [
+    {
+        path:"/GTDHistory",
+        component:GTDHistory
+    },
     {
         path:"/GTD",
         component:GTD
