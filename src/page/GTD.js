@@ -13,7 +13,6 @@ import {
     Modal,
     Button,
     Tag,
-    Layout,
     Collapse
 } from "antd";
 import {
@@ -34,8 +33,6 @@ import MarkdownPreview from "@uiw/react-markdown-preview";
 import moment from "moment";
 import config from "../config/setting";
 
-const { Header, Content, Footer } = Layout;
-
 const DISPLAY_HIDDEN='none';
 const DISPLAY_FLEX='flex';
 
@@ -53,7 +50,8 @@ var hotKeysMap=[
     {hotkey:"shift+up",label:"向上移动激活行"},
     {hotkey:"shift+down",label:"向下移动激活行"},
     {hotkey:"shift+m",label:"折叠所有行"},
-    {hotkey:"shift+s",label:"展开所有行"}
+    {hotkey:"shift+s",label:"展开所有行"},
+    {hotkey:"shift+q",label:"展示当前激活行的注释"}
 ];
 
 class GTD extends React.Component{
@@ -92,6 +90,7 @@ class GTD extends React.Component{
         this.handleCategoryCheckBoxChange=this.handleCategoryCheckBoxChange.bind(this);
         this.showSubGTD=this.showSubGTD.bind(this);
         this.focusMode=this.focusMode.bind(this);
+        this.showGTDNote=this.showGTDNote.bind(this);
     }
     componentDidMount() {
         this.SyncData();
@@ -468,7 +467,20 @@ class GTD extends React.Component{
             case "shift+s":
                 this.showSubGTD(false);
                 break;
+            case "shift+q":
+                if (this.state.activeGTD.ID){
+                    this.showGTDNote(this.state.activeGTDOutsideIndex,this.state.activeGTDInsideIndex);
+                }
+                break;
         }
+    }
+
+    showGTDNote(outsideIndex,insideIndex){
+        let GTDs=this.state.GTDs;
+        GTDs[outsideIndex].GTDS[insideIndex].ShowNote=!GTDs[outsideIndex].GTDS[insideIndex].ShowNote;
+        this.setState({
+            GTDs:GTDs
+        });
     }
 
     createNewCategory(modalVisible=true){
@@ -528,8 +540,12 @@ class GTD extends React.Component{
     }
 
     render() {
+        let hotKeyName=[];
+        hotKeysMap.map((Item)=>{
+            hotKeyName.push(Item.hotkey);
+        })
         return <Hotkeys
-            keyName={"shift+n,shift+[,shift+],shift+e,shift+up,shift+down,shift+m,shift+s"}
+            keyName={hotKeyName.join(",")}
             onKeyDown={(keyName,e,handler)=>{
                 this.onKeyDown(keyName,e,handler);
             }}
@@ -826,11 +842,7 @@ class GTD extends React.Component{
                                                                             {GTD.note
                                                                                 ?<ProfileOutlined
                                                                                     onClick={()=>{
-                                                                                        let GTDs=this.state.GTDs;
-                                                                                        GTDs[index].GTDS[insideIndex].ShowNote=!GTDs[index].GTDS[insideIndex].ShowNote;
-                                                                                        this.setState({
-                                                                                            GTDs:GTDs
-                                                                                        });
+                                                                                        this.showGTDNote(index,insideIndex);
                                                                                     }}
                                                                                 />
                                                                                 :''
