@@ -13,7 +13,7 @@ import {
     Modal,
     Button,
     Tag,
-    Collapse
+    Collapse, Select
 } from "antd";
 import {
     CaretDownOutlined,
@@ -23,7 +23,8 @@ import {
     FormOutlined,
     ClearOutlined,
     CheckOutlined,
-    ProfileOutlined
+    ProfileOutlined,
+    NumberOutlined
 } from '@ant-design/icons'
 import TodoItem from "../component/TodoItem";
 import Hotkeys from 'react-hot-keys'
@@ -71,6 +72,9 @@ class GTD extends React.Component{
             createNewModalVisible:false,
             NewCategoryName:"",
             displayCategory:true,
+            labelEditGID:{},
+            selectedLabels:[],
+            usefulLabels:[],
         }
         this.SyncData=this.SyncData.bind(this);
         this.onDragStart=this.onDragStart.bind(this);
@@ -91,10 +95,14 @@ class GTD extends React.Component{
         this.showSubGTD=this.showSubGTD.bind(this);
         this.focusMode=this.focusMode.bind(this);
         this.showGTDNote=this.showGTDNote.bind(this);
+        this.getLabels=this.getLabels.bind(this);
+        this.startEditLabel=this.startEditLabel.bind(this);
+        this.stopEditLabel=this.stopEditLabel.bind(this);
     }
     componentDidMount() {
         this.SyncData();
         document.title="GTD";
+        this.getLabels();
     }
 
     SyncData(){
@@ -539,6 +547,59 @@ class GTD extends React.Component{
         }
     }
 
+    getLabels(){
+        requestApi("/index.php?action=GTDLabel&method=List")
+            .then((res)=>{
+                res.json().then((json)=>{
+                    json.Data.List.map((Item)=>{
+                        Item.ID=parseInt(Item.ID)
+                    })
+                    this.setState({
+                        usefulLabels:json.Data.List
+                    })
+                })
+            })
+    }
+
+    startEditLabel(GTD){
+        let selectedLabel=[];
+        GTD.Labels.map((Label)=>{
+            selectedLabel.push(parseInt(Label.Label.ID));
+        })
+        this.setState({
+            labelEditGID:GTD,
+            selectedLabels:selectedLabel
+        });
+    }
+
+    stopEditLabel(){
+        if (this.state.labelEditGID.ID){
+            requestApi("/index.php?action=GTDLabelConnection&method=UpdateConnection",{
+                method:"post",
+                mode:"cors",
+                body:JSON.stringify({
+                    GTD_ID:this.state.labelEditGID.ID,
+                    Label_ID:this.state.selectedLabels
+                })
+            }).then((res)=>{
+                res.json().then((json)=>{
+                    if (json.Status==1){
+                        this.setState({
+                            labelEditGID:{},
+                            selectedLabels:[]
+                        })
+                    }
+                    return json.Status==1;
+                })
+                    .then((success)=>{
+                        if (success){
+                            this.SyncData();
+                        }
+                    })
+            })
+        }
+    }
+
     render() {
         let hotKeyName=[];
         hotKeysMap.map((Item)=>{
@@ -718,7 +779,7 @@ class GTD extends React.Component{
                                             >
                                                 {
                                                     Category.GTDS.map((GTD,insideIndex)=>{
-                                                        let ContentSpan=21-GTD.offset;
+                                                        let ContentSpan=20-GTD.offset;
                                                         let leftIcon='';
                                                         let nextGTD=Category.GTDS[insideIndex+1];
                                                         if (nextGTD && nextGTD.offset>GTD.offset){
@@ -848,33 +909,73 @@ class GTD extends React.Component{
                                                                                 :''
                                                                             }
                                                                         </Col>
+                                                                        <Col span={1}>
+                                                                            <NumberOutlined
+                                                                                onClick={()=>{
+                                                                                    this.startEditLabel(GTD);
+                                                                                }}
+                                                                            />
+                                                                        </Col>
                                                                     </Row>
                                                                     {
-                                                                        GTD.Labels.length>0
-                                                                            ?<Row
-                                                                                align={"middle"}
-                                                                                justify={"start"}
-                                                                                style={{paddingTop:"5px"}}
-                                                                            >
-                                                                                <Col
-                                                                                    offset={2+parseInt(GTD.offset)}
-                                                                                    span={20-parseInt(GTD.offset)}
+                                                                        this.state.labelEditGID.ID==GTD.ID
+                                                                        ?<Row>
+                                                                            <Col span={24}>
+                                                                                <Select
+                                                                                    style={{width:"100%",paddingTop:"5px"}}
+                                                                                    mode={"multiple"}
+                                                                                    showSearch={true}
+                                                                                    value={this.state.selectedLabels}
+                                                                                    onChange={(newSelectedValue)=>{
+                                                                                        this.setState({
+                                                                                            selectedLabels:newSelectedValue
+                                                                                        });
+                                                                                    }}
+                                                                                    onBlur={()=>{
+                                                                                        this.stopEditLabel();
+                                                                                    }}
                                                                                 >
-                                                                                    {GTD.Labels.map((labelConnection,labelIndex)=>{
-                                                                                        return <Tag
-                                                                                            key={labelIndex}
-                                                                                            color={labelConnection.Label.Color}
-                                                                                            closable={true}
-                                                                                            onClose={()=>{
-                                                                                                this.removeLabel(GTD.ID,labelConnection.Label.ID)
-                                                                                            }}
-                                                                                        >
-                                                                                            {labelConnection.Label.Label}
-                                                                                        </Tag>
-                                                                                    })}
-                                                                                </Col>
-                                                                            </Row>
-                                                                            :''
+                                                                                    {
+                                                                                        this.state.usefulLabels.map((Item)=>{
+                                                                                            return (
+                                                                                                <Select.Option
+                                                                                                    value={parseInt(Item.ID)}
+                                                                                                    key={Item.ID}
+                                                                                                    style={{backgroundColor:Item.Color}}
+                                                                                                >
+                                                                                                    {Item.Label}
+                                                                                                </Select.Option>
+                                                                                            )
+                                                                                        })
+                                                                                    }
+                                                                                </Select>
+                                                                            </Col>
+                                                                        </Row>
+                                                                            :GTD.Labels.length>0
+                                                                                ?<Row
+                                                                                    align={"middle"}
+                                                                                    justify={"start"}
+                                                                                    style={{paddingTop:"5px"}}
+                                                                                >
+                                                                                    <Col
+                                                                                        offset={2+parseInt(GTD.offset)}
+                                                                                        span={15-parseInt(GTD.offset)}
+                                                                                    >
+                                                                                        {GTD.Labels.map((labelConnection,labelIndex)=>{
+                                                                                            return <Tag
+                                                                                                key={labelIndex}
+                                                                                                color={labelConnection.Label.Color}
+                                                                                                closable={true}
+                                                                                                onClose={()=>{
+                                                                                                    this.removeLabel(GTD.ID,labelConnection.Label.ID)
+                                                                                                }}
+                                                                                            >
+                                                                                                {labelConnection.Label.Label}
+                                                                                            </Tag>
+                                                                                        })}
+                                                                                    </Col>
+                                                                                </Row>
+                                                                                :''
                                                                     }
                                                                     {
                                                                         GTD.ShowNote
