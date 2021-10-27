@@ -52,6 +52,8 @@ var hotKeysMap=[
     {hotkey:"shift+e",label:"编辑当前激活行"},
     {hotkey:"shift+up",label:"向上移动激活行"},
     {hotkey:"shift+down",label:"向下移动激活行"},
+    {hotkey:"shift+m",label:"折叠所有行"},
+    {hotkey:"shift+s",label:"展开所有行"}
 ];
 
 class GTD extends React.Component{
@@ -71,7 +73,6 @@ class GTD extends React.Component{
             createNewModalVisible:false,
             NewCategoryName:"",
             displayCategory:true,
-            focusMode:false
         }
         this.SyncData=this.SyncData.bind(this);
         this.onDragStart=this.onDragStart.bind(this);
@@ -89,6 +90,8 @@ class GTD extends React.Component{
         this.startEditData=this.startEditData.bind(this);
         this.moveActiveRecord=this.moveActiveRecord.bind(this);
         this.handleCategoryCheckBoxChange=this.handleCategoryCheckBoxChange.bind(this);
+        this.showSubGTD=this.showSubGTD.bind(this);
+        this.focusMode=this.focusMode.bind(this);
     }
     componentDidMount() {
         this.SyncData();
@@ -166,22 +169,75 @@ class GTD extends React.Component{
         event.preventDefault();
     }
 
+    focusMode(focusModeOn){
+        if (focusModeOn){
+            let GTDs=this.state.GTDs;
+            let offset,stop;
+            for (let outsideIndex=0;outsideIndex<GTDs.length;outsideIndex++){
+                if (GTDs[outsideIndex].GTDS[0].Display==DISPLAY_HIDDEN){
+                    continue;
+                }
+                stop=false;
+                for (let insideIndex=1;insideIndex<GTDs[outsideIndex].GTDS.length;insideIndex++){
+                    if (!stop){
+                        offset=parseInt(GTDs[outsideIndex].GTDS[insideIndex].offset);
+                        GTDs[outsideIndex].GTDS[insideIndex].Display=(offset>0)?DISPLAY_FLEX:DISPLAY_HIDDEN;
+                        if (offset==0){
+                            stop=true;
+                        }
+                    }else{
+                        GTDs[outsideIndex].GTDS[insideIndex].Display=DISPLAY_HIDDEN;
+                    }
+                }
+            }
+            this.setState({
+                GTDs:GTDs
+            });
+        }else{
+            this.showSubGTD(false);
+        }
+    }
+
     hideSubGTD(hide=true,outsideIndex,insideIndex){
         let GTDS=this.state.GTDs;
         let subGTD=GTDS[outsideIndex].GTDS[insideIndex];
         subGTD.offset=parseInt(subGTD.offset);
+        let stop=false;
         GTDS[outsideIndex].GTDS.map((Item,index)=>{
-            Item.offset=parseInt(Item.offset);
-            if (index>insideIndex && Item.offset>subGTD.offset){
-                if (hide){
-                    Item.Display=DISPLAY_HIDDEN;
-                }else{
-                    Item.Display=DISPLAY_FLEX;
+            if (!stop){
+                Item.offset=parseInt(Item.offset);
+                if (index>insideIndex && Item.offset>subGTD.offset){
+                    if (hide){
+                        Item.Display=DISPLAY_HIDDEN;
+                    }else{
+                        Item.Display=DISPLAY_FLEX;
+                    }
+                }
+                if (index>insideIndex && Item.offset==0){
+                    stop=true;
                 }
             }
-        })
+        });
         this.setState({
             GTDs:GTDS
+        });
+    }
+
+    showSubGTD(hide=false){
+        let GTDs=this.state.GTDs;
+        for (let outsideIndex=0;outsideIndex<this.state.GTDs.length;outsideIndex++){
+            for (let insideIndex=1;insideIndex<this.state.GTDs[outsideIndex].GTDS.length;insideIndex++){
+                if (hide){
+                    if(parseInt(GTDs[outsideIndex].GTDS[insideIndex].offset)){
+                        GTDs[outsideIndex].GTDS[insideIndex].Display=DISPLAY_HIDDEN;
+                    }
+                }else{
+                    GTDs[outsideIndex].GTDS[insideIndex].Display=DISPLAY_FLEX;
+                }
+            }
+        }
+        this.setState({
+            GTDs:GTDs
         });
     }
 
@@ -406,6 +462,12 @@ class GTD extends React.Component{
             case "shift+down":
                 this.moveActiveRecord(false);
                 break;
+            case "shift+m":
+                this.showSubGTD(true);
+                break;
+            case "shift+s":
+                this.showSubGTD(false);
+                break;
         }
     }
 
@@ -467,7 +529,7 @@ class GTD extends React.Component{
 
     render() {
         return <Hotkeys
-            keyName={"shift+n,shift+[,shift+],shift+e,shift+up,shift+down"}
+            keyName={"shift+n,shift+[,shift+],shift+e,shift+up,shift+down,shift+m,shift+s"}
             onKeyDown={(keyName,e,handler)=>{
                 this.onKeyDown(keyName,e,handler);
             }}
@@ -526,13 +588,7 @@ class GTD extends React.Component{
                     <Col span={1}>
                         <Switch
                             onChange={(checked)=>{
-                                // FIXME 这里的代码有问题
-                                this.setState({
-                                    focusMode:checked
-                                });
-                                if (!checked){
-                                    this.SyncData();
-                                }
+                                this.focusMode(checked);
                             }}
                         />
                     </Col>
@@ -602,7 +658,6 @@ class GTD extends React.Component{
                                         if(Category.Display!=undefined && !Category.Display){
                                             CategoryDisplay='none';
                                         }
-                                        let focusModeEnd=false;
                                         return (
                                             <Card
                                                 style={{display:CategoryDisplay}}
@@ -657,23 +712,9 @@ class GTD extends React.Component{
                                                                 leftIcon=<CaretDownOutlined/>
                                                             }
                                                         }
-                                                        if (!GTD.Display){
-                                                            GTD.Display=DISPLAY_FLEX;
-                                                        }
-                                                        if (this.state.focusMode && insideIndex>0){
-                                                            if (GTD.offset<=this.state.GTDs[0].GTDS[0].offset && !focusModeEnd){
-                                                                GTD.Display=DISPLAY_HIDDEN;
-                                                                if (GTD.offset==0){
-                                                                    focusModeEnd=true;
-                                                                }
-                                                            }
-                                                            if (focusModeEnd){
-                                                                GTD.Display=DISPLAY_HIDDEN;
-                                                            }
-                                                        }
                                                         return (
                                                             <Row
-                                                                style={{display:GTD.Display,color:GTD.FinishTime?"#6C6C6C":"#262626",paddingBottom:"5px",paddingTop:"5px",fontWeight:this.state.activeGTD.ID==GTD.ID?"bolder":"normal"}}
+                                                                style={{display:GTD.Display,color:GTD.FinishTime?"#6C6C6C":"#262626",paddingBottom:"5px",paddingTop:"5px"}}
                                                                 key={insideIndex}
                                                                 onDrop={(e)=>this.onDrop(e,GTD.ID,GTD.CategoryID)}
                                                                 onDragOver={(e)=>this.onDragOver(e,index,insideIndex)}
@@ -732,6 +773,7 @@ class GTD extends React.Component{
                                                                             </div>
                                                                         </Col>
                                                                         <Col
+                                                                            style={{fontWeight:this.state.activeGTD.ID==GTD.ID?"bolder":"normal"}}
                                                                             span={ContentSpan}
                                                                             draggable={true}
                                                                             onDragStart={(e)=>this.onDragStart(
@@ -822,9 +864,9 @@ class GTD extends React.Component{
                                                                     {
                                                                         GTD.ShowNote
                                                                             ?<Row
-                                                                                style={{backgroundColor:"#f0f0f0",minHeight:"22px",marginTop:"10px"}}
+                                                                                className={"NotePart"}
                                                                             >
-                                                                                <Col span={24}>
+                                                                                <Col span={22-GTD.offset} offset={2+parseInt(GTD.offset)}>
                                                                                     <MarkdownPreview
                                                                                         source={GTD.note}
                                                                                     />

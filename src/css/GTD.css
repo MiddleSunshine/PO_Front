@@ -14,3 +14,16 @@
     text-align: center;
     cursor: pointer;
 }
+
+.GTD .NotePart{
+    background-color: #f0f0f0;
+    min-height: 22px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+.GTD .wmde-markdown{
+    font-size: 14px;
+}
