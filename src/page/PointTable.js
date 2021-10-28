@@ -3,8 +3,13 @@ import {Card, Row, Timeline, Col, Drawer, Button, Badge} from "antd";
 import Road from "../component/road";
 import {requestApi} from "../config/functions";
 import PointEdit from "../component/PointEdit";
+import Hotkeys from 'react-hot-keys'
 import {PlusOutlined,PlusCircleOutlined} from '@ant-design/icons';
 import "../css/PointTable.css"
+
+var hotkeys_maps=[
+
+];
 
 class PointTable extends React.Component{
     constructor(props) {
@@ -21,21 +26,49 @@ class PointTable extends React.Component{
             },
             points:[],
             statusFilter:['new','solved'],
-            editPointID:0,
+            activePoint:{},
+            activeOutsideIndex:0,
+            activeInsideIndex:0,
             editPartVisible:false
         }
         this.getPointsByPID=this.getPointsByPID.bind(this);
         this.openDrawer=this.openDrawer.bind(this);
+        this.closeDrawer=this.closeDrawer.bind(this);
     }
     componentDidMount() {
         this.getPointsByPID(this.state.id);
     }
 
-    openDrawer(ID){
+    recordActivePoint(Point,outsideIndex,insideIndex){
         this.setState({
-            editPointID:ID,
-            editPartVisible:true
+            activePoint:Point,
+            activeOutsideIndex:outsideIndex,
+            activeInsideIndex:insideIndex
         });
+    }
+
+    openDrawer(Point,outsideIndex,insideIndex){
+        (async ()=>{})()
+            .then(()=>{
+                this.recordActivePoint(Point,outsideIndex,insideIndex);
+            })
+            .then(()=>{
+                this.setState({
+                    editPartVisible:true
+                });
+            });
+    }
+
+    closeDrawer(){
+        (async ()=>{})()
+            .then(()=>{
+                this.setState({
+                    editPartVisible:false
+                })
+            })
+            .then(()=>{
+                this.getPointsByPID(this.state.id);
+            })
     }
 
     getPointsByPID(pid){
@@ -54,96 +87,114 @@ class PointTable extends React.Component{
                 })
             })
     }
+
+    onKeyDown(keyName,e,handler){
+        switch (keyName){
+
+        }
+    }
+
     render() {
-        return <div className="container Point_Table">
-            <Row>
-                <Road />
-            </Row>
-            <hr/>
-            <Row>
-                这里展示 parent point 的一些信息
-            </Row>
-            <hr/>
-            <Row>
-                <Button
-                    type={"primary"}
-                    icon={<PlusCircleOutlined />}
-                >
-                    New Point
-                </Button>
-            </Row>
-            <hr/>
-            <Row>
-                {
-                    this.state.points.map((point,outsideIndex)=>{
-                        return(
-                            <Col
-                                span={8}
-                                key={outsideIndex}
-                            >
-                                <Card
-                                    title={
-                                        <span
-                                            onClick={()=>{
-                                                this.openDrawer(point.ID)
-                                            }}
-                                        >
+        let hotKeyName=[];
+        hotkeys_maps.map((Item)=>{
+            hotKeyName.push(Item.hotkey);
+        })
+        return <Hotkeys
+            keyName={hotKeyName.join(",")}
+            onKeyDown={(keyName,e,handler)=>{
+                this.onKeyDown(keyName,e,handler);
+            }}
+        >
+            <div className="container Point_Table">
+                <Row>
+                    <Road />
+                </Row>
+                <hr/>
+                <Row>
+                    这里展示 parent point 的一些信息
+                </Row>
+                <hr/>
+                <Row>
+                    <Button
+                        type={"primary"}
+                        icon={<PlusCircleOutlined />}
+                    >
+                        New Point
+                    </Button>
+                </Row>
+                <hr/>
+                <Row>
+                    {
+                        this.state.points.map((point,outsideIndex)=>{
+                            return(
+                                <Col
+                                    span={8}
+                                    key={outsideIndex}
+                                >
+                                    <Card
+                                        title={
+                                            <span
+                                                onClick={()=>{
+                                                    this.recordActivePoint(point,outsideIndex,-1);
+                                                }}
+                                            >
                                             {point.keyword}
                                         </span>
-                                    }
-                                    extra={
-                                        <Button
-                                            type={"primary"}
-                                            icon={<PlusOutlined />}
-                                            shape={"circle"}
-                                            size={"small"}
-                                        >
-                                        </Button>
-                                    }
-                                >
-                                    <Timeline>
-                                        {
-                                            point.children.map((subPoint,insideIndex)=>{
-                                                return(
-                                                    <Timeline.Item
-                                                        key={insideIndex}
-                                                        dot={<Badge />}
-                                                    >
+                                        }
+                                        extra={
+                                            <Button
+                                                type={"primary"}
+                                                icon={<PlusOutlined />}
+                                                shape={"circle"}
+                                                size={"small"}
+                                            >
+                                            </Button>
+                                        }
+                                    >
+                                        <Timeline>
+                                            {
+                                                point.children.map((subPoint,insideIndex)=>{
+                                                    return(
+                                                        <Timeline.Item
+                                                            key={insideIndex}
+                                                            dot={<Badge />}
+                                                            onClick={()=>{
+                                                                this.recordActivePoint(subPoint,outsideIndex,insideIndex);
+                                                            }}
+                                                        >
                                                         <span
                                                             onClick={()=>{
-                                                                this.openDrawer(subPoint.ID)
+
                                                             }}
                                                         >
                                                             {subPoint.keyword}
                                                         </span>
-                                                    </Timeline.Item>
-                                                )
-                                            })
-                                        }
-                                    </Timeline>
-                                </Card>
-                            </Col>
-                        )
-                    })
-                }
-            </Row>
-            <Row>
-                <Drawer
-                    width={1000}
-                    visible={this.state.editPartVisible}
-                    onClose={()=>{
-                        this.setState({
-                            editPartVisible:false
+                                                        </Timeline.Item>
+                                                    )
+                                                })
+                                            }
+                                        </Timeline>
+                                    </Card>
+                                </Col>
+                            )
                         })
-                    }}
-                >
-                    {/*todo 这个组件没有重复刷新的能力，需要更新一下*/}
-                    <PointEdit
-                        ID={this.state.editPointID}
-                    />
-                </Drawer>
-            </Row>
-        </div>
+                    }
+                </Row>
+                <Row>
+                    <Drawer
+                        width={1000}
+                        visible={this.state.editPartVisible}
+                        onClose={()=>{
+                            this.closeDrawer();
+                        }}
+                    >
+                        <PointEdit
+                            ID={this.state.activePoint.ID}
+                        />
+                    </Drawer>
+                </Row>
+            </div>
+        </Hotkeys>
     }
 }
 

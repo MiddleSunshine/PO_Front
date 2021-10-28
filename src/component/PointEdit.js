@@ -16,6 +16,7 @@ class PointEdit extends React.Component{
         super(props);
         this.state={
             ID:props.ID,
+            preID:props.ID,
             point:{
                 ID:0,
                 keyword:"",
@@ -41,6 +42,21 @@ class PointEdit extends React.Component{
     componentDidMount() {
         if (this.props.ID>0){
             this.getPointDetail(this.props.ID);
+        }
+    }
+
+    componentWillReceiveProps(nextProps, nextContext) {
+        if (parseInt(nextProps.ID)!=parseInt(this.state.preID)){
+            (async ()=>{})()
+                .then(()=>{
+                    this.setState({
+                        preID:nextProps.ID,
+                        ID:nextProps.ID
+                    })
+                })
+                .then(()=>{
+                    this.getPointDetail(nextProps.ID);
+                })
         }
     }
 
