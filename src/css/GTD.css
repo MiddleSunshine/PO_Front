@@ -28,6 +28,12 @@
     font-size: 14px;
 }
 
-.GTD .activeNote{
-    color: #018FFF;
+.GTD .GTDBorder{
+    border-bottom: 1px solid #F5F5F5;
+}
+
+.GTD .ant-tag-red{
+    background-color: #FFB2C0;
+    color: #610000;
+    font-weight: bolder;
 }

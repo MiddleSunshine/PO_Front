@@ -43,6 +43,10 @@ const OPTION_SUB='Sub';
 const ACTIVE_TYPE_TODOITEM='GTD';
 const ACTIVE_TYPE_CATEGORY='Category';
 
+const SHOW_FINISH_GTD_KEY='show_all_gtd_session_storage_key';
+const SHOW_FINISHTIME_GTD_YES='YES';
+const SHOW_FINISH_GTD_NO='NO';
+
 var hotKeysMap=[
     {hotkey:"shift+n",label:"快速创建子任务"},
     {hotkey:"shift+[",label:"向左缩进"},
@@ -52,7 +56,8 @@ var hotKeysMap=[
     {hotkey:"shift+down",label:"向下移动激活行"},
     {hotkey:"shift+m",label:"折叠所有行"},
     {hotkey:"shift+s",label:"展开所有行"},
-    {hotkey:"shift+q",label:"展示当前激活行的注释"}
+    {hotkey:"shift+q",label:"展示当前激活行的注释"},
+    {hotkey:"shift+i",label:"当前激活行进入编辑状态"}
 ];
 
 class GTD extends React.Component{
@@ -98,6 +103,9 @@ class GTD extends React.Component{
         this.getLabels=this.getLabels.bind(this);
         this.startEditLabel=this.startEditLabel.bind(this);
         this.stopEditLabel=this.stopEditLabel.bind(this);
+        this.finishInput=this.finishInput.bind(this);
+        this.UpdateOffsetForce=this.UpdateOffsetForce.bind(this);
+        this.startInput=this.startInput.bind(this);
     }
     componentDidMount() {
         this.SyncData();
@@ -107,6 +115,9 @@ class GTD extends React.Component{
 
     SyncData(){
         let body={};
+        if(sessionStorage.getItem(SHOW_FINISH_GTD_KEY)==SHOW_FINISHTIME_GTD_YES){
+            body.ShowFinishTimeGTD=sessionStorage.getItem(SHOW_FINISH_GTD_KEY);
+        }
         requestApi("/index.php?action=GTD&method=List",{
             method:"post",
             mode:"cors",
@@ -359,6 +370,19 @@ class GTD extends React.Component{
             })
     }
 
+    UpdateOffsetForce(ID,Option){
+        requestApi("/index.php?action=GTD&method=UpdateOffsetForce&ID="+ID+"&Option="+Option)
+            .then((res)=>{
+                res.json().then((json)=>{
+                    if (json.Status==1){
+                        this.SyncData();
+                    }else{
+                        message.warn(json.Message)
+                    }
+                })
+            })
+    }
+
     UpdateFinishTime(ID){
         requestApi("/index.php?action=GTD&method=UpdateFinishTime&ID="+ID)
             .then((res)=>{
@@ -452,13 +476,15 @@ class GTD extends React.Component{
                 if (!this.state.activeGTD.ID){
                     return false;
                 }
-                this.UpdateOffset(this.state.activeGTD.ID,parentGTD.ID,OPTION_SAME);
+                // this.UpdateOffset(this.state.activeGTD.ID,parentGTD.ID,OPTION_SAME);
+                this.UpdateOffsetForce(this.state.activeGTD.ID,OPTION_SAME);
                 break;
             case "shift+]":
                 if (!this.state.activeGTD.ID){
                     return false;
                 }
-                this.UpdateOffset(this.state.activeGTD.ID,parentGTD.ID,OPTION_SUB);
+                this.UpdateOffsetForce(this.state.activeGTD.ID,OPTION_SUB);
+                // this.UpdateOffset(this.state.activeGTD.ID,parentGTD.ID,OPTION_SUB);
                 break;
             case "shift+e":
                 this.startEditData();
@@ -479,6 +505,9 @@ class GTD extends React.Component{
                 if (this.state.activeGTD.ID){
                     this.showGTDNote(this.state.activeGTDOutsideIndex,this.state.activeGTDInsideIndex);
                 }
+                break;
+            case "shift+i":
+                this.startInput(this.state.activeGTD);
                 break;
         }
     }
@@ -600,6 +629,26 @@ class GTD extends React.Component{
         }
     }
 
+    startInput(GTD){
+        if (GTD.ID){
+            this.setState({
+                editGTDContentID:GTD.ID
+            })
+        }
+    }
+
+    finishInput(){
+        (async ()=>{})()
+            .then(()=>{
+                this.Update(this.state.activeGTD);
+            })
+            .then(()=>{
+                this.setState({
+                    editGTDContentID:0
+                })
+            })
+    }
+
     render() {
         let hotKeyName=[];
         hotKeysMap.map((Item)=>{
@@ -657,7 +706,18 @@ class GTD extends React.Component{
                         TodoItem
                     </Col>
                     <Col span={1}>
-                        <Switch />
+                        <Switch
+                            defaultChecked={sessionStorage.getItem(SHOW_FINISH_GTD_KEY)==SHOW_FINISHTIME_GTD_YES}
+                            onChange={(checked)=>{
+                                (async ()=>{})()
+                                    .then(()=>{
+                                        sessionStorage.setItem(SHOW_FINISH_GTD_KEY,checked?SHOW_FINISHTIME_GTD_YES:SHOW_FINISH_GTD_NO);
+                                    })
+                                    .then(()=>{
+                                        this.SyncData();
+                                    })
+                            }}
+                        />
                     </Col>
                     <Col span={1}>
                         Focus
@@ -737,6 +797,7 @@ class GTD extends React.Component{
                                         }
                                         return (
                                             <Card
+                                                key={index}
                                                 style={{display:CategoryDisplay}}
                                                 title={
                                                     <Row>
@@ -779,7 +840,7 @@ class GTD extends React.Component{
                                             >
                                                 {
                                                     Category.GTDS.map((GTD,insideIndex)=>{
-                                                        let ContentSpan=20-GTD.offset;
+                                                        let ContentSpan=18-GTD.offset;
                                                         let leftIcon='';
                                                         let nextGTD=Category.GTDS[insideIndex+1];
                                                         if (nextGTD && nextGTD.offset>GTD.offset){
@@ -861,21 +922,9 @@ class GTD extends React.Component{
                                                                                 insideIndex
                                                                             )}
                                                                             onClick={()=>{
-                                                                                this.setState({
-                                                                                    editGTDContentID:GTD.ID
-                                                                                })
+                                                                                this.startInput(GTD);
                                                                             }}
-                                                                            onBlur={()=>{
-                                                                                (async ()=>{})()
-                                                                                    .then(()=>{
-                                                                                        this.Update(this.state.activeGTD);
-                                                                                    })
-                                                                                    .then(()=>{
-                                                                                        this.setState({
-                                                                                            editGTDContentID:0
-                                                                                        })
-                                                                                    })
-                                                                            }}
+                                                                            className={"GTDBorder"}
                                                                         >
                                                                             {
                                                                                 this.state.editGTDContentID==GTD.ID
@@ -890,6 +939,12 @@ class GTD extends React.Component{
                                                                                                 }
                                                                                             })
                                                                                         }}
+                                                                                        onBlur={()=>{
+                                                                                            this.finishInput();
+                                                                                        }}
+                                                                                        onPressEnter={()=>{
+                                                                                            this.finishInput();
+                                                                                        }}
                                                                                     /> :GTD.FinishTime?
                                                                                         <span style={{textDecoration:"line-through"}}>{GTD.Content}</span>
                                                                                         :GTD.Content?
@@ -897,8 +952,20 @@ class GTD extends React.Component{
                                                                                             :<span style={{color:"gray"}}>Plese input the content</span>
                                                                             }
                                                                         </Col>
+                                                                        <Col span={2} className={"GTDBorder"}>
+                                                                            {
+                                                                                GTD.EndTime?
+                                                                                    <Tag
+                                                                                        color="red"
+                                                                                    >
+                                                                                        {GTD.EndTime}
+                                                                                    </Tag>
+                                                                                    :''
+                                                                            }
+                                                                        </Col>
                                                                         <Col
                                                                             span={1}
+                                                                            className={"GTDBorder"}
                                                                         >
                                                                             {GTD.note
                                                                                 ?<ProfileOutlined
@@ -909,7 +976,7 @@ class GTD extends React.Component{
                                                                                 :''
                                                                             }
                                                                         </Col>
-                                                                        <Col span={1}>
+                                                                        <Col span={1} className={"GTDBorder"}>
                                                                             <NumberOutlined
                                                                                 onClick={()=>{
                                                                                     this.startEditLabel(GTD);
