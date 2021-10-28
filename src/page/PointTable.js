@@ -8,8 +8,15 @@ import {PlusOutlined,PlusCircleOutlined} from '@ant-design/icons';
 import "../css/PointTable.css"
 
 var hotkeys_maps=[
-
+    {hotkey:"shift+e",label:"Edit"},
+    {hotkey:"shift+up",label:"Move Up"},
+    {hotkey:"shift+down",label:"Move Down"},
+    {hotkey:"shift+left",label:"Move Left"},
+    {hotkey:"shift+right",label:"Move Right"},
 ];
+
+const ACTIVE_TYPE_SUB_POINT='SubPoint';
+const ACTIVE_TYPE_PARENT_POINT='ParentPoint';
 
 class PointTable extends React.Component{
     constructor(props) {
@@ -29,12 +36,19 @@ class PointTable extends React.Component{
             activePoint:{},
             activeOutsideIndex:0,
             activeInsideIndex:0,
-            editPartVisible:false
+            editPartVisible:false,
+            activeOutsidePoint:{},
+            acitveType:''
         }
         this.getPointsByPID=this.getPointsByPID.bind(this);
         this.openDrawer=this.openDrawer.bind(this);
         this.closeDrawer=this.closeDrawer.bind(this);
+        this.recordActivePoint=this.recordActivePoint.bind(this);
+        this.onKeyDown=this.onKeyDown.bind(this);
+        this.updateActiveIndex=this.updateActiveIndex.bind(this);
+        this.recordAcitveParentPoint=this.recordAcitveParentPoint.bind(this);
     }
+
     componentDidMount() {
         this.getPointsByPID(this.state.id);
     }
@@ -43,8 +57,16 @@ class PointTable extends React.Component{
         this.setState({
             activePoint:Point,
             activeOutsideIndex:outsideIndex,
-            activeInsideIndex:insideIndex
+            activeInsideIndex:insideIndex,
+            acitveType:ACTIVE_TYPE_SUB_POINT
         });
+    }
+
+    recordAcitveParentPoint(Point){
+        this.setState({
+            activeOutsidePoint:Point,
+            acitveType:ACTIVE_TYPE_PARENT_POINT
+        })
     }
 
     openDrawer(Point,outsideIndex,insideIndex){
@@ -88,9 +110,51 @@ class PointTable extends React.Component{
             })
     }
 
+    updateActiveIndex(hotkey){
+        let newInsideIndex=this.state.activeInsideIndex;
+        let newOutsideIndex=this.state.activeOutsideIndex;
+        switch (hotkey){
+            case "shift+up":
+                newInsideIndex--;
+                break;
+            case "shift+down":
+                newInsideIndex++;
+                break;
+            case "shift+left":
+                newOutsideIndex++;
+                break;
+            case "shift+right":
+                newOutsideIndex--;
+                break;
+        }
+        if(newInsideIndex<0){
+            newInsideIndex=0;
+        }
+        if (newOutsideIndex<0){
+            newOutsideIndex=0;
+        }
+        if (!this.state.points[newOutsideIndex]){
+            newOutsideIndex=this.state.activeOutsideIndex;
+        }
+        if (!this.state.points[newOutsideIndex].children[newInsideIndex]){
+            newInsideIndex=this.state.activeInsideIndex;
+        }
+        this.setState({
+            activeOutsideIndex:newOutsideIndex,
+            activeInsideIndex:newInsideIndex,
+            activePoint:this.state.points[newOutsideIndex].children[newInsideIndex],
+            activeOutsidePoint:this.state.points[newOutsideIndex]
+        })
+    }
+
     onKeyDown(keyName,e,handler){
         switch (keyName){
-
+            case "shift+up":
+            case "shift+down":
+            case "shift+left":
+            case "shift+right":
+                this.updateActiveIndex(keyName);
+                break;
         }
     }
 
@@ -134,8 +198,9 @@ class PointTable extends React.Component{
                                     <Card
                                         title={
                                             <span
+                                                style={{fontWeight:point.ID==this.state.activeOutsidePoint.ID?"bolder":"normal"}}
                                                 onClick={()=>{
-                                                    this.recordActivePoint(point,outsideIndex,-1);
+                                                    this.recordAcitveParentPoint(point)
                                                 }}
                                             >
                                             {point.keyword}
@@ -163,6 +228,7 @@ class PointTable extends React.Component{
                                                             }}
                                                         >
                                                         <span
+                                                            style={{fontWeight:subPoint.ID==this.state.activePoint.ID?"bolder":"normal"}}
                                                             onClick={()=>{
 
                                                             }}
