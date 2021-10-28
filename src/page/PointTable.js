@@ -121,10 +121,12 @@ class PointTable extends React.Component{
                 newInsideIndex++;
                 break;
             case "shift+left":
-                newOutsideIndex++;
+                newOutsideIndex--;
+                newInsideIndex=0;
                 break;
             case "shift+right":
-                newOutsideIndex--;
+                newOutsideIndex++;
+                newInsideIndex=0;
                 break;
         }
         if(newInsideIndex<0){
