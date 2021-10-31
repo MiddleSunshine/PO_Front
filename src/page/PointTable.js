@@ -463,6 +463,7 @@ class PointTable extends React.Component {
                     {
                         this.state.points.map((point, outsideIndex) => {
                             let cardColor = config.statusBackGroupColor[point.status];
+                            let outsideIndexActive=(point.ID == this.state.activeOutsidePoint.ID && this.state.activeType == ACTIVE_TYPE_PARENT_POINT);
                             return (
                                 <Col
                                     span={8}
@@ -472,8 +473,7 @@ class PointTable extends React.Component {
                                         title={
                                             <div
                                                 style={{
-                                                    color: cardColor,
-                                                    fontWeight: (point.ID == this.state.activeOutsidePoint.ID && this.state.activeType == ACTIVE_TYPE_PARENT_POINT) ? "bolder" : "normal"
+                                                    color: cardColor
                                                 }}
                                                 onClick={(e) => {
                                                     e.preventDefault();
@@ -513,7 +513,8 @@ class PointTable extends React.Component {
                                                         >
                                                             <span
                                                                 style={{
-                                                                    fontSize: (point.ID == this.state.activeOutsidePoint.ID && this.state.activeType == ACTIVE_TYPE_PARENT_POINT) ? "20px" : "16px"
+                                                                    fontSize: outsideIndexActive ? "20px" : "16px",
+                                                                    color:outsideIndexActive?"black":"white"
                                                                 }}
                                                             >
                                                                 {point.keyword}
@@ -554,6 +555,7 @@ class PointTable extends React.Component {
                                                 {
                                                     point.children.map((subPoint, insideIndex) => {
                                                         let color = config.statusBackGroupColor[subPoint.status];
+                                                        let insideActive=(subPoint.ID == this.state.activePoint.ID && this.state.activeType == ACTIVE_TYPE_SUB_POINT);
                                                         return (
                                                             <Timeline.Item
                                                                 key={insideIndex}
@@ -599,7 +601,8 @@ class PointTable extends React.Component {
                                                                                 >
                                                                                     <span
                                                                                         style={{
-                                                                                            fontSize: (subPoint.ID == this.state.activePoint.ID && this.state.activeType == ACTIVE_TYPE_SUB_POINT) ? "20px" : "14px"
+                                                                                            fontSize: insideActive ? "20px" : "14px",
+                                                                                            color:insideActive?"black":"white"
                                                                                         }}
                                                                                         onClick={() => {
                                                                                             this.openDrawer(subPoint, false);
