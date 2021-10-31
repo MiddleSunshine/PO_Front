@@ -521,7 +521,18 @@ class PointTable extends React.Component {
                                     key={outsideIndex}
                                 >
                                     <Badge.Ribbon
-                                        text={point.status}
+                                        text={
+                                            <Tooltip
+                                                title={"Open New Sub Point Page"}
+                                            >
+                                                <a
+                                                    style={{color:"white"}}
+                                                    target={"_blank"}
+                                                    href={"/pointTable/"+point.ID}
+                                                >{point.status}
+                                                </a>
+                                            </Tooltip>
+                                        }
                                         color={cardColor}
                                     >
                                         <Card
@@ -537,9 +548,18 @@ class PointTable extends React.Component {
                                                 >
                                                     <Row>
                                                         <Col span={2}>
-                                                            <DingdingOutlined />
+                                                            <Tooltip
+                                                                title={"New Sub Point"}
+                                                            >
+                                                                <DingdingOutlined
+                                                                    onClick={() => {
+                                                                        this.openNewPointModal(point.ID);
+                                                                    }}
+                                                                    style={{cursor:"pointer"}}
+                                                                />
+                                                            </Tooltip>
                                                         </Col>
-                                                        <Col span={17}>
+                                                        <Col span={21}>
                                                             {
                                                                 (this.state.editPoint.ID == point.ID && !this.state.editPartVisible)
                                                                     ? <Input
@@ -581,27 +601,6 @@ class PointTable extends React.Component {
                                                                         </span>
                                                                     </Tag>
                                                             }
-                                                        </Col>
-                                                        <Col span={2}>
-                                                            <Button
-                                                                type={"primary"}
-                                                                icon={<PlusOutlined />}
-                                                                shape={"circle"}
-                                                                size={"small"}
-                                                                onClick={() => {
-                                                                    this.openNewPointModal(point.ID);
-                                                                }}
-                                                            >
-                                                            </Button>
-                                                        </Col>
-                                                        <Col span={2}>
-                                                            <Button
-                                                                type={"link"}
-                                                                icon={<ArrowRightOutlined />}
-                                                                target={"_blank"}
-                                                                href={"/pointTable/"+point.ID}
-                                                            >
-                                                            </Button>
                                                         </Col>
                                                     </Row>
                                                 </div>
