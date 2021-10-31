@@ -10,7 +10,7 @@ import {
     Input,
     message,
     Modal,
-    Checkbox, Form
+    Checkbox, Form, PageHeader
 } from "antd";
 import Road from "../component/road";
 import {requestApi} from "../config/functions";
@@ -86,10 +86,12 @@ class PointTable extends React.Component {
         this.newPoint = this.newPoint.bind(this);
         this.Search = this.Search.bind(this);
         this.removeCollection = this.removeCollection.bind(this);
+        this.getAPoint=this.getAPoint.bind(this);
     }
 
     componentDidMount() {
         this.getPointsByPID(this.state.id);
+        this.getAPoint(this.state.id);
     }
 
     recordActivePoint(Point, outsideIndex, insideIndex) {
@@ -148,6 +150,19 @@ class PointTable extends React.Component {
                     })
                 })
             })
+    }
+
+    getAPoint(ID){
+        if (ID>0){
+            requestApi("/index.php?action=Points&method=GetAPoint&id="+ID)
+                .then((res)=>{
+                    res.json().then((json)=>{
+                        this.setState({
+                            parentPoint:json.Data
+                        })
+                    })
+                })
+        }
     }
 
     updateActiveIndex(hotkey) {
@@ -372,11 +387,13 @@ class PointTable extends React.Component {
         >
             <div className="container Point_Table">
                 <Row>
-                    <Road/>
-                </Row>
-                <hr/>
-                <Row>
-                    这里展示 parent point 的一些信息
+                    <PageHeader
+                        title={this.state.parentPoint.keyword}
+                        subTitle={"Status:"+this.state.parentPoint.status+" / Point:"+this.state.parentPoint.Point}
+                        breadcrumb={<Road/>}
+                        footer={this.state.parentPoint.note}
+                        ghost={true}
+                    />
                 </Row>
                 <hr/>
                 <Row
