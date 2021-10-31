@@ -4,17 +4,18 @@ var config = {
     common_road: [
     ],
     statusMap:[
+        {value: "init",label: "Init"},
         {value:"new",label:"Processing"},
         {value:"solved",label:"Finished"},
+        {value:"archived",label:"Archived"},
         {value:"give_up",label:"Give Up"},
-        {value:"archived",label:"Archived"}
     ],
     statusBackGroupColor:{
-        new:"#EAEDF2",
-        solved:"#F6FFED",
-        give_up:"#FFFBE6",
-        archived:"#E6F7FF",
-        init:"#FFF2F0",
+        new:"#32D74B",
+        solved:"#1AA9FF",
+        give_up:"#FF453A",
+        archived:"#FF9F0A",
+        init:"#BF5AF2",
     },
     willingStatus:[
         {value:"new",label:"New"},

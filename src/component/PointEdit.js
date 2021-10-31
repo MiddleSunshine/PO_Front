@@ -69,9 +69,6 @@ class PointEdit extends React.Component{
                         fileContent:json.Data.FileContent,
                         localFilePath:json.Data.LocalFilePath
                     })
-                    return json.Data.Point.keyword;
-                }).then((keyword)=>{
-                    document.title=keyword ?? "Point Edit";
                 })
             })
     }

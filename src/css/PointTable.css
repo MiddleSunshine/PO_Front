@@ -4,3 +4,11 @@
 .Point_Table .ant-col-8{
     padding: 10px;
 }
+
+.Point_Table .ant-card-bordered{
+    border: 1px solid black;
+}
+
+.Point_Table .ant-card-head{
+    border-bottom: 1px solid black;
+}
