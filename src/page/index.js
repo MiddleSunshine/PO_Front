@@ -99,7 +99,7 @@ class Index extends React.Component {
                         <Col offset={6} span={2}>
                             <Button
                                 type={"link"}
-                                href={"./points/0"}
+                                href={"/pointTable/0"}
                                 target={"_blank"}
                             >
                                 Point Index
@@ -108,7 +108,7 @@ class Index extends React.Component {
                         <Col span={2}>
                             <Button
                                 type={"link"}
-                                href={"./summary/points/0"}
+                                href={"/summary/points/0"}
                                 target={"_blank"}
                             >
                                 Summary
@@ -117,7 +117,7 @@ class Index extends React.Component {
                         <Col span={2}>
                             <Button
                                 type={"link"}
-                                href={"./report"}
+                                href={"/report"}
                                 target={"_blank"}
                             >
                                 Report
@@ -126,7 +126,7 @@ class Index extends React.Component {
                         <Col span={2}>
                             <Button
                                 type={"link"}
-                                href={"./willing"}
+                                href={"/willing"}
                                 target={"_blank"}
                             >
                                 Willing
@@ -135,7 +135,7 @@ class Index extends React.Component {
                         <Col span={2}>
                             <Button
                                 type={"link"}
-                                href={"./planTable"}
+                                href={"/planTable"}
                                 target={"_blank"}
                             >
                                 Plan
@@ -144,7 +144,7 @@ class Index extends React.Component {
                         <Col span={2}>
                             <Button
                                 type={"link"}
-                                href={"./plan"}
+                                href={"/plan"}
                                 target={"_blank"}
                             >
                                 Schedule

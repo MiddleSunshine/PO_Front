@@ -1,6 +1,7 @@
 import React from "react";
-import {Badge, Card, Timeline} from "antd";
+import {Badge, Card, Tag, Timeline} from "antd";
 import {requestApi} from "../config/functions";
+import config from "../config/setting";
 
 class SubPointList extends React.Component{
     constructor(props) {
@@ -52,7 +53,14 @@ class SubPointList extends React.Component{
                             key={outsideIndex}
                         >
                             <Card
-                                title={Point.keyword}
+                                title={
+                                    <a
+                                        href={"/pointTable/"+Point.ID}
+                                        target={"_blank"}
+                                    >
+                                        {Point.keyword}
+                                    </a>
+                                }
                             >
                                 <Timeline>
                                     {
@@ -60,8 +68,19 @@ class SubPointList extends React.Component{
                                             return(
                                                 <Timeline.Item
                                                     key={insideIndex}
+                                                    // style={{color:config.statusBackGroupColor[subPoint.status]}}
+                                                    dot={<Tag
+                                                        color={config.statusBackGroupColor[subPoint.status]}
+                                                    >
+                                                        {subPoint.status}
+                                                    </Tag>}
                                                 >
-                                                    {subPoint.keyword}
+                                                    <a
+                                                        href={"/pointTable/"+subPoint.ID}
+                                                        target={"_blank"}
+                                                    >
+                                                        {subPoint.keyword}
+                                                    </a>
                                                 </Timeline.Item>
                                             )
                                         })

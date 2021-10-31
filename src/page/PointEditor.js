@@ -9,6 +9,10 @@ class PointEditor extends React.Component{
             ID:props.match.params.pid
         }
     }
+    componentDidMount() {
+        document.title="Point Edit";
+    }
+
     render() {
         return (
             <div className={"container"}>
