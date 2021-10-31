@@ -25,12 +25,11 @@ class SubPointList extends React.Component{
 
 
     getPoints(pid){
+        let body={};
         requestApi("/index.php?action=Points&method=Index&id=" + pid, {
             method: "post",
             mode: "cors",
-            body: JSON.stringify({
-                status: this.state.statusFilter.join(",")
-            })
+            body: JSON.stringify(body)
         })
             .then((res) => {
                 res.json().then((json) => {

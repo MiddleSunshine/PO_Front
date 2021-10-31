@@ -40,7 +40,7 @@ class PointEdit extends React.Component{
         this.openFileByTypora=this.openFileByTypora.bind(this);
     }
     componentDidMount() {
-        if (this.props.ID>0){
+        if (this.state.ID>0){
             this.getPointDetail(this.props.ID);
         }
     }
@@ -244,7 +244,7 @@ class PointEdit extends React.Component{
                         >
                             {config.statusMap.map((Item)=>{
                                 return(
-                                    <Option value={Item.value}>{Item.label}</Option>
+                                    <Option key={Item.value} value={Item.value}>{Item.label}</Option>
                                 )
                             })}
                         </Select>

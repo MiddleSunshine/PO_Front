@@ -19,7 +19,9 @@ import Hotkeys from 'react-hot-keys'
 import {
     PlusCircleOutlined,
     PlusOutlined,
-    ArrowRightOutlined
+    ArrowRightOutlined,
+    UnorderedListOutlined,
+    FormOutlined
 } from '@ant-design/icons';
 import "../css/PointTable.css"
 import config from "../config/setting";
@@ -52,11 +54,13 @@ class PointTable extends React.Component {
             },
             points: [],
             statusFilter: [],
+            //
             editPoint: {},
+            editPartVisible: false,
+            //
             activePoint: {},
             activeOutsideIndex: 0,
             activeInsideIndex: 0,
-            editPartVisible: false,
             activeOutsidePoint: {},
             activeType: '',
             //
@@ -118,7 +122,8 @@ class PointTable extends React.Component {
                 this.setState({
                     editPartVisible: false,
                     pointListVisible: false,
-                    newPointModalVisible: false
+                    newPointModalVisible: false,
+                    editPoint:{}
                 })
             })
             .then(() => {
@@ -168,16 +173,6 @@ class PointTable extends React.Component {
                 newInsideIndex = 0;
                 newActiveType = ACTIVE_TYPE_PARENT_POINT;
                 break;
-            case "shift+i":
-                switch (this.state.activeType) {
-                    case ACTIVE_TYPE_PARENT_POINT:
-                        this.openDrawer(this.state.activeOutsidePoint, false);
-                        break;
-                    case ACTIVE_TYPE_SUB_POINT:
-                        this.openDrawer(this.state.activePoint, false);
-                        break;
-                }
-                break;
         }
         if (newInsideIndex < 0) {
             newInsideIndex = 0;
@@ -207,6 +202,17 @@ class PointTable extends React.Component {
             case "shift+left":
             case "shift+right":
                 this.updateActiveIndex(keyName);
+                break;
+            case "shift+i":
+                e.preventDefault();
+                switch (this.state.activeType) {
+                    case ACTIVE_TYPE_PARENT_POINT:
+                        this.openDrawer(this.state.activeOutsidePoint, false);
+                        break;
+                    case ACTIVE_TYPE_SUB_POINT:
+                        this.openDrawer(this.state.activePoint, false);
+                        break;
+                }
                 break;
             case "shift+e":
                 switch (this.state.activeType) {
@@ -388,6 +394,42 @@ class PointTable extends React.Component {
                             New Point
                         </Button>
                     </Col>
+                    <Col span={3}>
+                        <Button
+                            type={"primary"}
+                            icon={<FormOutlined />}
+                            onClick={()=>{
+                                switch (this.state.activeType){
+                                    case ACTIVE_TYPE_PARENT_POINT:
+                                        this.openDrawer(this.state.activeOutsidePoint);
+                                        break;
+                                    case ACTIVE_TYPE_SUB_POINT:
+                                        this.openDrawer(this.state.activePoint);
+                                        break;
+                                }
+                            }}
+                        >
+                            Edit Point
+                        </Button>
+                    </Col>
+                    <Col span={3}>
+                        <Button
+                            type={"primary"}
+                            icon={<UnorderedListOutlined />}
+                            onClick={()=>{
+                                switch (this.state.activeType){
+                                    case ACTIVE_TYPE_PARENT_POINT:
+                                        this.showPointList(this.state.activeOutsidePoint.ID);
+                                        break;
+                                    case ACTIVE_TYPE_SUB_POINT:
+                                        this.showPointList(this.state.activePoint.ID);
+                                        break;
+                                }
+                            }}
+                        >
+                            Point List
+                        </Button>
+                    </Col>
                     {
                         config.statusMap.map((Item, index) => {
                             return (
@@ -416,12 +458,13 @@ class PointTable extends React.Component {
                                                     color: cardColor,
                                                     fontWeight: (point.ID == this.state.activeOutsidePoint.ID && this.state.activeType == ACTIVE_TYPE_PARENT_POINT) ? "bolder" : "normal"
                                                 }}
-                                                onClick={() => {
+                                                onClick={(e) => {
+                                                    e.preventDefault();
                                                     this.recordActiveParentPoint(point)
                                                 }}
                                             >
                                                 {
-                                                    this.state.editPoint.ID == point.ID
+                                                    (this.state.editPoint.ID == point.ID && !this.state.editPartVisible)
                                                         ? <Input
                                                             autoFocus={true}
                                                             value={this.state.editPoint.keyword}
@@ -498,7 +541,8 @@ class PointTable extends React.Component {
                                                             <Timeline.Item
                                                                 key={insideIndex}
                                                                 color={"#00FF33"}
-                                                                onClick={() => {
+                                                                onClick={(e) => {
+                                                                    e.preventDefault();
                                                                     this.recordActivePoint(subPoint, outsideIndex, insideIndex);
                                                                 }}
                                                             >
@@ -508,7 +552,7 @@ class PointTable extends React.Component {
                                                                 >
                                                                     <Col span={22}>
                                                                         {
-                                                                            this.state.editPoint.ID == subPoint.ID
+                                                                            (this.state.editPoint.ID == subPoint.ID && !this.state.editPartVisible)
                                                                                 ? <Input
                                                                                     autoFocus={true}
                                                                                     value={this.state.editPoint.keyword}
@@ -579,7 +623,7 @@ class PointTable extends React.Component {
                         }}
                     >
                         <PointEdit
-                            ID={this.state.activePoint.ID}
+                            ID={this.state.editPoint.ID}
                         />
                     </Drawer>
                 </Row>
