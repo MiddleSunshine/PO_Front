@@ -84,6 +84,9 @@ class Index extends React.Component {
                                         searchKeyWord:e.target.value
                                     })
                                 }}
+                                onPressEnter={()=>{
+                                    this.searchPoints();
+                                }}
                             />
                         </Col>
                         <Col span={1}>

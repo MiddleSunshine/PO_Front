@@ -62,30 +62,35 @@ class SubPointList extends React.Component{
                                     </a>
                                 }
                             >
-                                <Timeline>
-                                    {
-                                        Point.children.map((subPoint,insideIndex)=>{
-                                            return(
-                                                <Timeline.Item
-                                                    key={insideIndex}
-                                                    // style={{color:config.statusBackGroupColor[subPoint.status]}}
-                                                    dot={<Tag
-                                                        color={config.statusBackGroupColor[subPoint.status]}
-                                                    >
-                                                        {subPoint.status}
-                                                    </Tag>}
-                                                >
-                                                    <a
-                                                        href={"/pointTable/"+subPoint.ID}
-                                                        target={"_blank"}
-                                                    >
-                                                        {subPoint.keyword}
-                                                    </a>
-                                                </Timeline.Item>
-                                            )
-                                        })
-                                    }
-                                </Timeline>
+                                {
+                                    Point.children.length>0
+                                    ?<Timeline>
+                                            {
+                                                Point.children.map((subPoint,insideIndex)=>{
+                                                    return(
+                                                        <Timeline.Item
+                                                            key={insideIndex}
+                                                            // style={{color:config.statusBackGroupColor[subPoint.status]}}
+                                                            dot={<Tag
+                                                                color={config.statusBackGroupColor[subPoint.status]}
+                                                            >
+                                                                {subPoint.status}
+                                                            </Tag>}
+                                                        >
+                                                            &nbsp;&nbsp;&nbsp;
+                                                            <a
+                                                                href={"/pointTable/"+subPoint.ID}
+                                                                target={"_blank"}
+                                                            >
+                                                                {subPoint.keyword}
+                                                            </a>
+                                                        </Timeline.Item>
+                                                    )
+                                                })
+                                            }
+                                        </Timeline>
+                                        :Point.note
+                                }
                             </Card>
                         </Badge.Ribbon>
                     )

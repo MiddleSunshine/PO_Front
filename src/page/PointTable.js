@@ -2,7 +2,6 @@ import React from "react";
 import {
     Card,
     Row,
-    Timeline,
     Col,
     Drawer,
     Button,
@@ -18,11 +17,8 @@ import PointEdit from "../component/PointEdit";
 import Hotkeys from 'react-hot-keys'
 import {
     PlusCircleOutlined,
-    PlusOutlined,
-    ArrowRightOutlined,
     UnorderedListOutlined,
     FormOutlined,
-    TwitterOutlined,
     DingdingOutlined
 } from '@ant-design/icons';
 import "../css/PointTable.css"
@@ -35,11 +31,21 @@ var hotkeys_maps = [
     {hotkey: "shift+down", label: "Move Down"},
     {hotkey: "shift+left", label: "Move Left"},
     {hotkey: "shift+right", label: "Move Right"},
-    {hotkey: "shift+i", label: "Edit"}
+    {hotkey: "shift+i", label: "Edit"},
+    {hotkey: "shift+n",label: "New Point"}
 ];
 
 const ACTIVE_TYPE_SUB_POINT = 'SubPoint';
 const ACTIVE_TYPE_PARENT_POINT = 'ParentPoint';
+const SESSION_STORAGE_KEY='Point_Table_Filter_';
+
+function Hidden(hidden,ID){
+    sessionStorage.setItem(SESSION_STORAGE_KEY+ID,hidden);
+}
+
+function CheckHidden(ID){
+    return sessionStorage.getItem(SESSION_STORAGE_KEY+ID);
+}
 
 class PointTable extends React.Component {
     constructor(props) {
@@ -147,8 +153,12 @@ class PointTable extends React.Component {
         })
             .then((res) => {
                 res.json().then((json) => {
+                    let points=json.Data.points ? json.Data.points : [];
+                    points.map((Item)=>{
+                        Item.Hidden=CheckHidden(Item.ID);
+                    })
                     this.setState({
-                        points: json.Data.points ? json.Data.points : []
+                        points: points
                     })
                 })
             })
@@ -242,6 +252,23 @@ class PointTable extends React.Component {
                         break;
                     case ACTIVE_TYPE_SUB_POINT:
                         this.openDrawer(this.state.activePoint);
+                        break;
+                }
+                break;
+            case "shift+n":
+                switch (this.state.activeType) {
+                    case ACTIVE_TYPE_PARENT_POINT:
+                        if (this.state.activeOutsidePoint.ID){
+                            this.openNewPointModal(this.state.activeOutsidePoint.ID);
+                        }
+                        break;
+                    case ACTIVE_TYPE_SUB_POINT:
+                        if (this.state.activePoint.ID){
+                            this.openNewPointModal(this.state.activePoint.ID);
+                        }
+                        break;
+                    default:
+                        this.openNewPointModal(this.state.id);
                         break;
                 }
                 break;
@@ -394,7 +421,20 @@ class PointTable extends React.Component {
             <div className="container Point_Table">
                 <Row>
                     <PageHeader
-                        title={this.state.parentPoint.keyword}
+                        title={
+                            <Tooltip
+                                title={"Click To Update"}
+                            >
+                                <span
+                                    style={{cursor:"pointer"}}
+                                    onClick={()=>{
+                                        this.openDrawer(this.state.parentPoint);
+                                    }}
+                                >
+                                    {this.state.parentPoint.keyword}
+                                </span>
+                            </Tooltip>
+                        }
                         subTitle={"Status:" + this.state.parentPoint.status + " / Point:" + this.state.parentPoint.Point}
                         breadcrumb={<Road/>}
                         footer={this.state.parentPoint.note}
@@ -493,6 +533,7 @@ class PointTable extends React.Component {
                                     onClick={() => {
                                         let points = this.state.points;
                                         points[index].Hidden = !points[index].Hidden;
+                                        Hidden(points[index].Hidden,point.ID);
                                         this.setState({
                                             points: points
                                         });
@@ -515,7 +556,7 @@ class PointTable extends React.Component {
                             let cardColor = config.statusBackGroupColor[point.status];
                             let outsideIndexActive = (point.ID == this.state.activeOutsidePoint.ID && this.state.activeType == ACTIVE_TYPE_PARENT_POINT);
                             return (
-                                point.Hidden ? '' :
+                                    point.Hidden ? '' :
                                     <Col
                                         span={8}
                                         key={outsideIndex}
@@ -529,11 +570,11 @@ class PointTable extends React.Component {
                                                         style={{color: "white"}}
                                                         target={"_blank"}
                                                         href={"/pointTable/" + point.ID}
-                                                    >{point.status}
+                                                    >{config.statusLabelMap[point.status]}
                                                     </a>
                                                 </Tooltip>
                                             }
-                                            color={cardColor}
+                                            color={point.note?"gold":"gray"}
                                         >
                                             <Card
                                                 title={
@@ -603,17 +644,33 @@ class PointTable extends React.Component {
                                                                 }
                                                             </Col>
                                                         </Row>
+                                                        {point.note
+                                                            ?<Row
+                                                                justify={"end"}
+                                                                align={"middle"}
+                                                            >
+                                                                <Col
+                                                                    span={24}
+                                                                    style={{textAlign:"right"}}
+                                                                >
+                                                                    <span className={"title_note"}>{point.note}</span>
+                                                                </Col>
+                                                            </Row>
+                                                            :''
+                                                        }
                                                     </div>
                                                 }
                                             >
                                                 {
-                                                    <Collapse
+                                                    point.children.length<=0
+                                                        ?<div>{point.note}</div>
+                                                        :<Collapse
                                                         key={outsideIndex}
                                                     >
                                                         {
                                                             point.children.map((subPoint, insideIndex) => {
                                                                 let color = config.statusBackGroupColor[subPoint.status];
-                                                                let insideActive = (subPoint.ID == this.state.activePoint.ID && this.state.activeType == ACTIVE_TYPE_SUB_POINT);
+                                                                let insideActive = (this.state.activePoint && subPoint.ID == this.state.activePoint.ID && this.state.activeType == ACTIVE_TYPE_SUB_POINT);
                                                                 return (
                                                                     <Collapse.Panel
                                                                         showArrow={false}
@@ -641,7 +698,7 @@ class PointTable extends React.Component {
                                                                                 :
                                                                                 <Tag
                                                                                     closable={true}
-                                                                                    color={subPoint.note?color:"gray"}
+                                                                                    color={color}
                                                                                     onClose={(e) => {
                                                                                         this.removeCollection(subPoint.ID, point.ID)
                                                                                         e.preventDefault();
@@ -662,13 +719,14 @@ class PointTable extends React.Component {
                                                                         }
                                                                         extra={
                                                                             <Badge.Ribbon
+                                                                                color={subPoint.note?"gold":"gray"}
                                                                                 text={
                                                                                     <a
                                                                                         href={"/pointTable/" + subPoint.ID}
                                                                                         target={"_blank"}
                                                                                         style={{color: "white"}}
                                                                                     >
-                                                                                        {subPoint.status}
+                                                                                        {config.statusLabelMap[subPoint.status]}
                                                                                     </a>
                                                                                 }
                                                                             >
@@ -712,7 +770,7 @@ class PointTable extends React.Component {
                         width={1000}
                         visible={this.state.editPartVisible}
                         onClose={() => {
-                            this.closeDrawer();
+                            this.closeDrawer(true);
                         }}
                     >
                         <PointEdit
