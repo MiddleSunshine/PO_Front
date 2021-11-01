@@ -16,6 +16,7 @@ class PointEdit extends React.Component{
         super(props);
         this.state={
             ID:props.ID,
+            preID:props.ID,
             point:{
                 ID:0,
                 keyword:"",
@@ -39,8 +40,23 @@ class PointEdit extends React.Component{
         this.openFileByTypora=this.openFileByTypora.bind(this);
     }
     componentDidMount() {
-        if (this.props.ID>0){
+        if (this.state.ID>0){
             this.getPointDetail(this.props.ID);
+        }
+    }
+
+    componentWillReceiveProps(nextProps, nextContext) {
+        if (parseInt(nextProps.ID)!=parseInt(this.state.preID)){
+            (async ()=>{})()
+                .then(()=>{
+                    this.setState({
+                        preID:nextProps.ID,
+                        ID:nextProps.ID
+                    })
+                })
+                .then(()=>{
+                    this.getPointDetail(nextProps.ID);
+                })
         }
     }
 
@@ -53,9 +69,6 @@ class PointEdit extends React.Component{
                         fileContent:json.Data.FileContent,
                         localFilePath:json.Data.LocalFilePath
                     })
-                    return json.Data.Point.keyword;
-                }).then((keyword)=>{
-                    document.title=keyword ?? "Point Edit";
                 })
             })
     }
@@ -86,7 +99,7 @@ class PointEdit extends React.Component{
                 }
             }).then((saveResult)=>{
                 if(saveResult){
-                    window.location.href="/point/edit/"+this.state.ID;
+                    // window.location.href="/point/edit/"+this.state.ID;
                 }
             })
         }).catch((error)=>{
@@ -231,7 +244,7 @@ class PointEdit extends React.Component{
                         >
                             {config.statusMap.map((Item)=>{
                                 return(
-                                    <Option value={Item.value}>{Item.label}</Option>
+                                    <Option key={Item.value} value={Item.value}>{Item.label}</Option>
                                 )
                             })}
                         </Select>

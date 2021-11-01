@@ -4,3 +4,27 @@
 .Point_Table .ant-col-8{
     padding: 10px;
 }
+
+.Point_Table .ant-card-bordered{
+    border: 1px solid #D9D9D9;
+}
+
+.Point_Table .ant-card-head{
+    border-bottom: 1px solid #D9D9D9;
+    background-color: #FAFAFA;
+}
+
+.Point_Table .title{
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    cursor: pointer;
+}
+
+.Point_Table .ant-collapse-extra > .ant-ribbon-wrapper{
+    position: static !important;
+}
+
+.Point_Table .ant-card-body{
+    padding: 10px;
+}
