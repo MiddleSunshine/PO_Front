@@ -507,6 +507,7 @@ class GTD extends React.Component{
                 }
                 break;
             case "shift+i":
+                e.preventDefault();
                 this.startInput(this.state.activeGTD);
                 break;
         }
