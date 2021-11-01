@@ -241,7 +241,7 @@ class PointTable extends React.Component {
                         this.openDrawer(this.state.activeOutsidePoint);
                         break;
                     case ACTIVE_TYPE_SUB_POINT:
-                        this.openDrawer(this.state.activeInsideIndex);
+                        this.openDrawer(this.state.activePoint);
                         break;
                 }
                 break;
