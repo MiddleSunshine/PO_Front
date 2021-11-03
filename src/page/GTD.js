@@ -86,6 +86,7 @@ class GTD extends React.Component{
         this.onDragOver=this.onDragOver.bind(this);
         this.onDrop=this.onDrop.bind(this);
         this.updateSameCategory=this.updateSameCategory.bind(this);
+        this.updateDiffCategory=this.updateDiffCategory.bind(this);
         this.hideSubGTD=this.hideSubGTD.bind(this);
         this.updateActiveGTD=this.updateActiveGTD.bind(this);
         this.closeDrawer=this.closeDrawer.bind(this);
@@ -161,6 +162,22 @@ class GTD extends React.Component{
             })
     }
 
+    updateDiffCategory(CategoryID,ID,PID,Option){
+        requestApi("/index.php?action=GTD&method=UpdateCategory",{
+            method:"post",
+            mode:"cors",
+            body:JSON.stringify({
+                CategoryID:CategoryID,
+                ID:ID,
+                PID:PID,
+                Option:Option
+            })
+        })
+            .then((res)=>{
+                this.SyncData();
+            })
+    }
+
     onDragStart(event,ID,CategoryID,type='Same',outsideIndex,insideIndex){
         (async ()=>{})()
             .then(()=>{
@@ -183,6 +200,9 @@ class GTD extends React.Component{
         let GTD=JSON.parse(event.dataTransfer.getData('GTD'));
         if (CategoryID==GTD.CategoryID && GTD.ID!=PID){
             this.updateSameCategory(CategoryID,GTD.ID,PID,GTD.Option);
+        }
+        if (CategoryID!=GTD.CategoryID && GTD.ID!=PID){
+            this.updateDiffCategory(CategoryID,GTD.ID,PID,GTD.Option);
         }
         event.preventDefault();
     }
@@ -801,7 +821,14 @@ class GTD extends React.Component{
                                                 key={index}
                                                 style={{display:CategoryDisplay}}
                                                 title={
-                                                    <Row>
+                                                    <Row
+                                                        onDrop={(e)=>{
+                                                            this.onDrop(e,0,Category.ID);
+                                                        }}
+                                                        onDragOver={(e)=>{
+                                                            this.onDragOver(e,index,0);
+                                                        }}
+                                                    >
                                                         <Col span={24}>
                                                             <Row>
                                                                 <Col span={23}>
