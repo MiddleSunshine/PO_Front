@@ -11,7 +11,8 @@ class MindMapConnection extends React.Component{
             B:true,
             C:true,
             D:true,
-            displayNull:false
+            displayNull:false,
+            height:props.height
         }
         this.parseShape=this.parseShape.bind(this);
     }
@@ -20,9 +21,16 @@ class MindMapConnection extends React.Component{
         this.parseShape(this.state.shape);
     }
 
+    componentWillReceiveProps(nextProps, nextContext) {
+        if (nextProps.height!=this.state.height){
+            this.setState({
+                height:nextProps.height
+            })
+        }
+    }
+
     parseShape(shape){
         let data=shape.split(",");
-        console.log(data);
         let A,B,C,D;
         if (parseInt(data[0])==1){
             A=true;
@@ -54,10 +62,11 @@ class MindMapConnection extends React.Component{
     }
 
     render() {
+        let style={height: this.state.height}
         if (this.state.displayNull){
-            return  <div className={"MindMapConnection"}></div>
+            return  <div style={style} className={"MindMapConnection"}></div>
         }
-        return <div className={"MindMapConnection"}>
+        return <div style={style} className={"MindMapConnection"}>
             <Row className={"APosition"} justify={"center"}>
                 {
                     this.state.A

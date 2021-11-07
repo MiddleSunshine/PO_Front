@@ -4,7 +4,7 @@ import MindMapConnection from "../component/MindMap";
 import config from "../config/setting";
 
 import "../css/PointRoad.css"
-import {Button, Col, Drawer, Input, Row, Tooltip} from "antd";
+import {Button, Col, Drawer, InputNumber, Row, Tooltip} from "antd";
 import PointEdit from "../component/PointEdit";
 
 class PointsRoad extends React.Component{
@@ -14,7 +14,8 @@ class PointsRoad extends React.Component{
             pointTable:[],
             pid:props.match.params.pid,
             EditPoint:{},
-            pointItemWidth:130
+            pointItemWidth:130,
+            pointItemHeight:80
         }
         this.getTableData=this.getTableData.bind(this);
         this.EditPoint=this.EditPoint.bind(this);
@@ -61,12 +62,25 @@ class PointsRoad extends React.Component{
                         Point Item Width
                     </Col>
                     <Col span={1}>
-                        <Input
+                        <InputNumber
                             placeholder={"Point Item Width"}
                             value={this.state.pointItemWidth}
-                            onChange={(e)=>{
+                            onChange={(newValue)=>{
                                 this.setState({
-                                    pointItemWidth:e.target.value
+                                    pointItemWidth:newValue
+                                })
+                            }}
+                        />
+                    </Col>
+                    <Col span={2}>
+                        Point Item Height
+                    </Col>
+                    <Col span={1}>
+                        <InputNumber
+                            value={this.state.pointItemHeight}
+                            onChange={(newValue)=>{
+                                this.setState({
+                                    pointItemHeight:newValue
                                 })
                             }}
                         />
@@ -86,7 +100,7 @@ class PointsRoad extends React.Component{
 
                                 >
                                     <div className="Point" style={{backgroundColor:config.statusBackGroupColor[Item.value]}}>
-                                        {Item.value}
+                                        {config.statusLabelMap[Item.value]}
                                     </div>
                                 </Col>
                             )
@@ -107,7 +121,7 @@ class PointsRoad extends React.Component{
                                                     switch (Item.Type){
                                                         case "Empty":
                                                         case "Plus":
-                                                            component=<MindMapConnection shape={Item.Data} />
+                                                            component=<MindMapConnection height={this.state.pointItemHeight} shape={Item.Data} />
                                                             break;
                                                         case "Point":
                                                             let style={
