@@ -493,6 +493,15 @@ class PointTable extends React.Component {
                             Point List
                         </Button>
                     </Col>
+                    <Col span={3}>
+                        <Button
+                            type={"link"}
+                            href={"/pointRoad/"+this.state.parentPoint.ID}
+                            target={"_blank"}
+                        >
+                            Mind Map
+                        </Button>
+                    </Col>
                     <Col span={6}>
                         <Select
                             style={{width: "100%"}}

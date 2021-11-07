@@ -1,18 +1,28 @@
 import React from "react";
 import {requestApi} from "../config/functions";
 import MindMapConnection from "../component/MindMap";
+import config from "../config/setting";
+
+import "../css/PointRoad.css"
+import {Drawer, Tooltip} from "antd";
+import PointEdit from "../component/PointEdit";
+
+const SHOW_LENGTH=9;
 
 class PointsRoad extends React.Component{
     constructor(props) {
         super(props);
         this.state={
-            pointTable:[]
+            pointTable:[],
+            pid:props.match.params.pid,
+            EditPoint:{},
         }
         this.getTableData=this.getTableData.bind(this);
+        this.EditPoint=this.EditPoint.bind(this);
     }
 
     componentDidMount() {
-        this.getTableData(99);
+        this.getTableData(this.state.pid);
     }
 
     getTableData(id){
@@ -28,9 +38,15 @@ class PointsRoad extends React.Component{
         }
     }
 
+    EditPoint(point){
+        this.setState({
+            EditPoint:point
+        })
+    }
+
     render() {
         return (
-            <div className="container">
+            <div className="container PointRoad">
                 <table>
                 {
                     this.state.pointTable.map((lines,outsideIndex)=>{
@@ -45,7 +61,35 @@ class PointsRoad extends React.Component{
                                                 component=<MindMapConnection shape={Item.Data} />
                                                 break;
                                             case "Point":
-                                                component=<div>{Item.Data.keyword}</div>
+                                                let showWord=Item.Data.keyword;
+                                                if(showWord.length>SHOW_LENGTH){
+                                                    showWord=showWord.slice(0,SHOW_LENGTH);
+                                                    showWord=showWord+"...";
+                                                }
+                                                let style={
+                                                    backgroundColor:config.statusBackGroupColor[Item.Data.status]
+                                                }
+                                                if (Item.Data.ID==this.state.pid){
+                                                    style.fontSize="20px";
+                                                    style.textAlign="center";
+                                                    style.color="gold";
+                                                }
+                                                component=<div
+                                                    className={"Point"}
+                                                    style={style}
+                                                >
+                                                    <Tooltip
+                                                        title={Item.Data.keyword}
+                                                    >
+                                                        <span
+                                                            onClick={()=>{
+                                                                this.EditPoint(Item.Data);
+                                                            }}
+                                                        >
+                                                            {showWord}
+                                                        </span>
+                                                    </Tooltip>
+                                                </div>
                                                 break;
                                         }
                                         return(
@@ -60,6 +104,20 @@ class PointsRoad extends React.Component{
                     })
                 }
                 </table>
+                <div>
+                    <Drawer
+                        visible={this.state.EditPoint.ID}
+                        onClose={()=>{
+                            this.EditPoint({ID:0});
+                        }}
+                        width={1000}
+                        placement={"left"}
+                    >
+                        <PointEdit
+                            ID={this.state.EditPoint.ID}
+                        />
+                    </Drawer>
+                </div>
             </div>
         );
     }
