@@ -6,6 +6,7 @@ class MindMapConnection extends React.Component{
     constructor(props) {
         super(props);
         this.state={
+            shape:props.shape,
             A:true,
             B:true,
             C:true,
@@ -14,16 +15,14 @@ class MindMapConnection extends React.Component{
         }
         this.parseShape=this.parseShape.bind(this);
     }
-    componentWillReceiveProps(nextProps, nextContext) {
-
-    }
 
     componentDidMount() {
-        this.parseShape(this.props.shape);
+        this.parseShape(this.state.shape);
     }
 
     parseShape(shape){
         let data=shape.split(",");
+        console.log(data);
         let A,B,C,D;
         if (parseInt(data[0])==1){
             A=true;
@@ -71,7 +70,7 @@ class MindMapConnection extends React.Component{
             <Row className={"BRow"}>
                 <div className={"BPosition"}>
                     {
-                        this.state.B
+                        this.state.D
                             ?<div className={"BPart"}>
 
                             </div>
@@ -81,7 +80,7 @@ class MindMapConnection extends React.Component{
                 <div className={"CenterPart"}>.</div>
                 <div className={"BPosition"}>
                     {
-                        this.state.C
+                        this.state.B
                             ?<div className={"BPart"}>
 
                             </div>
@@ -91,7 +90,7 @@ class MindMapConnection extends React.Component{
             </Row>
             <Row justify={"center"} className={"APosition"}>
                 {
-                    this.state.D
+                    this.state.C
                         ?<div className={"APart"}>
 
                         </div>

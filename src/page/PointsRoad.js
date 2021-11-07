@@ -1,5 +1,6 @@
 import React from "react";
 import {requestApi} from "../config/functions";
+import MindMapConnection from "../component/MindMap";
 
 class PointsRoad extends React.Component{
     constructor(props) {
@@ -38,6 +39,15 @@ class PointsRoad extends React.Component{
                                 {
                                     lines.map((Item,insideIndex)=>{
                                         let component={};
+                                        switch (Item.Type){
+                                            case "Empty":
+                                            case "Plus":
+                                                component=<MindMapConnection shape={Item.Data} />
+                                                break;
+                                            case "Point":
+                                                component=<div>{Item.Data.keyword}</div>
+                                                break;
+                                        }
                                         return(
                                             <td key={insideIndex}>
                                                 {component}
