@@ -12,10 +12,11 @@ class PointsRoad extends React.Component{
         super(props);
         this.state={
             pointTable:[],
+            parentPoint:{},
             pid:props.match.params.pid,
             EditPoint:{},
             pointItemWidth:130,
-            pointItemHeight:80
+            pointItemHeight:80,
         }
         this.getTableData=this.getTableData.bind(this);
         this.EditPoint=this.EditPoint.bind(this);
@@ -23,7 +24,6 @@ class PointsRoad extends React.Component{
 
     componentDidMount() {
         this.getTableData(this.state.pid);
-        document.title="Point Mind Map Mode";
     }
 
     getTableData(id){
@@ -32,9 +32,14 @@ class PointsRoad extends React.Component{
                 .then((res)=>{
                     res.json().then((json)=>{
                         this.setState({
-                            pointTable:json.Data.Table
+                            pointTable:json.Data.Table,
+                            parentPoint:json.Data.point
                         })
+                        return json.Data.point;
                     })
+                        .then((point)=>{
+                            document.title="MindMap:"+point.keyword
+                        })
                 })
         }
     }
