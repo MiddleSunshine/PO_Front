@@ -4,10 +4,8 @@ import MindMapConnection from "../component/MindMap";
 import config from "../config/setting";
 
 import "../css/PointRoad.css"
-import {Drawer, Tooltip} from "antd";
+import {Button, Col, Drawer, Input, Row, Tooltip} from "antd";
 import PointEdit from "../component/PointEdit";
-
-const SHOW_LENGTH=9;
 
 class PointsRoad extends React.Component{
     constructor(props) {
@@ -16,6 +14,7 @@ class PointsRoad extends React.Component{
             pointTable:[],
             pid:props.match.params.pid,
             EditPoint:{},
+            pointItemWidth:130
         }
         this.getTableData=this.getTableData.bind(this);
         this.EditPoint=this.EditPoint.bind(this);
@@ -23,6 +22,7 @@ class PointsRoad extends React.Component{
 
     componentDidMount() {
         this.getTableData(this.state.pid);
+        document.title="Point Mind Map Mode";
     }
 
     getTableData(id){
@@ -47,63 +47,110 @@ class PointsRoad extends React.Component{
     render() {
         return (
             <div className="container PointRoad">
-                <table>
-                {
-                    this.state.pointTable.map((lines,outsideIndex)=>{
-                        return(
-                            <tr key={outsideIndex}>
-                                {
-                                    lines.map((Item,insideIndex)=>{
-                                        let component={};
-                                        switch (Item.Type){
-                                            case "Empty":
-                                            case "Plus":
-                                                component=<MindMapConnection shape={Item.Data} />
-                                                break;
-                                            case "Point":
-                                                let showWord=Item.Data.keyword;
-                                                if(showWord.length>SHOW_LENGTH){
-                                                    showWord=showWord.slice(0,SHOW_LENGTH);
-                                                    showWord=showWord+"...";
-                                                }
-                                                let style={
-                                                    backgroundColor:config.statusBackGroupColor[Item.Data.status]
-                                                }
-                                                if (Item.Data.ID==this.state.pid){
-                                                    style.fontSize="20px";
-                                                    style.textAlign="center";
-                                                    style.color="gold";
-                                                }
-                                                component=<div
-                                                    className={"Point"}
-                                                    style={style}
-                                                >
-                                                    <Tooltip
-                                                        title={Item.Data.keyword}
-                                                    >
+                <Row justify={"start"} align={"middle"}>
+                    <Col span={2}>
+                        <Button
+                            type={"link"}
+                            href={"/pointTable/"+this.state.pid}
+                            target={"_blank"}
+                        >
+                            Back To Point Table
+                        </Button>
+                    </Col>
+                    <Col span={2}>
+                        Point Item Width
+                    </Col>
+                    <Col span={1}>
+                        <Input
+                            placeholder={"Point Item Width"}
+                            value={this.state.pointItemWidth}
+                            onChange={(e)=>{
+                                this.setState({
+                                    pointItemWidth:e.target.value
+                                })
+                            }}
+                        />
+                    </Col>
+                </Row>
+                <hr/>
+                <Row>
+                    <Col span={1}>
+                        Status Map
+                    </Col>
+                    {
+                        config.statusMap.map((Item,index)=>{
+                            return(
+                                <Col
+                                    span={1}
+                                    offset={1}
+
+                                >
+                                    <div className="Point" style={{backgroundColor:config.statusBackGroupColor[Item.value]}}>
+                                        {Item.value}
+                                    </div>
+                                </Col>
+                            )
+                        })
+                    }
+                </Row>
+                <hr/>
+                <Row>
+                    <Col span={24}>
+                        <table>
+                            {
+                                this.state.pointTable.map((lines,outsideIndex)=>{
+                                    return(
+                                        <tr key={outsideIndex}>
+                                            {
+                                                lines.map((Item,insideIndex)=>{
+                                                    let component={};
+                                                    switch (Item.Type){
+                                                        case "Empty":
+                                                        case "Plus":
+                                                            component=<MindMapConnection shape={Item.Data} />
+                                                            break;
+                                                        case "Point":
+                                                            let style={
+                                                                backgroundColor:config.statusBackGroupColor[Item.Data.status],
+                                                                width:this.state.pointItemWidth+"px"
+                                                            }
+                                                            if (Item.Data.ID==this.state.pid){
+                                                                style.fontSize="20px";
+                                                                style.textAlign="center";
+                                                                style.color="gold";
+                                                            }
+                                                            component=<div
+                                                                className={"Point"}
+                                                                style={style}
+                                                            >
+                                                                <Tooltip
+                                                                    title={Item.Data.keyword}
+                                                                >
                                                         <span
                                                             onClick={()=>{
                                                                 this.EditPoint(Item.Data);
                                                             }}
                                                         >
-                                                            {showWord}
+                                                            {Item.Data.keyword}
                                                         </span>
-                                                    </Tooltip>
-                                                </div>
-                                                break;
-                                        }
-                                        return(
-                                            <td key={insideIndex}>
-                                                {component}
-                                            </td>
-                                        )
-                                    })
-                                }
-                            </tr>
-                        )
-                    })
-                }
-                </table>
+                                                                </Tooltip>
+                                                            </div>
+                                                            break;
+                                                    }
+                                                    return(
+                                                        <td key={insideIndex}>
+                                                            {component}
+                                                        </td>
+                                                    )
+                                                })
+                                            }
+                                        </tr>
+                                    )
+                                })
+                            }
+                        </table>
+                    </Col>
+                </Row>
                 <div>
                     <Drawer
                         visible={this.state.EditPoint.ID}
