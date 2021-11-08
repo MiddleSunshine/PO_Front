@@ -1,0 +1,38 @@
+.MindMapConnection{
+    width: 80px;
+    color: white;
+}
+
+.MindMapConnection .APosition{
+    height: 34px;
+}
+
+.MindMapConnection .APart{
+    width: 12px;
+    background: url("./svg/A.svg");
+    color: #44D7B6;
+}
+
+.MindMapConnection .BRow{
+    width: 80px;
+    height: 12px;
+    display: flex;
+}
+
+.MindMapConnection .BPosition{
+    width: 34px;
+    height: 12px;
+}
+
+.MindMapConnection .BPart{
+    width: 34px;
+    height: 12px;
+    background: url("./svg/B.svg");
+}
+
+.MindMapConnection .CenterPart{
+    background: url("./svg/center.svg");
+    background-repeat: no-repeat;
+    width: 12px;
+    height: 12px;
+}

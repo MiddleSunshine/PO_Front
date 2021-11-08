@@ -28,3 +28,10 @@
 .Point_Table .ant-card-body{
     padding: 10px;
 }
+
+.Point_Table .title_note{
+    font-size: 12px;
+    color: #9A9A9A;
+    padding-top: 5px;
+    border-top: 1px solid #9A9A9A;
+}

@@ -77,12 +77,15 @@ class Index extends React.Component {
                     </Row>
                     <Row align={"middle"} justify={"start"}>
                         <Col offset={8} span={7}>
-                            <input
+                            <Input
                                 value={this.state.searchKeyWord}
                                 onChange={(e)=>{
                                     this.setState({
                                         searchKeyWord:e.target.value
                                     })
+                                }}
+                                onPressEnter={()=>{
+                                    this.searchPoints();
                                 }}
                             />
                         </Col>
@@ -159,7 +162,7 @@ class Index extends React.Component {
                                 <Col offset={8} span={16}>
                                     <Button
                                         type={"link"}
-                                        href={"./points/"+Item.ID}
+                                        href={"/pointTable/"+Item.ID}
                                         target={"_blank"}
                                     >
                                         {Item.status} / {Item.keyword}
@@ -182,7 +185,7 @@ class Index extends React.Component {
                                 <Col offset={2} span={16}>
                                     <Button
                                         type={"link"}
-                                        href={"./points/"+Item.ID}
+                                        href={"/pointTable/"+Item.ID}
                                         target={"_blank"}
                                     >
                                         {Item.status} / {Item.keyword}

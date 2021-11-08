@@ -10,6 +10,13 @@ var config = {
         {value:"archived",label:"Archived"},
         {value:"give_up",label:"Give Up"},
     ],
+    statusLabelMap:{
+        init:"Init",
+        new:"Processing",
+        solved:"Finished",
+        archived:"Archived",
+        give_up:"Give Up"
+    },
     statusBackGroupColor:{
         new:"#32D74B",
         solved:"#1AA9FF",
