@@ -86,7 +86,7 @@ class Report extends React.Component{
     render() {
         let option = {
             title: {
-                text: 'Point Report'
+                text: 'Point Status Report'
             },
             tooltip: {
                 trigger: 'axis'
@@ -121,7 +121,7 @@ class Report extends React.Component{
         };
         let pointOption={
             title: {
-                text: 'Point Amount Report'
+                text: 'Point Report'
             },
             tooltip: {
                 trigger: 'axis'
@@ -131,6 +131,9 @@ class Report extends React.Component{
                 right: '4%',
                 bottom: '3%',
                 containLabel: true
+            },
+            legend:{
+                data:['Point Amount','Point','Willing','Point Rest']
             },
             toolbox: {
                 feature: {
@@ -186,6 +189,9 @@ class Report extends React.Component{
                 }
             ]
         };
+        let eachPartStyle={
+            paddingBottom:"60px"
+        };
         return(
             <div className="container">
                 <Road />
@@ -209,21 +215,21 @@ class Report extends React.Component{
                     </Button>
                 </Row>
                 <hr/>
-                <Row>
+                <Row style={eachPartStyle}>
                     <Col span={24}>
                         <ReactECharts
                             option={option}
                         />
                     </Col>
                 </Row>
-                <Row>
+                <Row style={eachPartStyle}>
                     <Col span={24}>
                         <ReactECharts
                             option={pointOption}
                         />
                     </Col>
                 </Row>
-                <Row>
+                <Row style={eachPartStyle}>
                     <Col span={24}>
                         <ReactECharts
                             option={percentOption}
