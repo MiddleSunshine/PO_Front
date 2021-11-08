@@ -55,7 +55,9 @@ class PointEdit extends React.Component{
                     })
                 })
                 .then(()=>{
-                    this.getPointDetail(nextProps.ID);
+                    if (nextProps.ID && nextProps.ID>0){
+                        this.getPointDetail(nextProps.ID);
+                    }
                 })
         }
     }

@@ -12,6 +12,7 @@ import CheckIn from "../page/CheckIn";
 import Debug from "../page/debug";
 import GTD from "../page/GTD";
 import GTDHistory from "../page/GTDHistory";
+import PointsRoad from "../page/PointsRoad";
 
 interface router {
     path: string,
@@ -55,6 +56,10 @@ const routers: Array<router> = [
     {
         path:"/report",
         component:Report
+    },
+    {
+        path:"/pointRoad/:pid",
+        component:PointsRoad
     },
     {
         path:"/point/edit/:pid",
