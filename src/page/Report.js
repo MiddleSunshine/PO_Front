@@ -1,7 +1,7 @@
 import React from "react";
 import ReactECharts from "echarts-for-react";
 import config from "../config/setting";
-import { DatePicker,Button } from 'antd';
+import {DatePicker, Button, Row, Col} from 'antd';
 import Road from "../component/road";
 import {requestApi} from "../config/functions";
 
@@ -11,17 +11,30 @@ class Report extends React.Component{
         this.state={
             data:[],
             xData:[],
+            pointData:[],
+            pointXData:[],
             startTime:'',
             endTime:'',
             percentData:[]
         }
         this.getData=this.getData.bind(this);
         this.getPercentData=this.getPercentData.bind(this);
+        this.getPointAmount=this.getPointAmount.bind(this);
     }
     componentDidMount() {
-        this.getData();
-        this.getPercentData();
-        document.title="Report";
+        (async ()=>{})()
+            .then(()=>{
+                this.getData();
+            })
+            .then(()=>{
+                this.getPointAmount();
+            })
+            .then((()=>{
+                this.getPercentData();
+            }))
+            .then(()=>{
+                document.title="Report";
+            })
     }
 
     getData(){
@@ -37,6 +50,24 @@ class Report extends React.Component{
                 this.setState({
                     data:json.Data.points,
                     xData:json.Data.xData
+                })
+            })
+        })
+    }
+
+    getPointAmount(){
+        requestApi("/index.php?action=Report&method=Points",{
+            mode:"cors",
+            method:"post",
+            body:JSON.stringify({
+                startTime:this.state.startTime,
+                endTime:this.state.endTime
+            })
+        }).then((res)=>{
+            res.json().then((json)=>{
+                this.setState({
+                    pointData:json.Data.point,
+                    pointXData:json.Data.xData
                 })
             })
         })
@@ -88,6 +119,36 @@ class Report extends React.Component{
             },
             series: this.state.data
         };
+        let pointOption={
+            title: {
+                text: 'Point Amount Report'
+            },
+            tooltip: {
+                trigger: 'axis'
+            },
+            grid: {
+                left: '3%',
+                right: '4%',
+                bottom: '3%',
+                containLabel: true
+            },
+            toolbox: {
+                feature: {
+                    magicType: {show: true, type: ['line', 'bar']},
+                    restore: {show: true},
+                    saveAsImage: {}
+                }
+            },
+            xAxis: {
+                type: 'category',
+                boundaryGap: false,
+                data: this.state.pointXData
+            },
+            yAxis: {
+                type: 'value'
+            },
+            series: this.state.pointData
+        };
         let percentOption = {
             tooltip: {
                 trigger: 'item'
@@ -129,7 +190,7 @@ class Report extends React.Component{
             <div className="container">
                 <Road />
                 <hr/>
-                <div className="row">
+                <Row>
                     <DatePicker.RangePicker
                         format="YYYY-MM-DD"
                         onChange={(date,dateString)=>{
@@ -146,18 +207,29 @@ class Report extends React.Component{
                     >
                         Search
                     </Button>
-                </div>
+                </Row>
                 <hr/>
-                <div className="row">
-                    <ReactECharts
-                        option={option}
-                    />
-                </div>
-                <div className="row">
-                    <ReactECharts
-                        option={percentOption}
-                    />
-                </div>
+                <Row>
+                    <Col span={24}>
+                        <ReactECharts
+                            option={option}
+                        />
+                    </Col>
+                </Row>
+                <Row>
+                    <Col span={24}>
+                        <ReactECharts
+                            option={pointOption}
+                        />
+                    </Col>
+                </Row>
+                <Row>
+                    <Col span={24}>
+                        <ReactECharts
+                            option={percentOption}
+                        />
+                    </Col>
+                </Row>
             </div>
 
         )
