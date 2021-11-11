@@ -114,7 +114,7 @@ class Decision extends React.Component{
                 <Col span={4}>
                     <Button
                         size={"large"}
-                        ghost={true}
+                        type={"primary"}
                         onClick={this.newCard}
                     >
                         new card
@@ -123,7 +123,7 @@ class Decision extends React.Component{
                 <Col span={4}>
                     <Button
                         size={"large"}
-                        ghost={true}
+                        type={"primary"}
                         onClick={()=>{
                             this.shuffleCards();
                         }}
@@ -134,7 +134,7 @@ class Decision extends React.Component{
                 <Col span={4}>
                     <Button
                         size={"large"}
-                        ghost={true}
+                        type={"primary"}
                         onClick={()=>{
                             this.pickOneCard();
                         }}
@@ -145,7 +145,7 @@ class Decision extends React.Component{
                 <Col span={4}>
                     <Button
                         size={"large"}
-                        ghost={true}
+                        type={"primary"}
                         onClick={()=>{
                             this.displayAllCard(true);
                         }}
@@ -156,7 +156,7 @@ class Decision extends React.Component{
                 <Col span={4}>
                     <Button
                         size={"large"}
-                        ghost={true}
+                        type={"primary"}
                         onClick={()=>{
                             this.displayAllCard(false);
                         }}
