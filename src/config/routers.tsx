@@ -13,7 +13,7 @@ import Debug from "../page/debug";
 import GTD from "../page/GTD";
 import GTDHistory from "../page/GTDHistory";
 import PointsRoad from "../page/PointsRoad";
-import Decition from "../page/Decition";
+import Decision from "../page/Decition";
 
 interface router {
     path: string,
@@ -24,7 +24,7 @@ interface router {
 const routers: Array<router> = [
     {
         path:"/Decision",
-        component:Decition
+        component:Decision
     },
     {
         path:"/GTDHistory",

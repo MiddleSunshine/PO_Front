@@ -1,3 +1,66 @@
 .Decision{
+    position:fixed;
+    top: 0;
+    left: 0;
+    width:100%;
+    height:100%;
+    min-width: 1000px;
+    background-color: #fff;
+    background-image: url("./image/the-three-fates-clotho-lachesis-and-atropos-by-the-italian-artist-G15GM1.jpg");
+    /*background-image: url("./image/Decision3.jpg");*/
+    background-size: cover;
+    -webkit-background-size: cover;
+    -o-background-size: cover;
+    background-position: center 0;
+}
 
+.Decision h1{
+    color: black;
+}
+
+.Decision .Card{
+    width: 213px;
+    height: 384px;
+}
+
+.Decision .Card .back{
+    background-image: url("./image/png.jpeg");
+    background-repeat: no-repeat;
+    background-size: contain;
+    width: 100%;
+    height: 100%;
+}
+
+.Decision .Card .back-hidden{
+    background-image: url("./image/cover.jpeg");
+    background-repeat: no-repeat;
+    background-size: contain;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+}
+
+.Decision .Card .ImagePart{
+    height: 200px;
+    cursor: pointer;
+}
+
+.Decision .Card .decisionInput{
+    background-color: #B1CEB2;
+    margin-left: 15px;
+    margin-right: 15px;
+    height: 54px;
+    border: none;
+    font-size: 12px;
+}
+
+.Decision .Card .powerInput{
+    background-color: #06907D;
+    width: 150px;
+    margin-left: 13px;
+    margin-top: 13px;
+    height: 22px;
+    border: none;
+    color: white;
+    font-weight: bolder;
 }
