@@ -4,7 +4,7 @@ import MindMapConnection from "../component/MindMap";
 import config from "../config/setting";
 
 import "../css/PointRoad.css"
-import {Button, Col, Drawer, InputNumber, Row, Tooltip} from "antd";
+import {Button, Col, Drawer, InputNumber, Row, Tooltip,Input} from "antd";
 import PointEdit from "../component/PointEdit";
 import {message} from "antd/es";
 
@@ -17,7 +17,10 @@ class PointsRoad extends React.Component{
             pid:props.match.params.pid,
             EditPoint:{},
             pointItemWidth:130,
-            pointItemHeight:80
+            pointItemHeight:80,
+            updatePid:0,
+            updateSubPid:0,
+            showId:true
         }
         this.getTableData=this.getTableData.bind(this);
         this.EditPoint=this.EditPoint.bind(this);
@@ -29,8 +32,6 @@ class PointsRoad extends React.Component{
     }
 
     updateConnection(PID,SubPID){
-        console.log("PID",PID);
-        console.log("SubPID",SubPID);
         if (PID && PID>0 && SubPID && SubPID>0){
             requestApi("/index.php?action=PointsConnection&method=NewConnection&StartID="+this.state.pid+"&PID="+PID+"&SubPID="+SubPID)
                 .then((res)=>{
@@ -81,7 +82,7 @@ class PointsRoad extends React.Component{
         return (
             <div className="container PointRoad">
                 <Row justify={"start"} align={"middle"}>
-                    <Col span={2}>
+                    <Col span={3}>
                         <Button
                             type={"link"}
                             href={"/pointTable/"+this.state.pid}
@@ -93,7 +94,7 @@ class PointsRoad extends React.Component{
                     <Col span={2}>
                         Point Item Width
                     </Col>
-                    <Col span={1}>
+                    <Col span={2}>
                         <InputNumber
                             placeholder={"Point Item Width"}
                             value={this.state.pointItemWidth}
@@ -107,7 +108,7 @@ class PointsRoad extends React.Component{
                     <Col span={2}>
                         Point Item Height
                     </Col>
-                    <Col span={1}>
+                    <Col span={3}>
                         <InputNumber
                             value={this.state.pointItemHeight}
                             onChange={(newValue)=>{
@@ -116,6 +117,55 @@ class PointsRoad extends React.Component{
                                 })
                             }}
                         />
+                    </Col>
+                    <Col span={2}>
+                        <Input
+                            placeholder={"PID"}
+                            value={this.state.updatePid}
+                            onChange={(e)=>{
+                                this.setState({
+                                    updatePid:e.target.value
+                                })
+                            }}
+                        />
+                    </Col>
+                    <Col span={2} offset={1}>
+                        <Input
+                            placeholder={"Sub PID"}
+                            value={this.state.updateSubPid}
+                            onChange={(e)=>{
+                                this.setState({
+                                    updateSubPid:e.target.value
+                                })
+                            }}
+                        />
+                    </Col>
+                    <Col span={2} offset={1}>
+                        <Button
+                            type={"primary"}
+                            onClick={()=>{
+                                this.updateConnection(
+                                    this.state.updatePid,
+                                    this.state.updateSubPid
+                                );
+                            }}
+                        >
+                            Update Connection
+                        </Button>
+                    </Col>
+                    <Col span={2} offset={1}>
+                        <Button
+                            type={"primary"}
+                            onClick={()=>{
+                                this.setState({
+                                    showId:!this.state.showId
+                                });
+                            }}
+                        >
+                            {
+                                this.state.showId?"Hide ID":"Show ID"
+                            }
+                        </Button>
                     </Col>
                 </Row>
                 <hr/>
@@ -177,7 +227,7 @@ class PointsRoad extends React.Component{
                                                                 this.EditPoint(Item.Data);
                                                             }}
                                                         >
-                                                            {Item.Data.keyword}
+                                                            {this.state.showId?Item.Data.ID+" / ":''}{Item.Data.keyword}
                                                         </span>
                                                                 </Tooltip>
                                                             </div>
