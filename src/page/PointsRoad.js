@@ -4,9 +4,10 @@ import MindMapConnection from "../component/MindMap";
 import config from "../config/setting";
 
 import "../css/PointRoad.css"
-import {Button, Col, Drawer, InputNumber, Row, Tooltip,Input} from "antd";
+import {Button, Col, Drawer, InputNumber, Row, Tooltip, Input, Modal} from "antd";
 import PointEdit from "../component/PointEdit";
 import {message} from "antd/es";
+import NewPoint from "../component/NewPoint";
 
 class PointsRoad extends React.Component{
     constructor(props) {
@@ -20,11 +21,15 @@ class PointsRoad extends React.Component{
             pointItemHeight:80,
             updatePid:0,
             updateSubPid:0,
-            showId:true
+            showId:true,
+            newPointVisible:true,
+            newPID:0
         }
         this.getTableData=this.getTableData.bind(this);
         this.EditPoint=this.EditPoint.bind(this);
         this.updateConnection=this.updateConnection.bind(this);
+        this.openNewPoint=this.openNewPoint.bind(this);
+        this.closeModal=this.closeModal.bind(this);
     }
 
     componentDidMount() {
@@ -75,6 +80,20 @@ class PointsRoad extends React.Component{
     EditPoint(point){
         this.setState({
             EditPoint:point
+        })
+    }
+
+    openNewPoint(PID){
+        this.setState({
+            newPointVisible:true,
+            newPID:PID
+        })
+    }
+
+    closeModal(){
+        this.setState({
+            newPointVisible:false,
+            newPID:0
         })
     }
 
@@ -273,6 +292,22 @@ class PointsRoad extends React.Component{
                             ID={this.state.EditPoint.ID}
                         />
                     </Drawer>
+                </div>
+                <div>
+                    <Modal
+                        title={"New Point"}
+                        onOk={()=>{
+                            this.closeModal();
+                        }}
+                        onCancel={()=>{
+                            this.closeModal();
+                        }}
+                        visible={this.state.newPointVisible}
+                    >
+                        <NewPoint
+                            PID={this.state.newPID}
+                        />
+                    </Modal>
                 </div>
             </div>
         );
