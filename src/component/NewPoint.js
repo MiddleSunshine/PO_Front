@@ -1,5 +1,5 @@
 import React from "react";
-import {Row, Col, Form, Checkbox, Input, message} from "antd";
+import {Row, Col, Form, Checkbox, Input, message, Button} from "antd";
 import {requestApi} from "../config/functions";
 
 class NewPoint extends React.Component{
@@ -54,7 +54,7 @@ class NewPoint extends React.Component{
                 }).catch(() => {
                 message.error("System Error");
             })
-        } else {
+        } else if(this.state.newPointKeyword){
             requestApi("/index.php?action=Points&method=Save", {
                 method: "post",
                 mode: "cors",
@@ -75,11 +75,26 @@ class NewPoint extends React.Component{
                 .catch((error) => {
                     message.error("System Error");
                 })
+        }else{
+            message.warn("Without Input !")
         }
     }
 
     render() {
         return <div className="container">
+            <Row>
+                <Col span={24}>
+                    <Button
+                        type={"primary"}
+                        onClick={()=>{
+                            this.newPoint();
+                        }}
+                    >
+                        New Point
+                    </Button>
+                </Col>
+            </Row>
+            <hr />
             <Row>
                 <Col span={24}>
                     <Input
