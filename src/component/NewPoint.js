@@ -49,6 +49,8 @@ class NewPoint extends React.Component{
                     res.json().then((json) => {
                         if (json.Status != 1) {
                             message.warn("New Point Error")
+                        }else{
+                            message.success("New Point Success");
                         }
                     })
                 }).catch(() => {
@@ -69,6 +71,8 @@ class NewPoint extends React.Component{
                     res.json().then((json) => {
                         if (json.Status != 1) {
                             message.warn(json.Message)
+                        }else{
+                            message.success("New Point Success!")
                         }
                     })
                 })

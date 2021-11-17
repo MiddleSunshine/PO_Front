@@ -17,6 +17,7 @@ const HOT_KEYS_MAP=[
     {label:"Move Right",value:"shift+right"},
     {label:"Edit Point",value:"shift+e"},
     {label:"New Point",value:"shift+n"},
+    {label:"Delete Connection",value: "shift+d"}
 ]
 
 class PointsRoad extends React.Component{
@@ -35,7 +36,7 @@ class PointsRoad extends React.Component{
             // update connection
             updatePid:0,
             updateSubPid:0,
-            showId:true,
+            showId:false,
             // new point
             newPointVisible:false,
             newPID:0,
@@ -51,6 +52,7 @@ class PointsRoad extends React.Component{
         this.closeModal=this.closeModal.bind(this);
         this.onKeyDown=this.onKeyDown.bind(this);
         this.moveActivePoint=this.moveActivePoint.bind(this);
+        this.deleteConnection=this.deleteConnection.bind(this);
     }
 
     componentDidMount() {
@@ -99,6 +101,33 @@ class PointsRoad extends React.Component{
         })
     }
 
+    deleteConnection(PID,SubPID,forceUpdate=false){
+        if (PID>0 && SubPID>0){
+            if (!forceUpdate){
+                Modal.confirm({
+                    title:"Delete  Connection",
+                    content:"Are you sure you want to delete this relationship?",
+                    onOk:()=>{
+                        this.deleteConnection(PID,SubPID,true);
+                    }
+                })
+            }else{
+                requestApi("/index.php?action=PointsConnection&method=Deleted&PID="+PID+"&SubPID="+SubPID)
+                    .then((res)=>{
+                        res.json().then((json)=>{
+                            if (json.Status==1){
+                                message.success("Delete Success");
+                            }else{
+                                message.warn(json.Message);
+                            }
+                        })
+                    })
+            }
+        }else{
+            message.warn("Param Error !");
+        }
+    }
+
     onKeyDown(keyName,e,handler){
         switch (keyName){
             case HOT_KEYS_MAP[0].value:
@@ -140,6 +169,9 @@ class PointsRoad extends React.Component{
                     });
                 }
                 break;
+            case HOT_KEYS_MAP[6].value:
+                // todo need to update the back code
+                break;
         }
     }
 
@@ -175,10 +207,16 @@ class PointsRoad extends React.Component{
     }
 
     closeModal(){
-        this.setState({
-            newPointVisible:false,
-            newPID:0
-        })
+        (async ()=>{})()
+            .then(()=>{
+                this.setState({
+                    newPointVisible:false,
+                    newPID:0
+                });
+            })
+            .then(()=>{
+                this.getTableData(this.state.pid);
+            })
     }
 
     render() {
