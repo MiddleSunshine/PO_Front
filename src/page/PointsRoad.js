@@ -83,40 +83,20 @@ class PointsRoad extends React.Component{
         if (startOutsideIndex<0){
             startIndexIndex=0;
         }
+        if (startOutsideIndex>=this.state.pointTable.length){
+            startOutsideIndex=this.state.pointTable.length-1;
+        }
         if (startIndexIndex<0){
             startIndexIndex=0;
         }
-        let newActivePoint={};
-        if (this.state.pointTable[startIndexIndex]){
-            this.state.pointTable[startIndexIndex].map((Item,insideIndex)=>{
-                if (Item.Type=='Point'){
-                    if (moveLeft){
-                        if (insideIndex<startIndexIndex){
-                            this.setState({
-                                activePointOutSideIndex:startOutsideIndex,
-                                activePointInsideIndex:insideIndex,
-                                activePoint:Item
-                            });
-                            newActivePoint=Item;
-                        }
-                    }else{
-                        if (insideIndex>startIndexIndex){
-                            this.setState({
-                                activePointOutSideIndex:startOutsideIndex,
-                                activePointInsideIndex:insideIndex,
-                                activePoint:Item
-                            });
-                            newActivePoint=Item;
-                        }
-                    }
-                }
-            })
+        if (!this.state.pointTable[startOutsideIndex][startIndexIndex]){
+            startIndexIndex--;
         }
-        if (!newActivePoint.Data){
-            return this.moveActivePoint(startOutsideIndex+1,startIndexIndex,moveLeft);
-        }else{
-            return  newActivePoint;
-        }
+        this.setState({
+            activePointOutSideIndex:startOutsideIndex,
+            activePointInsideIndex:startIndexIndex,
+            activePoint:this.state.pointTable[startOutsideIndex][startIndexIndex]
+        })
     }
 
     onKeyDown(keyName,e,handler){
@@ -136,25 +116,24 @@ class PointsRoad extends React.Component{
             case HOT_KEYS_MAP[2].value:
                 this.moveActivePoint(
                     this.state.activePointOutSideIndex,
-                    this.state.activePointInsideIndex
+                    this.state.activePointInsideIndex-1
                 );
                 break;
             case HOT_KEYS_MAP[3].value:
                 this.moveActivePoint(
                     this.state.activePointOutSideIndex,
-                    this.state.activePointInsideIndex,
-                    false
+                    this.state.activePointInsideIndex+1
                 );
                 break;
             case HOT_KEYS_MAP[4].value:
-                if (this.state.activePoint.Data.ID){
+                if (this.state.activePoint.Data && this.state.activePoint.Data.ID){
                     this.setState({
-                        EditPoint:this.state.activePoint
+                        EditPoint:this.state.activePoint.Data
                     });
                 }
                 break;
             case HOT_KEYS_MAP[5].value:
-                if (this.state.activePoint.Data.ID){
+                if (this.state.activePoint.Data && this.state.activePoint.Data.ID){
                     this.setState({
                         newPointVisible:true,
                         newPID:this.state.activePoint.Data.ID
@@ -333,6 +312,10 @@ class PointsRoad extends React.Component{
                                             <tr key={outsideIndex}>
                                                 {
                                                     lines.map((Item,insideIndex)=>{
+                                                        let tdStyle={};
+                                                        if (outsideIndex==this.state.activePointOutSideIndex && insideIndex==this.state.activePointInsideIndex){
+                                                            tdStyle.outline="pink dashed 2px";
+                                                        }
                                                         let component={};
                                                         switch (Item.Type){
                                                             case "Empty":
@@ -369,6 +352,7 @@ class PointsRoad extends React.Component{
                                                         }
                                                         return(
                                                             <td
+                                                                style={tdStyle}
                                                                 key={insideIndex}
                                                                 draggable={"true"}
                                                                 onDragStart={(event)=>{
