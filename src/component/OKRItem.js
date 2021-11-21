@@ -2,6 +2,10 @@ import React from "react";
 import {Button, Card, Checkbox, Col, Form, Input, message, Modal, Row, Select} from "antd";
 import {requestApi} from "../config/functions";
 
+import {
+    PlusCircleOutlined
+} from '@ant-design/icons';
+
 const WEEK_CHECK_SUCCESS='success';
 
 class OKRItem extends React.Component{
@@ -73,7 +77,35 @@ class OKRItem extends React.Component{
     }
 
     newItemDecision(){
-
+        if (!this.state.NewOKRDecisionContent){
+            message.warn("Please input the decision");
+            return false;
+        }
+        requestApi("/index.php?action=OKRDecision&method=NewDecision",{
+            mode:"cors",
+            method:"post",
+            body:JSON.stringify({
+                Content:this.state.NewOKRDecisionContent,
+                OKR_Item_ID:this.state.NewOKRItemID
+            })
+        })
+            .then((res)=>{
+                res.json().then((json)=>{
+                    if (json.Status==1){
+                        message.success("Add Decision Success !");
+                        return true;
+                    }else{
+                        message.warn(json.Message);
+                        return false;
+                    }
+                })
+                    .then((closeModal)=>{
+                        if (closeModal){
+                            this.operateDecisionModal();
+                            this.getOKRItems();
+                        }
+                    })
+            })
     }
 
     operateDecisionModal(modalVisible=false,ItemID=0){
@@ -111,7 +143,14 @@ class OKRItem extends React.Component{
                                                 {Item.Title}
                                             </Col>
                                             <Col span={1}>
-
+                                                <PlusCircleOutlined
+                                                    onClick={()=>{
+                                                        this.operateDecisionModal(
+                                                            true,
+                                                            Item.ID
+                                                        );
+                                                    }}
+                                                />
                                             </Col>
                                         </Row>
                                     }
