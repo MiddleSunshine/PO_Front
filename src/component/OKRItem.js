@@ -7,6 +7,26 @@ import {
 } from '@ant-design/icons';
 
 const WEEK_CHECK_SUCCESS='success';
+const WEEK_CHECK_Fail='fail';
+
+const ITEM_STATUS_MAP={
+    give_up:{
+        label:"Give Up",
+        value:"give_up"
+    },
+    finished:{
+        label: "Finished",
+        value: "finished"
+    },
+    processing:{
+        label:"Processing",
+        value:"processing"
+    },
+    init:{
+        label:"Init",
+        value:"init"
+    }
+};
 
 class OKRItem extends React.Component{
     constructor(props) {
@@ -28,6 +48,8 @@ class OKRItem extends React.Component{
         this.operateItemModal=this.operateItemModal.bind(this);
         this.newItemDecision=this.newItemDecision.bind(this);
         this.operateDecisionModal=this.operateDecisionModal.bind(this);
+        this.updateItem=this.updateItem.bind(this);
+        this.handleOKRItemChange=this.handleOKRItemChange.bind(this);
     }
 
     componentDidMount() {
@@ -133,6 +155,29 @@ class OKRItem extends React.Component{
         })
     }
 
+    handleOKRItemChange(Item,key,value){
+        Item[key]=value;
+        this.updateItem(Item);
+    }
+
+    updateItem(OKR_Item){
+        requestApi("/index.php?action=OKRItem&method=CommonSave",{
+            mode:"cors",
+            method:"post",
+            body:JSON.stringify(OKR_Item)
+        })
+            .then((res)=>{
+                res.json().then((json)=>{
+                    if (json.Status==1){
+                        message.success("Update OKR Item Success !");
+                        this.getOKRItems();
+                    }else{
+                        message.warn(json.Message);
+                    }
+                })
+            })
+    }
+
     render() {
         return <div className="container">
             <Row>
@@ -154,7 +199,12 @@ class OKRItem extends React.Component{
                                     title={
                                         <Row>
                                             <Col span={1}>
-                                                <Checkbox />
+                                                <Checkbox
+                                                    checked={Item.status==ITEM_STATUS_MAP.finished.value}
+                                                    onChange={(e)=>{
+                                                        this.handleOKRItemChange(Item,'status',e.target.checked?ITEM_STATUS_MAP.finished.value:ITEM_STATUS_MAP.processing.value)
+                                                    }}
+                                                />
                                             </Col>
                                             <Col span={22}>
                                                 {Item.Title}
@@ -181,6 +231,9 @@ class OKRItem extends React.Component{
                                                 <Col span={3}>
                                                     <Checkbox
                                                         checked={Item.W1==WEEK_CHECK_SUCCESS}
+                                                        onChange={(e)=>{
+                                                            this.handleOKRItemChange(Item,'W1',e.target.checked?WEEK_CHECK_SUCCESS:WEEK_CHECK_Fail)
+                                                        }}
                                                     />
                                                 </Col>
                                                 <Col span={1}>
@@ -189,6 +242,9 @@ class OKRItem extends React.Component{
                                                 <Col span={3}>
                                                     <Checkbox
                                                         checked={Item.W2==WEEK_CHECK_SUCCESS}
+                                                        onChange={(e)=>{
+                                                            this.handleOKRItemChange(Item,'W2',e.target.checked?WEEK_CHECK_SUCCESS:WEEK_CHECK_Fail)
+                                                        }}
                                                     />
                                                 </Col>
                                                 <Col span={1}>
@@ -197,6 +253,9 @@ class OKRItem extends React.Component{
                                                 <Col span={3}>
                                                     <Checkbox
                                                         checked={Item.W3==WEEK_CHECK_SUCCESS}
+                                                        onChange={(e)=>{
+                                                            this.handleOKRItemChange(Item,'W3',e.target.checked?WEEK_CHECK_SUCCESS:WEEK_CHECK_Fail)
+                                                        }}
                                                     />
                                                 </Col>
                                                 <Col span={1}>
@@ -205,6 +264,9 @@ class OKRItem extends React.Component{
                                                 <Col span={3}>
                                                     <Checkbox
                                                         checked={Item.W4==WEEK_CHECK_SUCCESS}
+                                                        onChange={(e)=>{
+                                                            this.handleOKRItemChange(Item,'W4',e.target.checked?WEEK_CHECK_SUCCESS:WEEK_CHECK_Fail)
+                                                        }}
                                                     />
                                                 </Col>
                                                 <Col span={1}>
@@ -213,6 +275,9 @@ class OKRItem extends React.Component{
                                                 <Col span={3}>
                                                     <Checkbox
                                                         checked={Item.W5==WEEK_CHECK_SUCCESS}
+                                                        onChange={(e)=>{
+                                                            this.handleOKRItemChange(Item,'W5',e.target.checked?WEEK_CHECK_SUCCESS:WEEK_CHECK_Fail)
+                                                        }}
                                                     />
                                                 </Col>
                                             </Row>
