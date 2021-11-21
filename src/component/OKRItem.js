@@ -65,6 +65,23 @@ class OKRItem extends React.Component{
                     type:this.state.NewOKRType
                 })
             })
+                .then((res)=>{
+                    res.json().then((json)=>{
+                        if (json.Status==1){
+                            message.success("New Item Success !");
+                            return true;
+                        }else{
+                            message.warn(json.Message);
+                            return false;
+                        }
+                    })
+                        .then((result)=>{
+                            if (result){
+                                this.operateItemModal();
+                                this.getOKRItems();
+                            }
+                        })
+                })
         }
     }
 
