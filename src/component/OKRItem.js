@@ -1,8 +1,8 @@
 import React from "react";
-import {Button, Collapse, Form, Input, message, Modal, Row, Select} from "antd";
+import {Button, Card, Checkbox, Col, Form, Input, message, Modal, Row, Select} from "antd";
 import {requestApi} from "../config/functions";
 
-const {Panel} = Collapse;
+const WEEK_CHECK_SUCCESS='success';
 
 class OKRItem extends React.Component{
     constructor(props) {
@@ -97,28 +97,85 @@ class OKRItem extends React.Component{
                 </Button>
             </Row>
             <Row>
-                <Collapse>
-                {
-                    this.state.OKRItemList.map((Item,outsideIndex)=>{
-                        return(
-                            <Panel
-                                key={outsideIndex}
-                                header={Item.Title}
-                            >
-                                {
-                                    Item.OKR_Decisions.map((Decision,insideIndex)=>{
+                <Col span={24}>
+                    {
+                        this.state.OKRItemList.map((Item,outsideIndex)=>{
+                            return(
+                                <Card
+                                    title={
+                                        <Row>
+                                            <Col span={1}>
+                                                <Checkbox />
+                                            </Col>
+                                            <Col span={22}>
+                                                {Item.Title}
+                                            </Col>
+                                            <Col span={1}>
+
+                                            </Col>
+                                        </Row>
+                                    }
+                                >
+                                    {
+                                        Item.type=='week'
+                                            ?<Row>
+                                                <Col span={1}>
+                                                    <h4>W1</h4>
+                                                </Col>
+                                                <Col span={3}>
+                                                    <Checkbox
+                                                        checked={Item.W1==WEEK_CHECK_SUCCESS}
+                                                    />
+                                                </Col>
+                                                <Col span={1}>
+                                                    <h4>W2</h4>
+                                                </Col>
+                                                <Col span={3}>
+                                                    <Checkbox
+                                                        checked={Item.W2==WEEK_CHECK_SUCCESS}
+                                                    />
+                                                </Col>
+                                                <Col span={1}>
+                                                    <h4>W3</h4>
+                                                </Col>
+                                                <Col span={3}>
+                                                    <Checkbox
+                                                        checked={Item.W3==WEEK_CHECK_SUCCESS}
+                                                    />
+                                                </Col>
+                                                <Col span={1}>
+                                                    <h4>W4</h4>
+                                                </Col>
+                                                <Col span={3}>
+                                                    <Checkbox
+                                                        checked={Item.W4==WEEK_CHECK_SUCCESS}
+                                                    />
+                                                </Col>
+                                                <Col span={1}>
+                                                    <h4>W5</h4>
+                                                </Col>
+                                                <Col span={3}>
+                                                    <Checkbox
+                                                        checked={Item.W5==WEEK_CHECK_SUCCESS}
+                                                    />
+                                                </Col>
+                                            </Row>
+                                            :''
+                                    }
+                                    {Item.OKR_Decisions.map((decision,insideIndex)=>{
                                         return(
-                                            <div key={insideIndex}>
-                                                {Decision.Content}
-                                            </div>
+                                            <Row key={insideIndex}>
+                                                <Col span={24}>
+                                                    {decision.Content}
+                                                </Col>
+                                            </Row>
                                         )
-                                    })
-                                }
-                            </Panel>
-                        )
-                    })
-                }
-                </Collapse>
+                                    })}
+                                </Card>
+                            )
+                        })
+                    }
+                </Col>
             </Row>
             <Row>
                 <Modal

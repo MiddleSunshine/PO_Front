@@ -82,7 +82,11 @@ class PointsRoad extends React.Component{
     }
 
     moveActivePoint(startOutsideIndex,startIndexIndex,moveLeft=true){
-        if (startOutsideIndex<0){
+        console.log({
+            inside:startIndexIndex,
+            outside:startOutsideIndex
+        })
+        if (startOutsideIndex<0 || startOutsideIndex>=this.state.pointTable.length){
             startIndexIndex=0;
         }
         if (startOutsideIndex>=this.state.pointTable.length){
@@ -369,6 +373,9 @@ class PointsRoad extends React.Component{
                                                                     style.fontSize="20px";
                                                                     style.textAlign="center";
                                                                     style.color="gold";
+                                                                }
+                                                                if (this.state.activePoint.Data && Item.Data.ID==this.state.activePoint.Data.ID){
+                                                                    style.outline="red dashed 5px";
                                                                 }
                                                                 component=<div
                                                                     className={"Point"}
