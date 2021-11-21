@@ -1,10 +1,11 @@
 import React from "react";
-import {Button, Card, Checkbox, Col, Form, Input, message, Modal, Row, Select} from "antd";
+import {Button, Card, Checkbox, Col, Drawer, Form, Input, message, Modal, Row, Select} from "antd";
 import {requestApi} from "../config/functions";
 
 import {
     PlusCircleOutlined
 } from '@ant-design/icons';
+import EditOKRItem from "./EditOKRItem";
 
 const WEEK_CHECK_SUCCESS='success';
 const WEEK_CHECK_Fail='fail';
@@ -41,7 +42,9 @@ class OKRItem extends React.Component{
             //
             NewOKRItemID:0,
             NewOKRDecisionModalVisible:false,
-            NewOKRDecisionContent:""
+            NewOKRDecisionContent:"",
+            //
+            EditOKRItem:{}
         }
         this.getOKRItems=this.getOKRItems.bind(this);
         this.newOKRItem=this.newOKRItem.bind(this);
@@ -178,6 +181,12 @@ class OKRItem extends React.Component{
             })
     }
 
+    startEditOKRItem(OKR_Item){
+        this.setState({
+            EditOKRItem:OKR_Item
+        })
+    }
+
     render() {
         return <div className="container">
             <Row>
@@ -206,7 +215,12 @@ class OKRItem extends React.Component{
                                                     }}
                                                 />
                                             </Col>
-                                            <Col span={22}>
+                                            <Col
+                                                span={22}
+                                                onClick={()=>{
+                                                    this.startEditOKRItem(Item);
+                                                }}
+                                            >
                                                 {Item.Title}
                                             </Col>
                                             <Col span={1}>
@@ -366,6 +380,23 @@ class OKRItem extends React.Component{
                     />
                 </Modal>
             </Row>
+            <div>
+                <Drawer
+                    title={"Edit OKR Item"}
+                    visible={this.state.EditOKRItem.ID}
+                    width={800}
+                    onClose={()=>{
+                        this.setState({
+                            EditOKRItem:{}
+                        })
+                    }}
+                >
+                    <EditOKRItem
+                        OKR_Item_ID={this.state.EditOKRItem.ID}
+                        statusMap={ITEM_STATUS_MAP}
+                    />
+                </Drawer>
+            </div>
         </div>
     }
 }
