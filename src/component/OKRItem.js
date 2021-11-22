@@ -29,6 +29,21 @@ const ITEM_STATUS_MAP={
     }
 };
 
+const ITEM_DECISION_MAP={
+    processing:{
+        label:"Processing",
+        value:"processing"
+    },
+    finished:{
+        label:"Finished",
+        value:"finished"
+    },
+    give_up:{
+        label:"Give Up",
+        value:"give_up"
+    }
+}
+
 class OKRItem extends React.Component{
     constructor(props) {
         super(props);
