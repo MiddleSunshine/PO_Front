@@ -318,7 +318,14 @@ class OKRItem extends React.Component{
                                     {Item.OKR_Decisions.map((decision,insideIndex)=>{
                                         return(
                                             <Row key={insideIndex}>
-                                                <Col span={24}>
+                                                <Col
+                                                    span={24}
+                                                    onClick={()=>{
+                                                        this.setState({
+                                                            EditOKRDecision:decision
+                                                        });
+                                                    }}
+                                                >
                                                     {decision.Content}
                                                 </Col>
                                             </Row>

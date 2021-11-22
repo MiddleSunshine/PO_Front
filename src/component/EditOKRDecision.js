@@ -1,5 +1,5 @@
 import React from "react";
-import {Button, Col, Form, message, Row, Select} from "antd";
+import {Button, Col, Form, message, Modal, Row, Select} from "antd";
 import TextArea from "antd/es/input/TextArea";
 import SimpleMDE from "react-simplemde-editor";
 import MarkdownPreview from "@uiw/react-markdown-preview";
@@ -19,6 +19,8 @@ class EditOKRDecision extends React.Component{
             statusMap:StatusMap
         }
         this.handleChange=this.handleChange.bind(this);
+        this.getOKRDecision=this.getOKRDecision.bind(this);
+        this.saveDecision=this.saveDecision.bind(this);
     }
 
     handleChange(key,value){
@@ -81,6 +83,31 @@ class EditOKRDecision extends React.Component{
         })
     }
 
+    deleteOKRDecision(forceDelete=false){
+        if (!forceDelete){
+            Modal.confirm({
+                title:"Delete Check",
+                content:"Are you sure to delete this decision !",
+                onOk:()=>{this.deleteOKRDecision(true)}
+            });
+            return true;
+        }
+        if (this.state.ID){
+            requestApi("/index.php?action=OKRDecision&method=CommonDelete&ID="+this.state.ID)
+                .then((res)=>{
+                    res.json().then((json)=>{
+                        if (json.Status==1){
+                            message.success("Delete Success")
+                        }else{
+                            message.warn(json.Message)
+                        }
+                    })
+                }).catch(()=>{
+                    message.error("System Error")
+            })
+        }
+    }
+
     render() {
         return (
             <div className={"container"}>
@@ -89,6 +116,26 @@ class EditOKRDecision extends React.Component{
                         <Form
                             layout={"vertical"}
                         >
+                            <Form.Item>
+                                <Button
+                                    type={"primary"}
+                                    onClick={()=>{
+                                        this.saveDecision();
+                                    }}
+                                >
+                                    Save Decision
+                                </Button>
+                                &nbsp;&nbsp;&nbsp;&nbsp;
+                                <Button
+                                    danger={true}
+                                    type={"primary"}
+                                    onClick={()=>{
+                                        this.deleteOKRDecision();
+                                    }}
+                                >
+                                    Delete Decision
+                                </Button>
+                            </Form.Item>
                             <Form.Item
                                 label={"Content"}
                             >
@@ -121,6 +168,7 @@ class EditOKRDecision extends React.Component{
                             </Form.Item>
                             <Form.Item>
                                 <Button
+                                    type={"primary"}
                                     onClick={()=>{
                                         this.setState({
                                             EditNode:!this.state.EditNode
@@ -148,6 +196,7 @@ class EditOKRDecision extends React.Component{
                                         />
                                 }
                             </Form.Item>
+
                         </Form>
                     </Col>
                 </Row>
