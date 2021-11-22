@@ -1,8 +1,24 @@
 import React from 'react';
-import {Row, Col, Input, Form, message, Button} from "antd";
+import {Row, Col, Input, Form, message, Button, Drawer} from "antd";
 import Road from "../component/road";
 import {requestApi} from "../config/functions";
 import OKRItem from "../component/OKRItem";
+import EditOKR from "../component/EditOKR";
+
+const OKR_STATUS_MAP={
+    processing:{
+        label:"Processing",
+        value:"processing"
+    },
+    success:{
+        label:"Success",
+        value: "success"
+    },
+    fail:{
+        label:"Fail",
+        value:"fail"
+    }
+};
 
 class OKR extends React.Component {
     constructor(props) {
@@ -10,7 +26,8 @@ class OKR extends React.Component {
         this.state = {
             Year:"",
             Month:"",
-            OKR:{}
+            OKR:{},
+            EditOKR:{}
         }
         this.getOKR=this.getOKR.bind(this);
         this.newOKR=this.newOKR.bind(this);
@@ -62,6 +79,7 @@ class OKR extends React.Component {
             <Row>
                 <Road />
             </Row>
+            <hr />
             <Row>
                 <Col span={3}>
                     <Input
@@ -74,9 +92,10 @@ class OKR extends React.Component {
                         onPressEnter={()=>{
                             this.getOKR();
                         }}
+                        placeholder={"set the year"}
                     />
                 </Col>
-                <Col span={3}>
+                <Col span={4} offset={1}>
                     <Input
                         value={this.state.Month}
                         onChange={(e)=>{
@@ -87,9 +106,11 @@ class OKR extends React.Component {
                         onPressEnter={()=>{
                             this.getOKR();
                         }}
+                        placeholder={"set the month from 1 to 12"}
                     />
                 </Col>
             </Row>
+            <hr />
             {
                 this.state.OKR.ID
                     ?<Row
@@ -98,9 +119,18 @@ class OKR extends React.Component {
                     >
                         <Col span={24}>
                             <Row>
-                                <h1>
+                                <h1
+                                    onClick={()=>{
+                                        this.setState({
+                                            EditOKR:this.state.OKR
+                                        })
+                                    }}
+                                >
                                     {this.state.OKR.OKR}
                                 </h1>
+                            </Row>
+                            <Row>
+                                <h3>Year:{this.state.OKR.Year} / Month:{this.state.OKR.Month} / Status:{this.state.OKR.status} / StartTime:{this.state.AddTime}</h3>
                             </Row>
                         </Col>
                     </Row>
@@ -112,7 +142,7 @@ class OKR extends React.Component {
                         justify={"center"}
                         align={"middle"}
                     >
-                        <Col span={8} offset={8}>
+                        <Col span={8}>
                             <Form
                                 layout={"vertical"}
                             >
@@ -148,6 +178,24 @@ class OKR extends React.Component {
                         OKR_ID={this.state.OKR.ID}
                     />
             }
+            <div>
+                <Drawer
+                    title={"Edit OKR"}
+                    onClose={()=>{
+                        this.setState({
+                            EditOKR:{}
+                        })
+                    }}
+                    visible={this.state.EditOKR.ID}
+                    width={800}
+                >
+                    <EditOKR
+                        OKR_STATUS_MAP={OKR_STATUS_MAP}
+                        OKR_ID={this.state.EditOKR.ID}
+                        EditSummary={true}
+                    />
+                </Drawer>
+            </div>
         </div>
     }
 }

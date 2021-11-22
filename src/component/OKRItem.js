@@ -217,6 +217,7 @@ class OKRItem extends React.Component{
                     New Item
                 </Button>
             </Row>
+            <hr />
             <Row>
                 <Col span={24}>
                     {
