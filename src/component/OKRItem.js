@@ -252,7 +252,7 @@ class OKRItem extends React.Component{
                                                     />
                                                 </Col>
                                                 <Col
-                                                    span={22}
+                                                    span={21}
                                                     onClick={()=>{
                                                         this.startEditOKRItem(Item);
                                                     }}
