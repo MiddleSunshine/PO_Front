@@ -174,7 +174,9 @@ class PointsRoad extends React.Component{
                 }
                 break;
             case HOT_KEYS_MAP[6].value:
-                // todo need to update the back code
+                if (this.state.activePoint.Data.PID){
+                    this.deleteConnection(this.state.activePoint.Data.PID,this.state.activePoint.Data.ID);
+                }
                 break;
         }
     }
@@ -399,16 +401,23 @@ class PointsRoad extends React.Component{
                                                             <td
                                                                 style={tdStyle}
                                                                 key={insideIndex}
-                                                                draggable={"true"}
-                                                                onDragStart={(event)=>{
-                                                                    event.dataTransfer.setData("SubPID",Item.Data.ID);
-                                                                }}
-                                                                onDrop={(event)=>{
-                                                                    let PID=event.dataTransfer.getData("SubPID");
-                                                                    this.updateConnection(PID,Item.Data.ID);
-                                                                }}
-                                                                onDragOver={(event)=>{
-                                                                    event.preventDefault();
+                                                                // draggable={"true"}
+                                                                // onDragStart={(event)=>{
+                                                                //     event.dataTransfer.setData("SubPID",Item.Data.ID);
+                                                                // }}
+                                                                // onDrop={(event)=>{
+                                                                //     let PID=event.dataTransfer.getData("SubPID");
+                                                                //     this.updateConnection(PID,Item.Data.ID);
+                                                                // }}
+                                                                // onDragOver={(event)=>{
+                                                                //     event.preventDefault();
+                                                                // }}
+                                                                onClick={()=>{
+                                                                    this.setState({
+                                                                        activePointOutSideIndex:outsideIndex,
+                                                                        activePointInsideIndex:insideIndex,
+                                                                        activePoint:Item
+                                                                    });
                                                                 }}
                                                             >
                                                                 {component}
