@@ -41,9 +41,10 @@ class EditOKR extends React.Component{
     }
 
     handleChange(key,value){
+        let OKR=this.state.OKR;
+        OKR[key]=value;
         this.setState({
-            ...this.state.OKR,
-            key:value
+            OKR:OKR
         });
     }
 

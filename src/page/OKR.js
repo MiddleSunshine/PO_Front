@@ -71,7 +71,8 @@ class OKR extends React.Component {
     }
 
     componentDidMount() {
-        this.getOKR(this.state.Year,this.state.Month)
+        this.getOKR(this.state.Year,this.state.Month);
+        document.title="OKR";
     }
 
     render() {

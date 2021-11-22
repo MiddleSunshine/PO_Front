@@ -24,9 +24,10 @@ class EditOKRDecision extends React.Component{
     }
 
     handleChange(key,value){
+        let decision=this.state.OKR_Decision;
+        decision[key]=value;
         this.setState({
-            ...this.state.OKR_Decision,
-            key:value
+            OKR_Decision:decision
         });
     }
 
@@ -61,7 +62,7 @@ class EditOKRDecision extends React.Component{
     }
 
     saveDecision(){
-        if (!this.props.OKR_Decision.ID){
+        if (!this.state.OKR_Decision.ID){
             message.error("Param Error !")
             return false;
         }

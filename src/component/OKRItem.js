@@ -1,5 +1,5 @@
 import React from "react";
-import {Button, Card, Checkbox, Col, Drawer, Form, Input, message, Modal, Row, Select} from "antd";
+import {Badge, Button, Card, Checkbox, Col, Drawer, Form, Input, message, Modal, Row, Select} from "antd";
 import {requestApi} from "../config/functions";
 
 import {
@@ -48,7 +48,12 @@ const ITEM_DECISION_MAP={
 class OKRItem extends React.Component{
     constructor(props) {
         super(props);
+        // let statusMap=[];
+        // Object.keys(ITEM_STATUS_MAP).forEach((key)=>{
+        //     statusMap.push(ITEM_STATUS_MAP[key].value);
+        // });
         this.state={
+            // StatusMap:statusMap,
             OKR_ID:props.OKR_ID,
             OKRItemList:[],
             //
@@ -77,7 +82,7 @@ class OKRItem extends React.Component{
         this.getOKRItems();
     }
 
-    getOKRItems(status=[]){
+    getOKRItems(status){
         requestApi("/index.php?action=OKRItem&method=GetItems",{
             mode:"cors",
             method:"post",
@@ -216,6 +221,15 @@ class OKRItem extends React.Component{
                 >
                     New Item
                 </Button>
+                &nbsp;&nbsp;&nbsp;&nbsp;
+                <Button
+                    type={"primary"}
+                    onClick={()=>{
+                        this.getOKRItems('all');
+                    }}
+                >
+                    All Items
+                </Button>
             </Row>
             <hr />
             <Row>
@@ -223,116 +237,123 @@ class OKRItem extends React.Component{
                     {
                         this.state.OKRItemList.map((Item,outsideIndex)=>{
                             return(
-                                <Card
-                                    title={
-                                        <Row>
-                                            <Col span={1}>
-                                                <Checkbox
-                                                    checked={Item.status==ITEM_STATUS_MAP.finished.value}
-                                                    onChange={(e)=>{
-                                                        this.handleOKRItemChange(Item,'status',e.target.checked?ITEM_STATUS_MAP.finished.value:ITEM_STATUS_MAP.processing.value)
-                                                    }}
-                                                />
-                                            </Col>
-                                            <Col
-                                                span={22}
-                                                onClick={()=>{
-                                                    this.startEditOKRItem(Item);
-                                                }}
-                                            >
-                                                {Item.Title}
-                                            </Col>
-                                            <Col span={1}>
-                                                <PlusCircleOutlined
-                                                    onClick={()=>{
-                                                        this.operateDecisionModal(
-                                                            true,
-                                                            Item.ID
-                                                        );
-                                                    }}
-                                                />
-                                            </Col>
-                                        </Row>
-                                    }
+                                <Badge.Ribbon
+                                    text={ITEM_STATUS_MAP[Item.status].label}
                                 >
-                                    {
-                                        Item.type=='week'
-                                            ?<Row>
+                                    <Card
+                                        title={
+                                            <Row>
                                                 <Col span={1}>
-                                                    <h4>W1</h4>
-                                                </Col>
-                                                <Col span={3}>
                                                     <Checkbox
-                                                        checked={Item.W1==WEEK_CHECK_SUCCESS}
+                                                        checked={Item.status==ITEM_STATUS_MAP.finished.value}
                                                         onChange={(e)=>{
-                                                            this.handleOKRItemChange(Item,'W1',e.target.checked?WEEK_CHECK_SUCCESS:WEEK_CHECK_Fail)
+                                                            this.handleOKRItemChange(Item,'status',e.target.checked?ITEM_STATUS_MAP.finished.value:ITEM_STATUS_MAP.processing.value)
                                                         }}
                                                     />
                                                 </Col>
-                                                <Col span={1}>
-                                                    <h4>W2</h4>
-                                                </Col>
-                                                <Col span={3}>
-                                                    <Checkbox
-                                                        checked={Item.W2==WEEK_CHECK_SUCCESS}
-                                                        onChange={(e)=>{
-                                                            this.handleOKRItemChange(Item,'W2',e.target.checked?WEEK_CHECK_SUCCESS:WEEK_CHECK_Fail)
-                                                        }}
-                                                    />
-                                                </Col>
-                                                <Col span={1}>
-                                                    <h4>W3</h4>
-                                                </Col>
-                                                <Col span={3}>
-                                                    <Checkbox
-                                                        checked={Item.W3==WEEK_CHECK_SUCCESS}
-                                                        onChange={(e)=>{
-                                                            this.handleOKRItemChange(Item,'W3',e.target.checked?WEEK_CHECK_SUCCESS:WEEK_CHECK_Fail)
-                                                        }}
-                                                    />
-                                                </Col>
-                                                <Col span={1}>
-                                                    <h4>W4</h4>
-                                                </Col>
-                                                <Col span={3}>
-                                                    <Checkbox
-                                                        checked={Item.W4==WEEK_CHECK_SUCCESS}
-                                                        onChange={(e)=>{
-                                                            this.handleOKRItemChange(Item,'W4',e.target.checked?WEEK_CHECK_SUCCESS:WEEK_CHECK_Fail)
-                                                        }}
-                                                    />
-                                                </Col>
-                                                <Col span={1}>
-                                                    <h4>W5</h4>
-                                                </Col>
-                                                <Col span={3}>
-                                                    <Checkbox
-                                                        checked={Item.W5==WEEK_CHECK_SUCCESS}
-                                                        onChange={(e)=>{
-                                                            this.handleOKRItemChange(Item,'W5',e.target.checked?WEEK_CHECK_SUCCESS:WEEK_CHECK_Fail)
-                                                        }}
-                                                    />
-                                                </Col>
-                                            </Row>
-                                            :''
-                                    }
-                                    {Item.OKR_Decisions.map((decision,insideIndex)=>{
-                                        return(
-                                            <Row key={insideIndex}>
                                                 <Col
-                                                    span={24}
+                                                    span={22}
                                                     onClick={()=>{
-                                                        this.setState({
-                                                            EditOKRDecision:decision
-                                                        });
+                                                        this.startEditOKRItem(Item);
                                                     }}
                                                 >
-                                                    {decision.Content}
+                                                    {Item.Title}
+                                                </Col>
+                                                <Col span={1}>
+                                                    <PlusCircleOutlined
+                                                        onClick={()=>{
+                                                            this.operateDecisionModal(
+                                                                true,
+                                                                Item.ID
+                                                            );
+                                                        }}
+                                                    />
                                                 </Col>
                                             </Row>
-                                        )
-                                    })}
-                                </Card>
+                                        }
+                                    >
+                                        {
+                                            Item.type=='week'
+                                                ?<Row>
+                                                    <Col span={1}>
+                                                        <h4>W1</h4>
+                                                    </Col>
+                                                    <Col span={3}>
+                                                        <Checkbox
+                                                            checked={Item.W1==WEEK_CHECK_SUCCESS}
+                                                            onChange={(e)=>{
+                                                                this.handleOKRItemChange(Item,'W1',e.target.checked?WEEK_CHECK_SUCCESS:WEEK_CHECK_Fail)
+                                                            }}
+                                                        />
+                                                    </Col>
+                                                    <Col span={1}>
+                                                        <h4>W2</h4>
+                                                    </Col>
+                                                    <Col span={3}>
+                                                        <Checkbox
+                                                            checked={Item.W2==WEEK_CHECK_SUCCESS}
+                                                            onChange={(e)=>{
+                                                                this.handleOKRItemChange(Item,'W2',e.target.checked?WEEK_CHECK_SUCCESS:WEEK_CHECK_Fail)
+                                                            }}
+                                                        />
+                                                    </Col>
+                                                    <Col span={1}>
+                                                        <h4>W3</h4>
+                                                    </Col>
+                                                    <Col span={3}>
+                                                        <Checkbox
+                                                            checked={Item.W3==WEEK_CHECK_SUCCESS}
+                                                            onChange={(e)=>{
+                                                                this.handleOKRItemChange(Item,'W3',e.target.checked?WEEK_CHECK_SUCCESS:WEEK_CHECK_Fail)
+                                                            }}
+                                                        />
+                                                    </Col>
+                                                    <Col span={1}>
+                                                        <h4>W4</h4>
+                                                    </Col>
+                                                    <Col span={3}>
+                                                        <Checkbox
+                                                            checked={Item.W4==WEEK_CHECK_SUCCESS}
+                                                            onChange={(e)=>{
+                                                                this.handleOKRItemChange(Item,'W4',e.target.checked?WEEK_CHECK_SUCCESS:WEEK_CHECK_Fail)
+                                                            }}
+                                                        />
+                                                    </Col>
+                                                    <Col span={1}>
+                                                        <h4>W5</h4>
+                                                    </Col>
+                                                    <Col span={3}>
+                                                        <Checkbox
+                                                            checked={Item.W5==WEEK_CHECK_SUCCESS}
+                                                            onChange={(e)=>{
+                                                                this.handleOKRItemChange(Item,'W5',e.target.checked?WEEK_CHECK_SUCCESS:WEEK_CHECK_Fail)
+                                                            }}
+                                                        />
+                                                    </Col>
+                                                </Row>
+                                                :''
+                                        }
+                                        {Item.OKR_Decisions.map((decision,insideIndex)=>{
+                                            return(
+                                                <Row key={insideIndex} style={{borderBottom:"1px solid #f0f0f0",padding:"10px 0px"}}>
+                                                    <Col
+                                                        span={22}
+                                                        onClick={()=>{
+                                                            this.setState({
+                                                                EditOKRDecision:decision
+                                                            });
+                                                        }}
+                                                    >
+                                                        {decision.Content}
+                                                    </Col>
+                                                    <Col span={2}>
+                                                        {ITEM_DECISION_MAP[decision.status].label}
+                                                    </Col>
+                                                </Row>
+                                            )
+                                        })}
+                                    </Card>
+                                </Badge.Ribbon>
                             )
                         })
                     }
