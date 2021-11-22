@@ -1,8 +1,9 @@
 import React from "react";
-import {Button, Col, Form, Row, Select} from "antd";
+import {Button, Col, Form, message, Row, Select} from "antd";
 import TextArea from "antd/es/input/TextArea";
 import SimpleMDE from "react-simplemde-editor";
 import MarkdownPreview from "@uiw/react-markdown-preview";
+import {requestApi} from "../config/functions";
 
 class EditOKRDecision extends React.Component{
     constructor(props) {
@@ -27,8 +28,57 @@ class EditOKRDecision extends React.Component{
         });
     }
 
+    componentDidMount() {
+        this.getOKRDecision(this.state.ID);
+    }
+
+    componentWillReceiveProps(nextProps, nextContext) {
+        if (nextProps.OKR_Decision_ID!=this.state.ID){
+            (async ()=>{})()
+                .then(()=>{
+                    this.setState({
+                        ID:nextProps.OKR_Decision_ID,
+                        EditNode:nextProps.EditNode,
+                    })
+                })
+                .then(()=>{
+                    this.getOKRDecision(nextProps.OKR_Decision_ID)
+                })
+        }
+    }
+
+    getOKRDecision(ID){
+        requestApi("/index.php?action=OKRDecision&method=Detail&id="+ID)
+            .then((res)=>{
+                res.json().then((json)=>{
+                    this.setState({
+                        OKR_Decision:json.Data
+                    })
+                })
+            })
+    }
+
     saveDecision(){
-        
+        if (!this.props.OKR_Decision.ID){
+            message.error("Param Error !")
+            return false;
+        }
+        requestApi("/index.php?action=OKRDecision&method=CommonSave",{
+            mode:"cors",
+            method:"post",
+            body:JSON.stringify(this.state.OKR_Decision)
+        })
+            .then((res)=>{
+                res.json().then((json)=>{
+                    if (json.Status==1){
+                        message.success("Save Success !")
+                    }else{
+                        message.warn(json.Message);
+                    }
+                })
+            }).catch((error)=>{
+                message.error("System Error !")
+        })
     }
 
     render() {

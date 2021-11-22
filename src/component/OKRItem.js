@@ -6,6 +6,7 @@ import {
     PlusCircleOutlined
 } from '@ant-design/icons';
 import EditOKRItem from "./EditOKRItem";
+import EditOKRDecision from "./EditOKRDecision";
 
 const WEEK_CHECK_SUCCESS='success';
 const WEEK_CHECK_Fail='fail';
@@ -59,7 +60,9 @@ class OKRItem extends React.Component{
             NewOKRDecisionModalVisible:false,
             NewOKRDecisionContent:"",
             //
-            EditOKRItem:{}
+            EditOKRItem:{},
+            //
+            EditOKRDecision:{}
         }
         this.getOKRItems=this.getOKRItems.bind(this);
         this.newOKRItem=this.newOKRItem.bind(this);
@@ -409,6 +412,24 @@ class OKRItem extends React.Component{
                     <EditOKRItem
                         OKR_Item_ID={this.state.EditOKRItem.ID}
                         statusMap={ITEM_STATUS_MAP}
+                    />
+                </Drawer>
+            </div>
+            <div>
+                <Drawer
+                    title={"Edit OKR Decision"}
+                    visible={this.state.EditOKRDecision.ID}
+                    width={800}
+                    onClose={()=>{
+                        this.setState({
+                            EditOKRDecision:{}
+                        })
+                    }}
+                >
+                    <EditOKRDecision
+                        OKR_Decision_ID={this.state.EditOKRDecision.ID}
+                        EditNode={true}
+                        ITEM_DECISION_MAP={ITEM_DECISION_MAP}
                     />
                 </Drawer>
             </div>
