@@ -82,12 +82,21 @@ class OKRItem extends React.Component{
         this.getOKRItems();
     }
 
-    getOKRItems(status){
+    componentWillReceiveProps(nextProps, nextContext) {
+        if (nextProps.OKR_ID!=this.state.OKR_ID){
+            this.setState({
+                OKR_ID:nextProps.OKR_ID
+            });
+            this.getOKRItems('all',nextProps.OKR_ID);
+        }
+    }
+
+    getOKRItems(status,OKR_ID=0){
         requestApi("/index.php?action=OKRItem&method=GetItems",{
             mode:"cors",
             method:"post",
             body:JSON.stringify({
-                OKR_ID:this.state.OKR_ID,
+                OKR_ID:OKR_ID?OKR_ID:this.state.OKR_ID,
                 status:status
             })
         })
