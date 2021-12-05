@@ -13,6 +13,7 @@ class TagManager extends React.Component{
         this.newTag=this.newTag.bind(this);
         this.updateTag=this.updateTag.bind(this);
         this.deleteTag=this.deleteTag.bind(this);
+        this.saveTag=this.saveTag.bind(this);
     }
     componentDidMount(){
         this.getTagList();
@@ -59,28 +60,59 @@ class TagManager extends React.Component{
         })
     }
 
-    updateTag(){
-
+    updateTag(index,field,value){
+        let tagList=this.state.tagList;
+        tagList[index][field]=value;
+        this.setState({
+            tagList:tagList
+        })
     }
 
-    deleteTag(ID,force=false){
+    saveTag(index){
+        requestApi("/index.php?action=PointTag&method=CommonSave",{
+            mode:"cors",
+            method:"post",
+            body:JSON.stringify(this.state.tagList[index])
+        })
+        .then((res)=>{
+            res.json().then((json)=>{
+                if(json.Status==1){
+                    message.success("Save Success");
+                }else{
+                    message.warn(json.Message);
+                }
+            })
+        })
+    }
+
+    deleteTag(index,force=false){
         if(!force){
             Modal.confirm({
                 title:"Delete Check",
                 content:"Are you sure to delete this Tag ?",
-                onOk:()=>{this.deleteTag(ID,true)}
+                onOk:()=>{this.deleteTag(index,true)}
             });
         }else{
-            requestApi("/index.php?action=PointTag&method=CommonDelete&ID="+ID)
-            .then((res)=>{
-                res.json().then((json)=>{
-                    if(json.Status==1){
-                        this.getTagList();
-                    }else{
-                        message.warn("Delete Error")
-                    }
-                })
+            (async ()=>{})()
+            .then(()=>{
+                this.updateTag(index,'Deleted',1);
             })
+            .then(()=>{
+                this.saveTag(index);
+            })
+            .then(()=>{
+                this.getTagList();
+            })
+            // requestApi("/index.php?action=PointTag&method=CommonDelete&ID="+ID)
+            // .then((res)=>{
+            //     res.json().then((json)=>{
+            //         if(json.Status==1){
+            //             this.getTagList();
+            //         }else{
+            //             message.warn("Delete Error")
+            //         }
+            //     })
+            // })
         }
     }
 
@@ -123,7 +155,7 @@ class TagManager extends React.Component{
                                                 type={"primary"}
                                                 danger={true}
                                                 onClick={()=>{
-                                                    this.deleteTag(Tag.ID);
+                                                    this.deleteTag(index);
                                                 }}
                                             >
                                                 Delete
@@ -132,6 +164,12 @@ class TagManager extends React.Component{
                                     >
                                         <Input 
                                             value={Tag.Tag}
+                                            onChange={(e)=>{
+                                                this.updateTag(index,'Tag',e.target.value);
+                                            }}
+                                            onPressEnter={()=>{
+                                                this.saveTag(index);
+                                            }}
                                         />
                                     </Form.Item>
                                 )
