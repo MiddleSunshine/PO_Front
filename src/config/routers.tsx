@@ -15,6 +15,7 @@ import GTDHistory from "../page/GTDHistory";
 import PointsRoad from "../page/PointsRoad";
 import Decision from "../page/Decition";
 import OKR from "../page/OKR";
+import PointSummary from '../page/PointSummary';
 
 interface router {
     path: string,
@@ -23,6 +24,10 @@ interface router {
 }
 
 const routers: Array<router> = [
+    {
+        path:"/PointSummary",
+        component:PointSummary
+    },
     {
         path:"/OKR",
         component:OKR
