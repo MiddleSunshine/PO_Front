@@ -1,6 +1,8 @@
-import { Col, Row,Form, Input, Button } from "antd";
+import { Col, Row,Form, Input, Button, Drawer } from "antd";
+import Select from "rc-select";
 import React from "react";
 import SimpleMdeReact from "react-simplemde-editor";
+import TagManager from "./Tag";
 
 var pointSummaryExample={
     Ttitle:"",
@@ -16,7 +18,8 @@ class PointSummaryEdit extends React.Component{
         super(props);
         this.state={
             pointSummary:{},
-            ID:props.ID
+            ID:props.ID,
+            editTag:false
         }
         this.handleChange=this.handleChange.bind(this);
     }
@@ -34,7 +37,7 @@ class PointSummaryEdit extends React.Component{
     }
 
     UpdatePointSummary(){
-        
+
     }
 
     render(){
@@ -102,6 +105,24 @@ class PointSummaryEdit extends React.Component{
                             />
                         </Form.Item>
                         <Form.Item
+                            label={
+                                <Button
+                                    type={"primary"}
+                                    onClick={()=>{
+                                        this.setState({
+                                            editTag:true
+                                        })
+                                    }}
+                                >
+                                    Edit Tag
+                                </Button>
+                            }
+                        >
+                            <Select>
+
+                            </Select>
+                        </Form.Item>
+                        <Form.Item
                             label={"File Content"}
                         >
                             <SimpleMdeReact
@@ -113,6 +134,20 @@ class PointSummaryEdit extends React.Component{
                         </Form.Item>
                     </Form>
                 </Col>
+            </Row>
+            <Row>
+                <Drawer
+                    visible={this.state.editTag}
+                    width={"500"}
+                    title={"Tag Manager"}
+                    onClose={()=>{
+                        this.setState({
+                            editTag:false
+                        })
+                    }}
+                >
+                    <TagManager />
+                </Drawer>
             </Row>
         </div>;
     }
