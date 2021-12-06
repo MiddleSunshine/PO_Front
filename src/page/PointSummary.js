@@ -70,6 +70,11 @@ class PointSummary extends React.Component{
                     <Row>
                         <Button
                             type={"primary"}
+                            onClick={()=>{
+                                this.setState({
+                                    EditPointID:0
+                                })
+                            }}
                         >
                             New Summary
                         </Button>

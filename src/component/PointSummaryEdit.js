@@ -4,20 +4,11 @@ import SimpleMdeReact from "react-simplemde-editor";
 import { requestApi } from "../config/functions";
 import TagManager from "./Tag";
 
-var pointSummaryExample={
-    Ttitle:"",
-    note:"",
-    file:"",
-    url:"",
-    YName:"",
-    file_content:""
-}
-
 class PointSummaryEdit extends React.Component{
     constructor(props){
         super(props);
         this.state={
-            pointSummary:{},
+            pointSummary: {},
             ID:props.ID,
             editTag:false,
             tagList:[]
@@ -56,6 +47,9 @@ class PointSummaryEdit extends React.Component{
     }
 
     getPointSummary(ID){
+        if (!ID){
+            return false;
+        }
         requestApi("/index.php?action=PointSummary&method=Detail&ID="+ID)
             .then((res)=>{
                 res.json().then((json)=>{
