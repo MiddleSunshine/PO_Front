@@ -1,7 +1,7 @@
-import { Col, Row,Form, Input, Button, Drawer } from "antd";
-import Select from "rc-select";
+import { Col, Row,Form, Input, Button, Drawer,Select } from "antd";
 import React from "react";
 import SimpleMdeReact from "react-simplemde-editor";
+import { requestApi } from "../config/functions";
 import TagManager from "./Tag";
 
 var pointSummaryExample={
@@ -19,9 +19,18 @@ class PointSummaryEdit extends React.Component{
         this.state={
             pointSummary:{},
             ID:props.ID,
-            editTag:false
+            editTag:false,
+            tagList:[]
         }
         this.handleChange=this.handleChange.bind(this);
+        this.getTagList=this.getTagList.bind(this);
+    }
+
+    componentDidMount(){
+        (async ()=>{})()
+        .then(()=>{
+            this.getTagList();
+        })
     }
 
     handleChange(key,value){
@@ -38,6 +47,17 @@ class PointSummaryEdit extends React.Component{
 
     UpdatePointSummary(){
 
+    }
+
+    getTagList(){
+        requestApi("/index.php?action=PointTag&method=List")
+        .then((res)=>{
+            res.json().then((json)=>{
+                this.setState({
+                    tagList:json.Data
+                })
+            })
+        })
     }
 
     render(){
@@ -118,8 +138,25 @@ class PointSummaryEdit extends React.Component{
                                 </Button>
                             }
                         >
-                            <Select>
-
+                            <Select
+                                mode={"multiple"}
+                                value={this.state.pointSummary.tags}
+                                // searchValue={true}
+                                placeholder={"select tag"}
+                                onChange={(newValue)=>{
+                                    this.handleChange('tags',newValue);
+                                }}
+                                
+                            >
+                                {
+                                    this.state.tagList.map((tag,index)=>{
+                                        return(
+                                            <Select.Option value={tag.ID}>
+                                                {tag.Tag}
+                                            </Select.Option>
+                                        )
+                                    })
+                                }
                             </Select>
                         </Form.Item>
                         <Form.Item
@@ -141,8 +178,14 @@ class PointSummaryEdit extends React.Component{
                     width={"500"}
                     title={"Tag Manager"}
                     onClose={()=>{
-                        this.setState({
-                            editTag:false
+                        (async ()=>{})()
+                        .then(()=>{
+                            this.getTagList();
+                        })
+                        .then(()=>{
+                            this.setState({
+                                editTag:false
+                            })
                         })
                     }}
                 >

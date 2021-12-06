@@ -123,25 +123,17 @@ class TagManager extends React.Component{
                     <Form
                         layout={"vertical"}
                     >
-                        <Form.Item
-                            label={
-                                <Button
-                                    type={"primary"}
-                                    onClick={()=>{
-                                        this.newTag();
-                                    }}
-                                >
-                                    New Tag
-                                </Button>
-                            }
-                        >
+                        <Form.Item>
                             <Input
-                                placeholder={"Input tag name"}
+                                placeholder={"Input new tag name"}
                                 value={this.state.newPoint}
                                 onChange={(e)=>{
                                     this.setState({
                                         newPoint:e.target.value
                                     })
+                                }}
+                                onPressEnter={()=>{
+                                    this.newTag();
                                 }}
                             />
                         </Form.Item>
