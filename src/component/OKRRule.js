@@ -92,7 +92,21 @@ class OKRRule extends React.Component{
     render() {
         return <div>
             <Row>
-                <Col span={2}>
+                <Col span={20}>
+                    <Input
+                        value={this.state.newRule}
+                        onChange={(e)=>{
+                        this.setState({
+                            newRule:e.target.value
+                        })}
+                        }
+                        onPressEnter={()=>{
+                            this.newRule();
+                        }}
+                        placeholder={"please input the new rule"}
+                    />
+                </Col>
+                <Col span={3} offset={1}>
                     <Button
                         type={"primary"}
                         onClick={()=>{
@@ -106,19 +120,6 @@ class OKRRule extends React.Component{
                         }
                     </Button>
                 </Col>
-                <Col span={21} offset={1}>
-                    <Input
-                        value={this.state.newRule}
-                        onChange={(e)=>{
-                        this.setState({
-                            newRule:e.target.value
-                        })}
-                        }
-                        onPressEnter={()=>{
-                            this.newRule();
-                        }}
-                    />
-                </Col>
             </Row>
             <Row>
                 <Col span={24}>
@@ -128,8 +129,13 @@ class OKRRule extends React.Component{
                                 return null;
                             }
                             return(
-                                <Row key={index}>
-                                    <Col span={20}>
+                                <Row
+                                    key={index}
+                                    style={{paddingTop:"10px"}}
+                                    justify={"center"}
+                                    align={"middle"}
+                                >
+                                    <Col span={16}>
                                         <Input
                                             value={Item.Rule}
                                             onChange={(e)=>{
@@ -140,7 +146,10 @@ class OKRRule extends React.Component{
                                             }}
                                         />
                                     </Col>
-                                    <Col span={4}>
+                                    <Col span={3} offset={1}>
+                                        {Item.AddTime}
+                                    </Col>
+                                    <Col span={3} offset={1}>
                                         <Select
                                             value={Item.Status}
                                             onChange={(newValue)=>{

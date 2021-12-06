@@ -4,6 +4,7 @@ import Road from "../component/road";
 import {requestApi} from "../config/functions";
 import OKRItem from "../component/OKRItem";
 import EditOKR from "../component/EditOKR";
+import OKRRule from "../component/OKRRule";
 
 const OKR_STATUS_MAP={
     processing:{
@@ -27,7 +28,8 @@ class OKR extends React.Component {
             Year:"",
             Month:"",
             OKR:{},
-            EditOKR:{}
+            EditOKR:{},
+            showOKRRule:false
         }
         this.getOKR=this.getOKR.bind(this);
         this.newOKR=this.newOKR.bind(this);
@@ -109,6 +111,18 @@ class OKR extends React.Component {
                         }}
                         placeholder={"set the month from 1 to 12"}
                     />
+                </Col>
+                <Col span={4} offset={1}>
+                    <Button
+                        type={"primary"}
+                        onClick={()=>{
+                            this.setState({
+                                showOKRRule:true
+                            })
+                        }}
+                    >
+                        Check Rule
+                    </Button>
                 </Col>
             </Row>
             <hr />
@@ -195,6 +209,20 @@ class OKR extends React.Component {
                         OKR_ID={this.state.EditOKR.ID}
                         EditSummary={true}
                     />
+                </Drawer>
+            </div>
+            <div>
+                <Drawer
+                    title={"OKR Rule"}
+                    visible={this.state.showOKRRule}
+                    onClose={()=>{
+                        this.setState({
+                            showOKRRule:false
+                        })
+                    }}
+                    placement={"top"}
+                >
+                    <OKRRule />
                 </Drawer>
             </div>
         </div>
