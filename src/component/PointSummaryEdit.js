@@ -1,29 +1,23 @@
-import { Col, Row,Form, Input, Button, Drawer,Select } from "antd";
+import {Col, Row, Form, Input, Button, Drawer, Select, message} from "antd";
 import React from "react";
 import SimpleMdeReact from "react-simplemde-editor";
 import { requestApi } from "../config/functions";
 import TagManager from "./Tag";
 
-var pointSummaryExample={
-    Ttitle:"",
-    note:"",
-    file:"",
-    url:"",
-    YName:"",
-    file_content:""
-}
-
 class PointSummaryEdit extends React.Component{
     constructor(props){
         super(props);
         this.state={
-            pointSummary:{},
+            pointSummary: {},
             ID:props.ID,
             editTag:false,
             tagList:[]
         }
         this.handleChange=this.handleChange.bind(this);
         this.getTagList=this.getTagList.bind(this);
+        this.NewPointSummary=this.NewPointSummary.bind(this);
+        this.UpdatePointSummary=this.UpdatePointSummary.bind(this);
+        this.getPointSummary=this.getPointSummary.bind(this);
     }
 
     componentDidMount(){
@@ -31,6 +25,17 @@ class PointSummaryEdit extends React.Component{
         .then(()=>{
             this.getTagList();
         })
+            .then(()=>{
+                if (this.state.ID){
+                    this.getPointSummary(this.state.ID);
+                }
+            })
+    }
+
+    componentWillReceiveProps(nextProps, nextContext) {
+        if (nextProps.ID!=this.state.ID){
+            this.getPointSummary(nextProps.ID);
+        }
     }
 
     handleChange(key,value){
@@ -41,12 +46,55 @@ class PointSummaryEdit extends React.Component{
         })
     }
 
-    NewPointSummary(){
+    getPointSummary(ID){
+        if (!ID){
+            return false;
+        }
+        requestApi("/index.php?action=PointSummary&method=Detail&ID="+ID)
+            .then((res)=>{
+                res.json().then((json)=>{
+                    this.setState({
+                        pointSummary:json.Data.PointSummary,
+                        ID:ID
+                    })
+                })
+            })
+    }
 
+    NewPointSummary(){
+        requestApi("/index.php?action=PointSummary&method=NewPointSummary",{
+            method:"post",
+            body:JSON.stringify(
+                this.state.pointSummary
+            ),
+            mode:"cors"
+        })
+            .then((res)=>{
+                res.json().then((json)=>{
+                    if (json.Status==1){
+                        message.success("New Summary!");
+                    }else{
+                        message.warn(json.Message);
+                    }
+                })
+            })
     }
 
     UpdatePointSummary(){
-
+        requestApi("/index.php?action=PointSummary&method=CommonSave",{
+            mode:"cors",
+            body:JSON.stringify(this.state.pointSummary),
+            method:"post"
+        })
+            .then((res)=>{
+                res.json().then((json)=>{
+                    if (json.Status==1){
+                        message.success("Save Success !");
+                    }else{
+                        message.warn(json.Message);
+                    }
+                })
+            })
     }
 
     getTagList(){
@@ -70,6 +118,13 @@ class PointSummaryEdit extends React.Component{
                         <Form.Item>
                             <Button
                                 type={"primary"}
+                                onClick={()=>{
+                                    if (this.state.pointSummary.ID){
+                                        this.UpdatePointSummary();
+                                    }else{
+                                        this.NewPointSummary();
+                                    }
+                                }}
                             >
                                 Save Point Summary
                             </Button>
@@ -78,7 +133,7 @@ class PointSummaryEdit extends React.Component{
                             label={"Title"}
                         >
                             <Input
-                                value={this.state.pointSummary.Ttitle}
+                                value={this.state.pointSummary.Title}
                                 onChange={(e)=>{
                                     this.handleChange('Title',e.target.value);
                                 }}
@@ -140,18 +195,17 @@ class PointSummaryEdit extends React.Component{
                         >
                             <Select
                                 mode={"multiple"}
-                                value={this.state.pointSummary.tags}
+                                value={this.state.pointSummary.tag_ids}
                                 // searchValue={true}
                                 placeholder={"select tag"}
                                 onChange={(newValue)=>{
-                                    this.handleChange('tags',newValue);
+                                    this.handleChange('tag_ids',newValue);
                                 }}
-                                
                             >
                                 {
                                     this.state.tagList.map((tag,index)=>{
                                         return(
-                                            <Select.Option value={tag.ID}>
+                                            <Select.Option value={parseInt(tag.ID)}>
                                                 {tag.Tag}
                                             </Select.Option>
                                         )

@@ -1,0 +1,18 @@
+.PointSummary{
+
+}
+
+.PointSummary .dateInfo{
+    font-size: 12px;
+    color: #6a737d;
+}
+
+.PointSummary .YName{
+    margin-top: 5px;
+    padding-top: 5px;
+    border-top: 1px solid #F0F0F0;
+}
+
+.PointSummary .clickAble{
+    cursor: pointer;
+}
