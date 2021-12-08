@@ -16,6 +16,7 @@ import PointsRoad from "../page/PointsRoad";
 import Decision from "../page/Decition";
 import OKR from "../page/OKR";
 import PointSummary from '../page/PointSummary';
+import EditPointSummaryFile from '../component/EditPointSummaryFile';
 
 interface router {
     path: string,
@@ -25,72 +26,76 @@ interface router {
 
 const routers: Array<router> = [
     {
-        path:"/PointSummary",
-        component:PointSummary
+        path: "/PointSummaryEdit/:ID/:Edit",
+        component: EditPointSummaryFile
     },
     {
-        path:"/OKR",
-        component:OKR
+        path: "/PointSummary",
+        component: PointSummary
     },
     {
-        path:"/Decision",
-        component:Decision
+        path: "/OKR",
+        component: OKR
     },
     {
-        path:"/GTDHistory",
-        component:GTDHistory
+        path: "/Decision",
+        component: Decision
     },
     {
-        path:"/GTD",
-        component:GTD
+        path: "/GTDHistory",
+        component: GTDHistory
     },
     {
-        path:"/debug",
-        component:Debug
+        path: "/GTD",
+        component: GTD
     },
     {
-        path:"/clock_in",
-        component:CheckIn
+        path: "/debug",
+        component: Debug
     },
     {
-        path:"/planTable",
-        component:PlanTable
+        path: "/clock_in",
+        component: CheckIn
     },
     {
-        path:"/plan",
-        component:Plan
+        path: "/planTable",
+        component: PlanTable
     },
     {
-        path:"/image",
-        component:Image
+        path: "/plan",
+        component: Plan
     },
     {
-        path:"/willing",
-        component:Willing
+        path: "/image",
+        component: Image
     },
     {
-        path:"/report",
-        component:Report
+        path: "/willing",
+        component: Willing
     },
     {
-        path:"/pointRoad/:pid",
-        component:PointsRoad
+        path: "/report",
+        component: Report
     },
     {
-        path:"/point/edit/:pid",
-        component:PointEditor
+        path: "/pointRoad/:pid",
+        component: PointsRoad
     },
     {
-        path:"/pointTable/:pid",
-        component:PointTable
+        path: "/point/edit/:pid",
+        component: PointEditor
     },
     {
-        path:"/points/:pid",
-        component:Collector
+        path: "/pointTable/:pid",
+        component: PointTable
     },
     {
-        path:"/summary/points/:pid",
-        component:Summary
+        path: "/points/:pid",
+        component: Collector
+    },
+    {
+        path: "/summary/points/:pid",
+        component: Summary
     },
     {
         path: "/",

@@ -126,7 +126,7 @@ class PointSummary extends React.Component {
                                     <Button
                                         type={"link"}
                                         target={"_blank"}
-                                        href={""}
+                                        href={"/PointSummaryEdit/" + Item.ID + "/1"}
                                         icon={<FormOutlined />}
                                     >
                                     </Button>
@@ -144,7 +144,7 @@ class PointSummary extends React.Component {
                                     <Button
                                         type={"link"}
                                         target={"_blank"}
-                                        href={""}
+                                        href={"/PointSummaryEdit/" + Item.ID + "/0"}
                                         icon={<EyeOutlined />}
                                     >
                                     </Button>
