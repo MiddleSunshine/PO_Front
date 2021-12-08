@@ -1,118 +1,70 @@
-import {Button, Card, Col, Divider, Drawer, message, Row, Tag} from "antd";
+import { Button, Card, Col, Divider, Drawer, message, PageHeader, Row, Tag } from "antd";
 import React from "react";
 import PointSummaryEdit from "../component/PointSummaryEdit";
 import Road from "../component/road";
-import {requestApi} from "../config/functions";
+import { requestApi } from "../config/functions";
+import { FormOutlined, ShareAltOutlined, EyeOutlined } from '@ant-design/icons';
 import "../css/PointSummary.css";
 
-class PointSummary extends React.Component{
-    constructor(props){
+class PointSummary extends React.Component {
+    constructor(props) {
         super(props);
-        this.state={
-            EditPointID:-1,
-            pointSummaryList:[]
+        this.state = {
+            EditPointID: -1,
+            pointSummaryList: []
         }
-        this.getSummaryList=this.getSummaryList.bind(this);
-        this.switchHidden=this.switchHidden.bind(this);
+        this.getSummaryList = this.getSummaryList.bind(this);
     }
 
-    componentDidMount(){
-        document.title="Point Summary";
+    componentDidMount() {
+        document.title = "Point Summary";
         this.getSummaryList();
     }
 
-    getSummaryList(){
+    getSummaryList(searchKeyWord = '') {
         requestApi("/index.php?action=PointSummary&method=List")
-            .then((res)=>{
-                res.json().then((json)=>{
+            .then((res) => {
+                res.json().then((json) => {
                     this.setState({
-                        pointSummaryList:json.Data.summaries
+                        pointSummaryList: json.Data.summaries
                     })
                 })
             })
     }
 
-    switchHidden(index){
-        let pointSummaryList=this.state.pointSummaryList;
-        pointSummaryList[index].Hidden=!pointSummaryList[index].Hidden;
-        this.setState({
-            pointSummaryList:pointSummaryList
-        });
-    }
-
-    deleteConnection(summaryId,tagId){
-        requestApi("/index.php?action=PointTagConnection&method=DeleteConnection",{
-            method:"post",
-            body:JSON.stringify({
-                PS_ID:summaryId,
-                TID:tagId
+    deleteConnection(summaryId, tagId) {
+        requestApi("/index.php?action=PointTagConnection&method=DeleteConnection", {
+            method: "post",
+            body: JSON.stringify({
+                PS_ID: summaryId,
+                TID: tagId
             }),
-            mode:"cors"
+            mode: "cors"
         })
-            .then((res)=>{
-                res.json().then((json)=>{
-                    if (json.Status==1){
+            .then((res) => {
+                res.json().then((json) => {
+                    if (json.Status == 1) {
                         message.success("Delete Success !")
                     }
                 })
             })
     }
-    render(){
+    render() {
         return <div className="container PointSummary">
             <Road />
-            <Divider
-                orientation="left"
-            >
-                我们的目标，是星辰大海
-            </Divider>
+            <hr />
             <Row>
                 <Col span={24}>
                     <Row>
                         <Button
                             type={"primary"}
-                            onClick={()=>{
+                            onClick={() => {
                                 this.setState({
-                                    EditPointID:0
+                                    EditPointID: 0
                                 })
                             }}
                         >
                             New Summary
-                        </Button>
-                        &nbsp;&nbsp;&nbsp;
-                        <Button
-                            type={"primary"}
-                            onClick={()=>{
-                                let list=[];
-                                this.state.pointSummaryList.map((Item)=>{
-                                    list.push({
-                                        ...Item,
-                                        Hidden:true
-                                    });
-                                });
-                                this.setState({
-                                    pointSummaryList:list
-                                })
-                            }}
-                        >
-                            Min
-                        </Button>
-                        &nbsp;&nbsp;&nbsp;
-                        <Button
-                            type={"primary"}
-                            onClick={()=>{
-                                let list=[];
-                                this.state.pointSummaryList.map((Item)=>{
-                                    list.push({
-                                        ...Item,
-                                        Hidden:false
-                                    });
-                                });
-                                this.setState({
-                                    pointSummaryList:list
-                                })
-                            }}
-                        >
-                            Max
                         </Button>
                     </Row>
                     <Row>
@@ -125,100 +77,79 @@ class PointSummary extends React.Component{
                 </Col>
             </Row>
             {
-                this.state.pointSummaryList.map((Item,index)=>{
-                    return(
+                this.state.pointSummaryList.map((Item, index) => {
+                    return (
                         <div
                             key={index}
-                            style={{marginBottom:"10px"}}
+                            className={"SummaryItem"}
                         >
-                            <Card
-                                title={
+                            <Row
+                                justify={"start"}
+                                align={"middle"}
+                            >
+                                <Col span={12}>
                                     <Row
                                         className={"clickAble"}
-                                        onClick={()=>{
-                                            this.switchHidden(index);
-                                        }}
                                     >
-                                        <Col span={16}>
-                                            <span
-                                                onClick={()=>{
+                                        <Col span={24}>
+                                            <Button
+                                                type={"primary"}
+                                                onClick={() => {
                                                     this.setState({
-                                                        EditPointID:Item.ID
+                                                        EditPointID: Item.ID
                                                     })
                                                 }}
+                                                ghost={true}
                                             >
                                                 {Item.Title}
-                                            </span>
-                                        </Col>
-                                        <Col span={8}>
-                                            {
-                                                Item.tags.map((tag,insideIndex)=>{
-                                                    return(
-                                                        <Tag
-                                                            closable={true}
-                                                            onClose={()=>{
-                                                                this.deleteConnection(Item.ID,tag.ID);
-                                                            }}
-                                                        >
-                                                            {tag.Tag}
-                                                        </Tag>
-                                                    )
-                                                })
-                                            }
+                                            </Button>
                                         </Col>
                                     </Row>
-                                }
-                                size={"small"}
-                            >
-                                {
-                                    Item.Hidden
-                                        ?""
-                                        :<div>
-                                            <Row>
-                                                <Col span={24}>
-                                                    {Item.note}
-                                                </Col>
-                                            </Row>
-                                            <Row
-                                                className={"YName"}
-                                                justify={"center"}
-                                                align={"middle"}
-                                            >
-                                                <Col span={4}>
-                                                    <span>{Item.YName}</span>
-                                                </Col>
-                                                {
-                                                    Item.url
-                                                        ?<Col span={4}>
-                                                            <Button
-                                                                type={"link"}
-                                                                target={"_blank"}
-                                                                href={Item.url}
-                                                            >
-                                                                link
-                                                            </Button>
-                                                        </Col>
-                                                        :''
-                                                }
-                                                {
-                                                    Item.file
-                                                        ?<Col span={4}>
-                                                            <Button
-                                                                type={"primary"}
-                                                                ghost={true}
-                                                            >
-                                                                {Item.file}
-                                                            </Button>
-                                                        </Col>
-                                                        :''
-                                                }
-                                                <Col span={12}>
-                                                    <span className={"dateInfo"}>AddTime : {Item.AddTime} / LastUpdateTime : {Item.LastUpdateTime}</span>
-                                                </Col>
-                                            </Row>
-                                        </div>
-                                }
-                            </Card>
+                                </Col>
+                                <Col span={8}>
+                                    {
+                                        Item.tags.map((tag, insideIndex) => {
+                                            return (
+                                                <Tag
+                                                    closable={true}
+                                                    onClose={() => {
+                                                        this.deleteConnection(Item.ID, tag.ID);
+                                                    }}
+                                                >
+                                                    {tag.Tag}
+                                                </Tag>
+                                            )
+                                        })
+                                    }
+                                </Col>
+                                <Col span={1}>
+                                    <Button
+                                        type={"link"}
+                                        target={"_blank"}
+                                        href={""}
+                                        icon={<FormOutlined />}
+                                    >
+                                    </Button>
+                                </Col>
+                                <Col span={1}>
+                                    <Button
+                                        type={"link"}
+                                        target={"_blank"}
+                                        href={""}
+                                        icon={<ShareAltOutlined />}
+                                    >
+                                    </Button>
+                                </Col>
+                                <Col span={1}>
+                                    <Button
+                                        type={"link"}
+                                        target={"_blank"}
+                                        href={""}
+                                        icon={<EyeOutlined />}
+                                    >
+                                    </Button>
+                                </Col>
+                            </Row>
                         </div>
                     )
                 })
@@ -227,16 +158,16 @@ class PointSummary extends React.Component{
                 <Drawer
                     title={"Point Summary Edit"}
                     width={800}
-                    visible={this.state.EditPointID!=-1}
+                    visible={this.state.EditPointID != -1}
                     onClose={
-                        ()=>{
+                        () => {
                             this.setState({
-                                EditPointID:-1
+                                EditPointID: -1
                             })
                         }
                     }
                 >
-                    <PointSummaryEdit 
+                    <PointSummaryEdit
                         ID={this.state.EditPointID}
                     />
                 </Drawer>

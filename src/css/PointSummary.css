@@ -1,7 +1,10 @@
 .PointSummary{
 
 }
-
+.PointSummary .SummaryItem{
+    border:1px solid #F0F0F0;
+    padding: 10px;
+}
 .PointSummary .dateInfo{
     font-size: 12px;
     color: #6a737d;
