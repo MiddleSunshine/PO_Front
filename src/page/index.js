@@ -1,7 +1,7 @@
 import React from 'react'
-import { Layout, Row, Col, Button, message, Input, Menu } from "antd";
+import { Layout, Row, Col, Button, message, Input, Menu, Tag } from "antd";
 import "../css/index.css"
-import { DingdingOutlined } from '@ant-design/icons';
+import { DingdingOutlined, FormOutlined } from '@ant-design/icons';
 import { requestApi } from "../config/functions";
 import Welcome from "../component/Welcome";
 
@@ -222,7 +222,7 @@ class Index extends React.Component {
                         <h2>Point Organization</h2>
                     </Row>
                     <Row align={"middle"} justify={"start"}>
-                        <Col offset={8} span={7}>
+                        <Col offset={8} span={8}>
                             <Input
                                 value={this.state.searchKeyWord}
                                 onChange={(e) => {
@@ -235,14 +235,14 @@ class Index extends React.Component {
                                 }}
                             />
                         </Col>
-                        <Col span={1}>
+                        {/* <Col span={1}>
                             <Button
                                 type={"primary"}
                                 onClick={() => this.searchPoints()}
                             >
                                 Search
                             </Button>
-                        </Col>
+                        </Col> */}
                     </Row>
                 </Content>
                 <Footer>
@@ -250,12 +250,20 @@ class Index extends React.Component {
                         return (
                             <Row>
                                 <Col offset={8} span={16}>
+                                    <Tag>{Item.status}</Tag>
                                     <Button
                                         type={"link"}
                                         href={"/pointTable/" + Item.ID}
                                         target={"_blank"}
                                     >
-                                        {Item.status} / {Item.keyword}
+                                        {Item.keyword}
+                                    </Button>
+                                    <Button
+                                        type={"link"}
+                                        href={"/point/edit/" + Item.ID}
+                                        target={"_blank"}
+                                        icon={<FormOutlined />}
+                                    >
                                     </Button>
                                 </Col>
                             </Row>
