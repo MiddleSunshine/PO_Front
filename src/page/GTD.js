@@ -47,6 +47,10 @@ const SHOW_FINISH_GTD_KEY='show_all_gtd_session_storage_key';
 const SHOW_FINISHTIME_GTD_YES='YES';
 const SHOW_FINISH_GTD_NO='NO';
 
+const SESSION_STORAGE_KEY_PRE='GTD_';
+const SESSION_STORAGE_YES='yes';
+const SESSION_STORAGE_NO='no';
+
 var hotKeysMap=[
     {hotkey:"shift+n",label:"快速创建子任务"},
     {hotkey:"shift+[",label:"向左缩进"},
@@ -126,9 +130,25 @@ class GTD extends React.Component{
         })
             .then((res)=>{
                 res.json().then((json)=>{
+                    let List=json.Data.List;
+                    let display=true;
+                    List.map((Item)=>{
+                        switch (sessionStorage.getItem(SESSION_STORAGE_KEY_PRE+Item.ID)){
+                            case SESSION_STORAGE_YES:
+                                display=true;
+                                break;
+                            case SESSION_STORAGE_NO:
+                                display=false;
+                                break;
+                            default:
+                                display=true;
+                        }
+                        Item.Display=display;
+                        return Item;
+                    });
                     this.setState({
                         Categories:json.Data.Categories,
-                        GTDs:json.Data.List
+                        GTDs:List
                     })
                 })
             })
@@ -138,6 +158,11 @@ class GTD extends React.Component{
         let GTDs=this.state.GTDs;
         GTDs.map((Item)=>{
             if(Item.ID==CategoryID){
+                if (e.target.checked){
+                    sessionStorage.setItem(SESSION_STORAGE_KEY_PRE+CategoryID,SESSION_STORAGE_YES);
+                }else{
+                    sessionStorage.setItem(SESSION_STORAGE_KEY_PRE+CategoryID,SESSION_STORAGE_NO);
+                }
                 Item.Display=e.target.checked;
             }
         });

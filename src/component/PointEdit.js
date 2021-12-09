@@ -285,6 +285,10 @@ class PointEdit extends React.Component{
                                         value={this.state.fileContent}
                                         onChange={(value)=>{
                                             this.setState({
+                                                point:{
+                                                    ...this.state.point,
+                                                    file:this.state.point.file?this.state.point.file:"笔记"
+                                                },
                                                 fileChanged:true,
                                                 fileContent:value
                                             })

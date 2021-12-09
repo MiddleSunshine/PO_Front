@@ -28,3 +28,10 @@ export function openLocalMarkdownFile(filePath,createWhileFileNotExists=false){
         })
     })
 }
+
+export function GetRandomNum(Min,Max)
+{
+    let Range = Max - Min;
+    let Rand = Math.random();
+    return(Min + Math.round(Rand * Range));
+}
