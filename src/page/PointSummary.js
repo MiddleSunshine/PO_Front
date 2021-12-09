@@ -5,13 +5,15 @@ import Road from "../component/road";
 import { requestApi } from "../config/functions";
 import { FormOutlined, ShareAltOutlined, EyeOutlined } from '@ant-design/icons';
 import "../css/PointSummary.css";
+import SummaryPoints from "../component/SummaryPoints";
 
 class PointSummary extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             EditPointID: -1,
-            pointSummaryList: []
+            pointSummaryList: [],
+            checkPoint: -1
         }
         this.getSummaryList = this.getSummaryList.bind(this);
     }
@@ -122,32 +124,36 @@ class PointSummary extends React.Component {
                                         })
                                     }
                                 </Col>
-                                <Col span={1}>
-                                    <Button
-                                        type={"link"}
-                                        target={"_blank"}
-                                        href={"/PointSummaryEdit/" + Item.ID + "/1"}
-                                        icon={<FormOutlined />}
+                                <Col span={3}>
+                                    <Row
+                                        justify={"start"}
+                                        align={"middle"}
                                     >
-                                    </Button>
-                                </Col>
-                                <Col span={1}>
-                                    <Button
-                                        type={"link"}
-                                        target={"_blank"}
-                                        href={""}
-                                        icon={<ShareAltOutlined />}
-                                    >
-                                    </Button>
-                                </Col>
-                                <Col span={1}>
-                                    <Button
-                                        type={"link"}
-                                        target={"_blank"}
-                                        href={"/PointSummaryEdit/" + Item.ID + "/0"}
-                                        icon={<EyeOutlined />}
-                                    >
-                                    </Button>
+                                        <Button
+                                            type={"link"}
+                                            target={"_blank"}
+                                            href={"/PointSummaryEdit/" + Item.ID + "/1"}
+                                            icon={<FormOutlined />}
+                                        >
+                                        </Button>
+                                        <Button
+                                            type={"link"}
+                                            icon={<ShareAltOutlined />}
+                                            onClick={() => {
+                                                this.setState({
+                                                    checkPoint: Item.ID
+                                                })
+                                            }}
+                                        >
+                                        </Button>
+                                        <Button
+                                            type={"link"}
+                                            target={"_blank"}
+                                            href={"/PointSummaryEdit/" + Item.ID + "/0"}
+                                            icon={<EyeOutlined />}
+                                        >
+                                        </Button>
+                                    </Row>
                                 </Col>
                             </Row>
                         </div>
@@ -169,6 +175,23 @@ class PointSummary extends React.Component {
                 >
                     <PointSummaryEdit
                         ID={this.state.EditPointID}
+                    />
+                </Drawer>
+            </Row>
+            <Row>
+                <Drawer
+                    title={"Points"}
+                    width={800}
+                    placement={"left"}
+                    onClose={() => {
+                        this.setState({
+                            checkPoint: -1
+                        })
+                    }}
+                    visible={this.state.checkPoint != -1}
+                >
+                    <SummaryPoints
+                        ID={this.state.checkPoint}
                     />
                 </Drawer>
             </Row>

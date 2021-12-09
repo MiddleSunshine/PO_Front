@@ -28,6 +28,10 @@ class SummaryPoints extends React.Component {
         this.getPoints(this.state.ID);
     }
 
+    componentWillReceiveProps(nextprops, nextContent) {
+        this.getPoints(nextprops.ID);
+    }
+
     getPoints(SummaryID) {
         if (SummaryID) {
             requestApi("/index.php?action=PointSummaryConnection&method=GetPoints&ID=" + SummaryID)

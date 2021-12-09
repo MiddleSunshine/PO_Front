@@ -19,3 +19,7 @@
 .PointSummary .clickAble{
     cursor: pointer;
 }
+
+.PointSummary a.ant-btn{
+    padding-top: 7px !important;
+}
