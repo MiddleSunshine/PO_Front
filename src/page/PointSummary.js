@@ -89,7 +89,12 @@ class PointSummary extends React.Component {
                                 justify={"start"}
                                 align={"middle"}
                             >
-                                <Col span={12}>
+                                <Col span={1}>
+                                    {
+                                        this.state.pointSummaryList.length - index
+                                    }
+                                </Col>
+                                <Col span={11}>
                                     <Row
                                         className={"clickAble"}
                                     >
