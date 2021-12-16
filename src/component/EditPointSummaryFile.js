@@ -1,4 +1,4 @@
-import { Button, Col, Row } from "antd";
+import { Button, Col, Row,message } from "antd";
 import React from "react";
 import SimpleMdeReact from "react-simplemde-editor";
 import MarkdownPreview from '@uiw/react-markdown-preview';
@@ -37,7 +37,20 @@ class EditPointSummaryFile extends React.Component {
     }
 
     savePointSummary() {
-
+        requestApi("/index.php?action=PointSummary&method=CommonSave",{
+            mode:"cors",
+            body:JSON.stringify(this.state.pointSummary),
+            method:"post"
+        })
+            .then((res)=>{
+                res.json().then((json)=>{
+                    if (json.Status==1){
+                        message.success("Save Success !");
+                    }else{
+                        message.warn(json.Message);    
+                    }
+                })
+            })
     }
 
 
@@ -57,6 +70,16 @@ class EditPointSummaryFile extends React.Component {
                         {
                             this.state.EditMode ? "Preview" : "Edit"
                         }
+                    </Button>
+                </Col>
+                <Col span={2}>
+                    <Button
+                        type={"primary"}
+                        onClick={()=>{
+                            this.savePointSummary();
+                        }}
+                    >
+                        Save
                     </Button>
                 </Col>
             </Row>
