@@ -49,15 +49,48 @@ class CheckList extends React.Component {
                         CheckList: json.Data.List
                     })
                 })
+            }).then(() => {
+                this.switchModal(-1);
             })
     }
 
-    updateCheckResult() {
-
+    updateCheckResult(Item) {
+        requestApi("/index.php?action=CheckResult&method=CommonSave", {
+            mode: "cors",
+            method: "post",
+            body: JSON.stringify({
+                ...Item
+            })
+        })
+            .then((res) => {
+                res.json().then((json) => {
+                    if (json.Status == 1) {
+                        this.getCheckList();
+                    }
+                })
+            })
     }
 
-    newCheckResult() {
-
+    newCheckResult(ListID, Result) {
+        requestApi("/index.php?action=CheckResult&method=NewResult", {
+            mode: "cors",
+            method: "post",
+            body: JSON.stringify({
+                ListID: ListID,
+                Result: Result,
+                Year: this.state.Year,
+                Month: this.state.Month,
+                Day: this.state.Day,
+                Hour: this.state.Hour
+            })
+        })
+            .then((res) => {
+                res.json().then((json) => {
+                    if (json.Status == 1) {
+                        this.getCheckList();
+                    }
+                })
+            })
     }
 
     updateCheckList(Item) {
@@ -191,6 +224,9 @@ class CheckList extends React.Component {
             <hr />
             {
                 this.state.CheckList.map((Item, outsideIndex) => {
+                    if (Item.Status == STATUS_INACTIVE && !Item.Result) {
+                        return '';
+                    }
                     return (
                         <Row
                             className='eachRow'
@@ -240,6 +276,18 @@ class CheckList extends React.Component {
                                         ? ''
                                         : <Input
                                             value={Item.Result && Item.Result.Result}
+                                            onChange={(e) => {
+                                                if (Item.Result) {
+                                                    this.updateCheckResult(
+                                                        {
+                                                            ...Item.Result,
+                                                            Result: e.target.value
+                                                        }
+                                                    );
+                                                } else {
+                                                    this.newCheckResult(Item.ID, e.target.value);
+                                                }
+                                            }}
                                         />
                                 }
                             </Col>
@@ -247,6 +295,14 @@ class CheckList extends React.Component {
                                 <Button
                                     icon={<CloseCircleOutlined />}
                                     type='link'
+                                    onClick={() => {
+                                        this.updateCheckList(
+                                            {
+                                                ...Item,
+                                                Status: STATUS_INACTIVE
+                                            }
+                                        );
+                                    }}
                                 ></Button>
                             </Col>
                             <Col span={1}>
