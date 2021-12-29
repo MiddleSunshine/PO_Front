@@ -32,6 +32,9 @@ class EditPointSummaryFile extends React.Component {
                             pointSummary: json.Data.PointSummary
                         })
                     })
+                        .then(()=>{
+                            document.title=this.state.pointSummary.Title
+                        });
                 })
         }
     }
@@ -57,6 +60,10 @@ class EditPointSummaryFile extends React.Component {
 
     render() {
         return <div className={"container"}>
+            <Row>
+                <h2>{this.state.pointSummary.Title}</h2>
+            </Row>
+            <hr/>
             <Row>
                 <Col span={2}>
                     <Button
