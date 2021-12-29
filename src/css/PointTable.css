@@ -12,6 +12,11 @@
 .Point_Table .ant-card-head{
     border-bottom: 1px solid #D9D9D9;
     background-color: #FAFAFA;
+    height: 30px;
+}
+
+.Point_Table .ant-card-head-title{
+    padding: 10px 0px;
 }
 
 .Point_Table .title{

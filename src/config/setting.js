@@ -32,3 +32,6 @@ var config = {
 }
 
 export default config
+
+export const SEARCHABLE_POINT='Point';
+export const SEARCHABLE_TITLE='Title';
