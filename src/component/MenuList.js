@@ -123,6 +123,15 @@ class MenuList extends React.Component {
                                         Me
                                     </a>
                                 </Menu.Item>
+                                <Menu.Item>
+                                    <a
+                                        href={"/Psychotherapy/CheckListHistory"}
+                                        target={"_blank"}
+                                        rel={"noreferrer"}
+                                    >
+                                        History
+                                    </a>
+                                </Menu.Item>
                             </Menu.ItemGroup>
                         </Menu.SubMenu>
                         <Menu.SubMenu

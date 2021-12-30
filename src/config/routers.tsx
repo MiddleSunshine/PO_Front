@@ -18,6 +18,7 @@ import OKR from "../page/OKR";
 import PointSummary from '../page/PointSummary';
 import EditPointSummaryFile from '../component/EditPointSummaryFile';
 import CheckList from '../page/CheckList';
+import CheckListHistory from "../page/CheckListHistory";
 
 interface router {
     path: string,
@@ -26,6 +27,10 @@ interface router {
 }
 
 const routers: Array<router> = [
+    {
+        path: "/Psychotherapy/CheckListHistory",
+        component: CheckListHistory
+    },
     {
         path: "/Psychotherapy/CheckList",
         component: CheckList
