@@ -753,7 +753,7 @@ class PointTable extends React.Component {
                                                                                             target={"_blank"}
                                                                                             style={{color: "white"}}
                                                                                         >
-                                                                                            {config.statusLabelMap[subPoint.status]}
+                                                                                            {subPoint.SearchAble==SEARCHABLE_POINT?config.statusLabelMap[subPoint.status]:"Title"}
                                                                                         </a>
                                                                                     }
                                                                                 >

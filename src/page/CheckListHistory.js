@@ -56,16 +56,21 @@ class CheckListHistory extends React.Component{
                 {
                     this.state.CheckListResult.map((List,outsideIndex)=>{
                         isTitle=List.type=='Title';
+                        if (List.Status == 'Inactive' && !List.Result.length) {
+                            return '';
+                        }
                         return(
                             <Row
                                 style={{borderBottom:"1px solid #f0f0f0",padding:"10px 0px"}}
                                 key={outsideIndex}
+                                justify={"center"}
+                                align={"middle"}
                             >
                                 <Col span={4} offset={isTitle?0:1} >
                                     {
                                         isTitle
-                                            ?<h3>{List.Title}</h3>
-                                            :<h4>{List.Title}</h4>
+                                            ?<span style={{fontSize:"18px",fontWeight:"bold"}}>{List.Title}</span>
+                                            :<span>{List.Title}</span>
                                     }
                                 </Col>
                                 <Col span={19}>
