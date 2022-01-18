@@ -1,23 +1,24 @@
 import React from 'react';
-import {Row, Col, Input, Form, message, Button, Drawer} from "antd";
+import { Row, Col, Input, Form, message, Button, Drawer } from "antd";
 import Road from "../component/road";
-import {requestApi} from "../config/functions";
+import { requestApi } from "../config/functions";
 import OKRItem from "../component/OKRItem";
 import EditOKR from "../component/EditOKR";
 import OKRRule from "../component/OKRRule";
+import MenuList from '../component/MenuList';
 
-const OKR_STATUS_MAP={
-    processing:{
-        label:"Processing",
-        value:"processing"
+const OKR_STATUS_MAP = {
+    processing: {
+        label: "Processing",
+        value: "processing"
     },
-    success:{
-        label:"Success",
+    success: {
+        label: "Success",
         value: "success"
     },
-    fail:{
-        label:"Fail",
-        value:"fail"
+    fail: {
+        label: "Fail",
+        value: "fail"
     }
 };
 
@@ -25,74 +26,76 @@ class OKR extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            Year:"",
-            Month:"",
-            OKR:{},
-            EditOKR:{},
-            showOKRRule:false
+            Year: "",
+            Month: "",
+            OKR: {},
+            EditOKR: {},
+            showOKRRule: false
         }
-        this.getOKR=this.getOKR.bind(this);
-        this.newOKR=this.newOKR.bind(this);
+        this.getOKR = this.getOKR.bind(this);
+        this.newOKR = this.newOKR.bind(this);
     }
 
-    getOKR(){
-        requestApi("/index.php?action=OKR&method=Index&Year="+this.state.Year+"&Month="+this.state.Month)
-            .then((res)=>{
-                res.json().then((json)=>{
+    getOKR() {
+        requestApi("/index.php?action=OKR&method=Index&Year=" + this.state.Year + "&Month=" + this.state.Month)
+            .then((res) => {
+                res.json().then((json) => {
                     this.setState({
-                        OKR:json.Data.OKR
+                        OKR: json.Data.OKR
                     })
                 })
             })
     }
 
-    newOKR(){
-        if (this.state.OKR.OKR){
-            requestApi("/index.php?action=OKR&method=StartOKR",{
-                mode:"cors",
-                method:"post",
-                body:JSON.stringify({
-                    OKR:this.state.OKR.OKR
+    newOKR() {
+        if (this.state.OKR.OKR) {
+            requestApi("/index.php?action=OKR&method=StartOKR", {
+                mode: "cors",
+                method: "post",
+                body: JSON.stringify({
+                    OKR: this.state.OKR.OKR
                 })
             })
-                .then((res)=>{
-                    res.json().then((json)=>{
-                        if (json.Status==1){
+                .then((res) => {
+                    res.json().then((json) => {
+                        if (json.Status == 1) {
                             this.getOKR();
-                        }else{
+                        } else {
                             message.warn(json.Message);
                         }
                     })
                 })
-                .catch(()=>{
+                .catch(() => {
                     message.error("System Error");
                 })
-        }else{
+        } else {
             message.warn("Please Input OKR !");
         }
     }
 
     componentDidMount() {
-        this.getOKR(this.state.Year,this.state.Month);
-        document.title="OKR";
+        this.getOKR(this.state.Year, this.state.Month);
+        document.title = "OKR";
     }
 
     render() {
         return <div className="container">
             <Row>
-                <Road />
+                <Col span={24}>
+                    <MenuList />
+                </Col>
             </Row>
             <hr />
             <Row>
                 <Col span={3}>
                     <Input
                         value={this.state.Year}
-                        onChange={(e)=>{
+                        onChange={(e) => {
                             this.setState({
-                                Year:e.target.value
+                                Year: e.target.value
                             })
                         }}
-                        onPressEnter={()=>{
+                        onPressEnter={() => {
                             this.getOKR();
                         }}
                         placeholder={"set the year"}
@@ -101,12 +104,12 @@ class OKR extends React.Component {
                 <Col span={4} offset={1}>
                     <Input
                         value={this.state.Month}
-                        onChange={(e)=>{
+                        onChange={(e) => {
                             this.setState({
-                                Month:e.target.value
+                                Month: e.target.value
                             })
                         }}
-                        onPressEnter={()=>{
+                        onPressEnter={() => {
                             this.getOKR();
                         }}
                         placeholder={"set the month from 1 to 12"}
@@ -115,9 +118,9 @@ class OKR extends React.Component {
                 <Col span={4} offset={1}>
                     <Button
                         type={"primary"}
-                        onClick={()=>{
+                        onClick={() => {
                             this.setState({
-                                showOKRRule:true
+                                showOKRRule: true
                             })
                         }}
                     >
@@ -128,16 +131,16 @@ class OKR extends React.Component {
             <hr />
             {
                 this.state.OKR.ID
-                    ?<Row
+                    ? <Row
                         justify={"center"}
                         align={"middle"}
                     >
                         <Col span={24}>
                             <Row>
                                 <h1
-                                    onClick={()=>{
+                                    onClick={() => {
                                         this.setState({
-                                            EditOKR:this.state.OKR
+                                            EditOKR: this.state.OKR
                                         })
                                     }}
                                 >
@@ -149,11 +152,11 @@ class OKR extends React.Component {
                             </Row>
                         </Col>
                     </Row>
-                    :""
+                    : ""
             }
             {
                 !this.state.OKR.ID
-                    ?<Row
+                    ? <Row
                         justify={"center"}
                         align={"middle"}
                     >
@@ -166,11 +169,11 @@ class OKR extends React.Component {
                                 >
                                     <Input
                                         value={this.state.OKR.OKR}
-                                        onChange={(e)=>{
+                                        onChange={(e) => {
                                             this.setState({
-                                                OKR:{
+                                                OKR: {
                                                     ...this.state.OKR,
-                                                    OKR:e.target.value
+                                                    OKR: e.target.value
                                                 }
                                             })
                                         }}
@@ -179,7 +182,7 @@ class OKR extends React.Component {
                                 <Form.Item>
                                     <Button
                                         type={"primary"}
-                                        onClick={()=>{
+                                        onClick={() => {
                                             this.newOKR();
                                         }}
                                     >
@@ -189,16 +192,16 @@ class OKR extends React.Component {
                             </Form>
                         </Col>
                     </Row>
-                    :<OKRItem
+                    : <OKRItem
                         OKR_ID={this.state.OKR.ID}
                     />
             }
             <div>
                 <Drawer
                     title={"Edit OKR"}
-                    onClose={()=>{
+                    onClose={() => {
                         this.setState({
-                            EditOKR:{}
+                            EditOKR: {}
                         })
                     }}
                     visible={this.state.EditOKR.ID}
@@ -215,9 +218,9 @@ class OKR extends React.Component {
                 <Drawer
                     title={"OKR Rule"}
                     visible={this.state.showOKRRule}
-                    onClose={()=>{
+                    onClose={() => {
                         this.setState({
-                            showOKRRule:false
+                            showOKRRule: false
                         })
                     }}
                     placement={"top"}

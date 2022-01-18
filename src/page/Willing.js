@@ -5,6 +5,7 @@ import { SketchOutlined } from '@ant-design/icons'
 import WillingDetail from "../component/WillingDetail";
 import Road from "../component/road";
 import { requestApi } from "../config/functions";
+import MenuList from "../component/MenuList";
 
 const { Header, Footer, Content } = Layout;
 
@@ -108,7 +109,9 @@ class Willing extends React.Component {
                 </Header>
                 <Content style={{ paddingLeft: "15px", paddingRight: "15px" }}>
                     <Row>
-                        <Road />
+                        <Col span={24}>
+                            <MenuList />
+                        </Col>
                     </Row>
                     <hr />
                     <Row>

@@ -12,7 +12,7 @@ import {
     Checkbox, Form, PageHeader, Tooltip, Badge, Select, Collapse
 } from "antd";
 import Road from "../component/road";
-import {requestApi} from "../config/functions";
+import { requestApi } from "../config/functions";
 import PointEdit from "../component/PointEdit";
 import Hotkeys from 'react-hot-keys'
 import {
@@ -24,17 +24,18 @@ import {
     MinusCircleOutlined
 } from '@ant-design/icons';
 import "../css/PointTable.css"
-import config, {SEARCHABLE_POINT, SEARCHABLE_TITLE} from "../config/setting";
+import config, { SEARCHABLE_POINT, SEARCHABLE_TITLE } from "../config/setting";
 import SubPointList from "../component/SubPointList";
+import MenuList from "../component/MenuList";
 
 var hotkeys_maps = [
-    {hotkey: "shift+e", label: "Edit"},
-    {hotkey: "shift+up", label: "Move Up"},
-    {hotkey: "shift+down", label: "Move Down"},
-    {hotkey: "shift+left", label: "Move Left"},
-    {hotkey: "shift+right", label: "Move Right"},
-    {hotkey: "shift+i", label: "Edit"},
-    {hotkey: "shift+n", label: "New Point"}
+    { hotkey: "shift+e", label: "Edit" },
+    { hotkey: "shift+up", label: "Move Up" },
+    { hotkey: "shift+down", label: "Move Down" },
+    { hotkey: "shift+left", label: "Move Left" },
+    { hotkey: "shift+right", label: "Move Right" },
+    { hotkey: "shift+i", label: "Edit" },
+    { hotkey: "shift+n", label: "New Point" }
 ];
 
 const ACTIVE_TYPE_SUB_POINT = 'SubPoint';
@@ -302,8 +303,8 @@ class PointTable extends React.Component {
                                 }
                             })
                     }).catch(() => {
-                    message.error("System Error !")
-                })
+                        message.error("System Error !")
+                    })
             })
             .then(() => {
                 this.setState({
@@ -342,8 +343,8 @@ class PointTable extends React.Component {
                         }
                     })
                 }).catch(() => {
-                message.error("System Error");
-            })
+                    message.error("System Error");
+                })
         } else {
             let newPoint = {
                 keyword: this.state.newPointKeyword,
@@ -436,7 +437,7 @@ class PointTable extends React.Component {
                                 title={"Click To Update"}
                             >
                                 <span
-                                    style={{cursor: "pointer"}}
+                                    style={{ cursor: "pointer" }}
                                     onClick={() => {
                                         this.openDrawer(this.state.parentPoint);
                                     }}
@@ -446,12 +447,12 @@ class PointTable extends React.Component {
                             </Tooltip>
                         }
                         subTitle={"Status:" + this.state.parentPoint.status + " / Point:" + this.state.parentPoint.Point}
-                        breadcrumb={<Road/>}
+                        breadcrumb={<MenuList />}
                         footer={this.state.parentPoint.note}
                         ghost={true}
                     />
                 </Row>
-                <hr/>
+                <hr />
                 <Row
                     align={"middle"}
                     justify={"start"}
@@ -459,7 +460,7 @@ class PointTable extends React.Component {
                     <Col span={3}>
                         <Button
                             type={"primary"}
-                            icon={<PlusCircleOutlined/>}
+                            icon={<PlusCircleOutlined />}
                             onClick={() => {
                                 this.openNewPointModal(this.state.id)
                             }}
@@ -470,7 +471,7 @@ class PointTable extends React.Component {
                     <Col span={3}>
                         <Button
                             type={"primary"}
-                            icon={<FormOutlined/>}
+                            icon={<FormOutlined />}
                             onClick={() => {
                                 switch (this.state.activeType) {
                                     case ACTIVE_TYPE_PARENT_POINT:
@@ -488,7 +489,7 @@ class PointTable extends React.Component {
                     <Col span={3}>
                         <Button
                             type={"primary"}
-                            icon={<UnorderedListOutlined/>}
+                            icon={<UnorderedListOutlined />}
                             onClick={() => {
                                 switch (this.state.activeType) {
                                     case ACTIVE_TYPE_PARENT_POINT:
@@ -514,7 +515,7 @@ class PointTable extends React.Component {
                     </Col>
                     <Col span={6}>
                         <Select
-                            style={{width: "100%"}}
+                            style={{ width: "100%" }}
                             mode={"multiple"}
                             placeholder={"Status Filter"}
                             showSearch={true}
@@ -539,7 +540,7 @@ class PointTable extends React.Component {
                         </Select>
                     </Col>
                 </Row>
-                <hr/>
+                <hr />
                 <Row>
                     {
                         this.state.points.map((point, index) => {
@@ -548,7 +549,7 @@ class PointTable extends React.Component {
                                     span={2}
                                     key={index}
                                     className={"title"}
-                                    style={{color: point.Hidden ? "#9A9A9A" : "black"}}
+                                    style={{ color: point.Hidden ? "#9A9A9A" : "black" }}
                                     onClick={() => {
                                         let points = this.state.points;
                                         points[index].Hidden = !points[index].Hidden;
@@ -568,7 +569,7 @@ class PointTable extends React.Component {
                         })
                     }
                 </Row>
-                <hr/>
+                <hr />
                 <Row>
                     {
                         this.state.points.map((point, outsideIndex) => {
@@ -586,7 +587,7 @@ class PointTable extends React.Component {
                                                     title={"Open New Sub Point Page"}
                                                 >
                                                     <a
-                                                        style={{color: "white"}}
+                                                        style={{ color: "white" }}
                                                         target={"_blank"}
                                                         href={"/pointTable/" + point.ID}
                                                     >{point.SearchAble == SEARCHABLE_POINT ? config.statusLabelMap[point.status] : "Title"}
@@ -639,27 +640,27 @@ class PointTable extends React.Component {
                                                                                 type={"primary"}
                                                                                 shape={"circle"}
                                                                                 size={"small"}
-                                                                                onClick={(e)=>{
+                                                                                onClick={(e) => {
                                                                                     e.preventDefault();
                                                                                     this.removeCollection(point.ID, this.state.id);
                                                                                 }}
                                                                             >
-                                                                                {outsideIndex+1}
+                                                                                {outsideIndex + 1}
                                                                             </Button>
                                                                             <Button
                                                                                 ghost={true}
-                                                                                onClick={()=>{
+                                                                                onClick={() => {
                                                                                     this.openDrawer(point, false);
                                                                                 }}
                                                                             >
                                                                                 <span
-                                                                                  style={{
-                                                                                      fontSize: outsideIndexActive ? "18px" : "15px",
-                                                                                      color: outsideIndexActive ? "black" : point.SearchAble==SEARCHABLE_POINT?config.statusBackGroupColor[point.status]:'black'
-                                                                                  }}
-                                                                                 >
-                                                                                {point.keyword}
-                                                                            </span>
+                                                                                    style={{
+                                                                                        fontSize: outsideIndexActive ? "18px" : "15px",
+                                                                                        color: outsideIndexActive ? "black" : point.SearchAble == SEARCHABLE_POINT ? config.statusBackGroupColor[point.status] : 'black'
+                                                                                    }}
+                                                                                >
+                                                                                    {point.keyword}
+                                                                                </span>
                                                                             </Button>
                                                                         </Row>
                                                                 }
@@ -722,9 +723,9 @@ class PointTable extends React.Component {
                                                                                     >
                                                                                         <Button
                                                                                             type={"link"}
-                                                                                            style={{color:color}}
+                                                                                            style={{ color: color }}
                                                                                             icon={<MinusCircleOutlined />}
-                                                                                            onClick={(e)=>{
+                                                                                            onClick={(e) => {
                                                                                                 this.removeCollection(subPoint.ID, point.ID)
                                                                                                 e.preventDefault();
                                                                                             }}
@@ -740,8 +741,8 @@ class PointTable extends React.Component {
                                                                                                 this.openDrawer(subPoint, false);
                                                                                             }}
                                                                                         >
-                                                                                                {subPoint.keyword}
-                                                                                            </span>
+                                                                                            {subPoint.keyword}
+                                                                                        </span>
                                                                                     </Row>
                                                                             }
                                                                             extra={
@@ -751,9 +752,9 @@ class PointTable extends React.Component {
                                                                                         <a
                                                                                             href={"/pointTable/" + subPoint.ID}
                                                                                             target={"_blank"}
-                                                                                            style={{color: "white"}}
+                                                                                            style={{ color: "white" }}
                                                                                         >
-                                                                                            {subPoint.SearchAble==SEARCHABLE_POINT?config.statusLabelMap[subPoint.status]:"Title"}
+                                                                                            {subPoint.SearchAble == SEARCHABLE_POINT ? config.statusLabelMap[subPoint.status] : "Title"}
                                                                                         </a>
                                                                                     }
                                                                                 >
@@ -769,7 +770,7 @@ class PointTable extends React.Component {
                                                                                     )
                                                                                 }}
                                                                             >
-                                                                                File : {subPoint.file}<br/>Note
+                                                                                File : {subPoint.file}<br />Note
                                                                                 : {subPoint.note}
                                                                             </div>
                                                                         </Collapse.Panel>
@@ -832,7 +833,7 @@ class PointTable extends React.Component {
                             this.newPoint()
                         }}
                     >
-                        <Row style={{paddingBottom: "5px"}}>
+                        <Row style={{ paddingBottom: "5px" }}>
                             <Col span={24}>
                                 <Select
                                     value={this.state.newPointType}
@@ -865,7 +866,7 @@ class PointTable extends React.Component {
                                 placeholder={"Please Input The Keyword"}
                             />
                         </Row>
-                        <hr/>
+                        <hr />
                         <Row>
                             <Col span={24}>
                                 <Form

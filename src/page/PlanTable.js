@@ -1,5 +1,5 @@
 import React from "react";
-import {Row, Col, Button, Modal, Tabs, PageHeader, message, Switch} from 'antd'
+import { Row, Col, Button, Modal, Tabs, PageHeader, message, Switch } from 'antd'
 import Road from "../component/road";
 import PlanDetail from "../component/PlanDetail";
 import PlanDetailEdit from "../component/PlanDetailEdit";
@@ -8,75 +8,78 @@ import {
     FormOutlined
 } from '@ant-design/icons';
 import MarkdownPreview from '@uiw/react-markdown-preview';
-import {requestApi} from "../config/functions";
+import { requestApi } from "../config/functions";
+import MenuList from "../component/MenuList";
 
 const { TabPane } = Tabs;
 
-class PlanTable extends React.Component{
+class PlanTable extends React.Component {
     constructor(props) {
         super(props);
-        this.state={
-            plans:[],
-            planEditId:0,
-            planModalVisible:false,
-            activeTabID:0,
-            activePlan:{}
+        this.state = {
+            plans: [],
+            planEditId: 0,
+            planModalVisible: false,
+            activeTabID: 0,
+            activePlan: {}
         }
-        this.hiddenModal=this.hiddenModal.bind(this);
-        this.showModal=this.showModal.bind(this);
-        this.getTable=this.getTable.bind(this);
+        this.hiddenModal = this.hiddenModal.bind(this);
+        this.showModal = this.showModal.bind(this);
+        this.getTable = this.getTable.bind(this);
     }
-    hiddenModal(){
+    hiddenModal() {
         this.setState({
-            planModalVisible:false
+            planModalVisible: false
         });
     }
-    showModal(ID){
+    showModal(ID) {
         this.setState({
-            planEditId:ID,
-            planModalVisible:true
+            planEditId: ID,
+            planModalVisible: true
         });
     }
-    getTable(displayInTable='Yes'){
-        requestApi("/index.php?action=Plan&method=List&DisplayInTable="+displayInTable)
-            .then((res)=>{
-                res.json().then((json)=>{
+    getTable(displayInTable = 'Yes') {
+        requestApi("/index.php?action=Plan&method=List&DisplayInTable=" + displayInTable)
+            .then((res) => {
+                res.json().then((json) => {
                     this.setState({
-                        plans:json.Data
+                        plans: json.Data
                     });
-                }).then(()=>{
-                    if (this.state.plans.length>0){
-                        let activePlan=this.state.plans[0];
+                }).then(() => {
+                    if (this.state.plans.length > 0) {
+                        let activePlan = this.state.plans[0];
                         this.setState({
-                            activeTabID:activePlan.ID,
-                            activePlan:activePlan
+                            activeTabID: activePlan.ID,
+                            activePlan: activePlan
                         });
                     }
                 })
-                    .then(()=>{
+                    .then(() => {
                         message.success("Page Load Success!")
                     })
             })
     }
     componentDidMount() {
         this.getTable();
-        document.title="Plan Table";
+        document.title = "Plan Table";
     }
 
     render() {
-        return(
+        return (
             <div className="container">
                 <Row>
-                    <Road />
+                    <Col span={24}>
+                        <MenuList />
+                    </Col>
                 </Row>
-                <hr/>
+                <hr />
                 <Row
                     justify={"start"}
                     align={"middle"}
                 >
                     <Col span={3}>
                         <Button
-                            onClick={()=>{
+                            onClick={() => {
                                 this.showModal(0);
                             }}
                             type={"primary"}
@@ -87,7 +90,7 @@ class PlanTable extends React.Component{
                     </Col>
                     <Col span={3}>
                         <Button
-                            onClick={()=>{
+                            onClick={() => {
                                 this.showModal(this.state.activeTabID);
                             }}
                             type={"primary"}
@@ -101,17 +104,17 @@ class PlanTable extends React.Component{
                             checkedChildren={"Only Show Display"}
                             unCheckedChildren={"Show Hidden"}
                             defaultChecked
-                            onChange={(checked,e)=>{
-                                if (checked){
+                            onChange={(checked, e) => {
+                                if (checked) {
                                     this.getTable()
-                                }else{
+                                } else {
                                     this.getTable('No')
                                 }
                             }}
                         />
                     </Col>
                 </Row>
-                <hr/>
+                <hr />
                 <Row>
                     <Col span={6}>
                         <span>
@@ -139,25 +142,25 @@ class PlanTable extends React.Component{
                         source={this.state.activePlan.Note}
                     />
                 </Row>
-                <hr/>
+                <hr />
                 <Row>
                     <Col span={24}>
                         <Tabs
-                            onChange={(activeKey)=>{
-                                let activePlan={};
-                                this.state.plans.map((Item)=>{
-                                    if (Item.ID==activeKey){
-                                        activePlan=Item;
+                            onChange={(activeKey) => {
+                                let activePlan = {};
+                                this.state.plans.map((Item) => {
+                                    if (Item.ID == activeKey) {
+                                        activePlan = Item;
                                     }
                                 })
                                 this.setState({
-                                    activeTabID:activeKey,
-                                    activePlan:activePlan
+                                    activeTabID: activeKey,
+                                    activePlan: activePlan
                                 });
                             }}
                         >
                             {
-                                this.state.plans.map((Item)=>{
+                                this.state.plans.map((Item) => {
                                     return <TabPane
                                         tab={Item.Name}
                                         key={Item.ID}
@@ -174,8 +177,8 @@ class PlanTable extends React.Component{
                 <Row>
                     <Modal
                         visible={this.state.planModalVisible}
-                        onOk={()=>this.hiddenModal()}
-                        onCancel={()=>this.hiddenModal()}
+                        onOk={() => this.hiddenModal()}
+                        onCancel={() => this.hiddenModal()}
                         title={"Plan Update"}
                         width={1800}
                     >

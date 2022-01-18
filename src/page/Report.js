@@ -1,84 +1,85 @@
 import React from "react";
 import ReactECharts from "echarts-for-react";
 import config from "../config/setting";
-import {DatePicker, Button, Row, Col} from 'antd';
+import { DatePicker, Button, Row, Col } from 'antd';
 import Road from "../component/road";
-import {requestApi} from "../config/functions";
+import { requestApi } from "../config/functions";
+import MenuList from "../component/MenuList";
 
-class Report extends React.Component{
+class Report extends React.Component {
     constructor(props) {
         super(props);
-        this.state={
-            data:[],
-            xData:[],
-            pointData:[],
-            pointXData:[],
-            startTime:'',
-            endTime:'',
-            percentData:[]
+        this.state = {
+            data: [],
+            xData: [],
+            pointData: [],
+            pointXData: [],
+            startTime: '',
+            endTime: '',
+            percentData: []
         }
-        this.getData=this.getData.bind(this);
-        this.getPercentData=this.getPercentData.bind(this);
-        this.getPointAmount=this.getPointAmount.bind(this);
+        this.getData = this.getData.bind(this);
+        this.getPercentData = this.getPercentData.bind(this);
+        this.getPointAmount = this.getPointAmount.bind(this);
     }
     componentDidMount() {
-        (async ()=>{})()
-            .then(()=>{
+        (async () => { })()
+            .then(() => {
                 this.getData();
             })
-            .then(()=>{
+            .then(() => {
                 this.getPointAmount();
             })
-            .then((()=>{
+            .then((() => {
                 this.getPercentData();
             }))
-            .then(()=>{
-                document.title="Report";
+            .then(() => {
+                document.title = "Report";
             })
     }
 
-    getData(){
-        requestApi("/index.php?action=Report&method=Index",{
-            mode:"cors",
-            method:"post",
-            body:JSON.stringify({
-                startTime:this.state.startTime,
-                endTime:this.state.endTime
+    getData() {
+        requestApi("/index.php?action=Report&method=Index", {
+            mode: "cors",
+            method: "post",
+            body: JSON.stringify({
+                startTime: this.state.startTime,
+                endTime: this.state.endTime
             })
-        }).then((res)=>{
-            res.json().then((json)=>{
+        }).then((res) => {
+            res.json().then((json) => {
                 this.setState({
-                    data:json.Data.points,
-                    xData:json.Data.xData
+                    data: json.Data.points,
+                    xData: json.Data.xData
                 })
             })
         })
     }
 
-    getPointAmount(){
-        requestApi("/index.php?action=Report&method=Points",{
-            mode:"cors",
-            method:"post",
-            body:JSON.stringify({
-                startTime:this.state.startTime,
-                endTime:this.state.endTime
+    getPointAmount() {
+        requestApi("/index.php?action=Report&method=Points", {
+            mode: "cors",
+            method: "post",
+            body: JSON.stringify({
+                startTime: this.state.startTime,
+                endTime: this.state.endTime
             })
-        }).then((res)=>{
-            res.json().then((json)=>{
+        }).then((res) => {
+            res.json().then((json) => {
                 this.setState({
-                    pointData:json.Data.point,
-                    pointXData:json.Data.xData
+                    pointData: json.Data.point,
+                    pointXData: json.Data.xData
                 })
             })
         })
     }
 
-    getPercentData(){
+    getPercentData() {
         requestApi("/index.php?action=report&method=getpercent",)
-            .then((res)=>{
-                res.json().then((json)=>{
+            .then((res) => {
+                res.json().then((json) => {
                     this.setState({
-                        percentData:json.Data
+                        percentData: json.Data
                     })
                 })
             })
@@ -92,7 +93,7 @@ class Report extends React.Component{
                 trigger: 'axis'
             },
             legend: {
-                data: config.statusMap.map((Item)=>{
+                data: config.statusMap.map((Item) => {
                     return Item.value;
                 })
             },
@@ -104,8 +105,8 @@ class Report extends React.Component{
             },
             toolbox: {
                 feature: {
-                    magicType: {show: true, type: ['line', 'bar']},
-                    restore: {show: true},
+                    magicType: { show: true, type: ['line', 'bar'] },
+                    restore: { show: true },
                     saveAsImage: {}
                 }
             },
@@ -119,7 +120,7 @@ class Report extends React.Component{
             },
             series: this.state.data
         };
-        let pointOption={
+        let pointOption = {
             title: {
                 text: 'Point Report'
             },
@@ -132,13 +133,13 @@ class Report extends React.Component{
                 bottom: '3%',
                 containLabel: true
             },
-            legend:{
-                data:['Point Amount','Point','Willing','Point Rest']
+            legend: {
+                data: ['Point Amount', 'Point', 'Willing', 'Point Rest']
             },
             toolbox: {
                 feature: {
-                    magicType: {show: true, type: ['line', 'bar']},
-                    restore: {show: true},
+                    magicType: { show: true, type: ['line', 'bar'] },
+                    restore: { show: true },
                     saveAsImage: {}
                 }
             },
@@ -189,32 +190,32 @@ class Report extends React.Component{
                 }
             ]
         };
-        let eachPartStyle={
-            paddingBottom:"60px"
+        let eachPartStyle = {
+            paddingBottom: "60px"
         };
-        return(
+        return (
             <div className="container">
-                <Road />
-                <hr/>
+                <MenuList />
+                <hr />
                 <Row>
                     <DatePicker.RangePicker
                         format="YYYY-MM-DD"
-                        onChange={(date,dateString)=>{
+                        onChange={(date, dateString) => {
                             this.setState({
-                                startTime:dateString[0],
-                                endTime:dateString[1]
+                                startTime: dateString[0],
+                                endTime: dateString[1]
                             })
                         }}
                     />
                     &nbsp;&nbsp;
                     <Button
                         type={"primary"}
-                        onClick={()=>this.getData()}
+                        onClick={() => this.getData()}
                     >
                         Search
                     </Button>
                 </Row>
-                <hr/>
+                <hr />
                 <Row style={eachPartStyle}>
                     <Col span={24}>
                         <ReactECharts

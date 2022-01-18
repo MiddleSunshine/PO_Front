@@ -1,25 +1,26 @@
 import React from "react";
+import MenuList from "../component/MenuList";
 import PointEdit from "../component/PointEdit";
 import Road from "../component/road";
 
-class PointEditor extends React.Component{
+class PointEditor extends React.Component {
     constructor(props) {
         super(props);
-        this.state={
-            ID:props.match.params.pid
+        this.state = {
+            ID: props.match.params.pid
         }
     }
     componentDidMount() {
-        document.title="Point Edit";
+        document.title = "Point Edit";
     }
 
     render() {
         return (
             <div className={"container"}>
                 <div>
-                    <Road />
+                    <MenuList />
                 </div>
-                <hr/>
+                <hr />
                 <div>
                     <PointEdit
                         ID={this.state.ID}
