@@ -1,7 +1,6 @@
 import { Button, Card, Col, Divider, Drawer, message, PageHeader, Row, Tag } from "antd";
 import React from "react";
 import PointSummaryEdit from "../component/PointSummaryEdit";
-import Road from "../component/road";
 import { requestApi } from "../config/functions";
 import { FormOutlined, ShareAltOutlined, EyeOutlined } from '@ant-design/icons';
 import "../css/PointSummary.css";

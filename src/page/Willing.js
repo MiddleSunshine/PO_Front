@@ -3,7 +3,6 @@ import config from "../config/setting";
 import { Table, Layout, Row, Col, Button, Modal, Tag, message } from 'antd'
 import { SketchOutlined } from '@ant-design/icons'
 import WillingDetail from "../component/WillingDetail";
-import Road from "../component/road";
 import { requestApi } from "../config/functions";
 import MenuList from "../component/MenuList";
 

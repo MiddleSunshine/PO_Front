@@ -11,7 +11,6 @@ import {
     Modal,
     Checkbox, Form, PageHeader, Tooltip, Badge, Select, Collapse
 } from "antd";
-import Road from "../component/road";
 import { requestApi } from "../config/functions";
 import PointEdit from "../component/PointEdit";
 import Hotkeys from 'react-hot-keys'

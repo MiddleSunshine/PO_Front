@@ -4,7 +4,6 @@ import { Card, Select, Row, Col, Button, message, Switch, Tooltip, Modal } from 
 import "./../css/Collector.css"
 import { SaveOutlined, PlusCircleOutlined, DeleteOutlined, HeartOutlined, FileMarkdownOutlined } from '@ant-design/icons';
 import config from "../config/setting";
-import Road from "../component/road";
 import { requestApi } from "../config/functions";
 import MenuList from '../component/MenuList';
 const { Option } = Select;
