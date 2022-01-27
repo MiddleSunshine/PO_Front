@@ -21,7 +21,7 @@ import {
     FormOutlined,
     DingdingOutlined,
     CloseOutlined,
-    MinusCircleOutlined
+    MinusCircleOutlined,
 } from '@ant-design/icons';
 import "../css/PointTable.css"
 import config, { SEARCHABLE_POINT, SEARCHABLE_TITLE } from "../config/setting";
@@ -896,8 +896,16 @@ class PointTable extends React.Component {
                                                                 }}
                                                             />
                                                         </Col>
-                                                        <Col span={22} offset={1}>
-                                                            {point.keyword}
+                                                        <Col span={1}>
+                                                            <Button
+                                                                icon={<FormOutlined />}
+                                                                type={"link"}
+                                                                href={"/point/edit/" + point.ID}// 
+                                                                target={"_blank"}
+                                                            ></Button>
+                                                        </Col>
+                                                        <Col span={21} offset={1}>
+                                                            <a target={"_blank"} href={"/pointTable/" + point.ID}>{point.keyword}</a>
                                                         </Col>
                                                     </Row>
                                                 </Form.Item>
@@ -909,8 +917,8 @@ class PointTable extends React.Component {
                         </Row>
                     </Modal>
                 </Row>
-            </div>
-        </Hotkeys>
+            </div >
+        </Hotkeys >
     }
 }
 
