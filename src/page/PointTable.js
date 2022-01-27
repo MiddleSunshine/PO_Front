@@ -5,13 +5,11 @@ import {
     Col,
     Drawer,
     Button,
-    Tag,
     Input,
     message,
     Modal,
     Checkbox, Form, PageHeader, Tooltip, Badge, Select, Collapse
 } from "antd";
-import Road from "../component/road";
 import { requestApi } from "../config/functions";
 import PointEdit from "../component/PointEdit";
 import Hotkeys from 'react-hot-keys'
@@ -19,8 +17,6 @@ import {
     PlusCircleOutlined,
     UnorderedListOutlined,
     FormOutlined,
-    DingdingOutlined,
-    CloseOutlined,
     MinusCircleOutlined,
 } from '@ant-design/icons';
 import "../css/PointTable.css"
