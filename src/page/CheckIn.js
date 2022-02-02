@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, Col, Menu, message, Row, Table } from "antd";
+import {Button, Card, Col, Menu, message, Row, Table} from "antd";
 import { requestApi } from "../config/functions";
 import MenuList from "../component/MenuList";
 
@@ -8,11 +8,13 @@ class CheckIn extends React.Component {
         super(props);
         this.state = {
             dataSource: [],
-            amount: 0
+            amount: 0,
+            Calendar:[]
         }
         this.startWork = this.startWork.bind(this);
         this.endWork = this.endWork.bind(this);
         this.getTableData = this.getTableData.bind(this);
+        this.InitCalendar=this.InitCalendar.bind(this);
     }
     startWork() {
         requestApi("/index.php?action=ClockIn&method=StartWork")
@@ -53,7 +55,19 @@ class CheckIn extends React.Component {
             })
     }
     componentDidMount() {
-        this.getTableData()
+        // this.getTableData()
+        this.InitCalendar();
+    }
+
+    InitCalendar(){
+        requestApi("/index.php?action=Calendar&method=InitCalendar")
+            .then((res)=>{
+                res.json().then((json)=>{
+                    this.setState({
+                        Calendar:json.Data.Calendar
+                    })
+                })
+            })
     }
 
     render() {
@@ -94,39 +108,54 @@ class CheckIn extends React.Component {
             </Row>
             <hr />
             <Row>
-                <Col span={24}>
-                    <Table
-                        pagination={false}
-                        dataSource={this.state.dataSource}
-                        columns={[
-                            {
-                                title: "Date",
-                                render: (record, text, index) => {
-                                    return record.Month + "-" + record.Day
-                                }
-                            },
-                            {
-                                title: "Start Work",
-                                dataIndex: "working_hours",
-                                key: "ID"
-                            },
-                            {
-                                title: "Finish Work",
-                                dataIndex: "off_work_time",
-                                key: "ID"
-                            },
-                            {
-                                title: "Result",
-                                render: (record, text, index) => {
-                                    return <div>
-                                        {record.Result} mins
-                                    </div>;
-                                }
-                            }
-                        ]}
-                    />
+                <Col span={3}>
+                    <h3>Mon</h3>
                 </Col>
+                <Col span={3}>
+                    <h3>Tue</h3>
+                </Col>
+                <Col span={3}>
+                    <h3>Wed</h3>
+                </Col>
+                <Col span={3}>
+                    <h3>Thu</h3>
+                </Col>
+                <Col span={3}>
+                    <h3>Fri</h3>
+                </Col>
+                <Col span={3}>
+                    <h3>Sat</h3>
+                </Col>
+                <Col span={3}>
+                    <h3>Sun</h3>
+                </Col>
+            </Row>
+            <Row>
+                <Col span={24}>
+                    {
+                        this.state.Calendar.map((row,outsideIndex)=>{
+                            return(
+                                <Row
+                                    key={outsideIndex}
+                                >
+                                    {
+                                        row.map((item,insideIndex)=>{
+                                            return(
+                                                <Col span={3}>
+                                                    <Card
+                                                        title={item.Date}
+                                                    >
 
+                                                    </Card>
+                                                </Col>
+                                            )
+                                        })
+                                    }
+                                </Row>
+                            )
+                        })
+                    }
+                </Col>
             </Row>
         </div>
     }
