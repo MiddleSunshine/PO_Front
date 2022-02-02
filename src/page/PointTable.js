@@ -5,7 +5,6 @@ import {
     Col,
     Drawer,
     Button,
-    Tag,
     Input,
     message,
     Modal,
@@ -18,8 +17,6 @@ import {
     PlusCircleOutlined,
     UnorderedListOutlined,
     FormOutlined,
-    DingdingOutlined,
-    CloseOutlined,
     MinusCircleOutlined
 } from '@ant-design/icons';
 import "../css/PointTable.css"
@@ -430,6 +427,11 @@ class PointTable extends React.Component {
         >
             <div className="container Point_Table">
                 <Row>
+                    <Col span={24}>
+                        <MenuList />
+                    </Col>
+                </Row>
+                <Row>
                     <PageHeader
                         title={
                             <Tooltip
@@ -446,7 +448,6 @@ class PointTable extends React.Component {
                             </Tooltip>
                         }
                         subTitle={"Status:" + this.state.parentPoint.status + " / Point:" + this.state.parentPoint.Point}
-                        breadcrumb={<MenuList />}
                         footer={this.state.parentPoint.note}
                         ghost={true}
                     />
@@ -895,8 +896,21 @@ class PointTable extends React.Component {
                                                                 }}
                                                             />
                                                         </Col>
-                                                        <Col span={22} offset={1}>
-                                                            {point.keyword}
+                                                        <Col span={1} offset={1}>
+                                                            <a
+                                                                href={"/point/edit/"+point.ID}
+                                                                target={"_blank"}
+                                                            >
+                                                                <FormOutlined />
+                                                            </a>
+                                                        </Col>
+                                                        <Col span={20}>
+                                                            <a
+                                                                href={"/pointTable/"+point.ID}
+                                                                target={"_blank"}
+                                                            >
+                                                                {point.keyword}
+                                                            </a>
                                                         </Col>
                                                     </Row>
                                                 </Form.Item>
