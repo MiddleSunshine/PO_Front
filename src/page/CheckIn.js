@@ -1,13 +1,14 @@
 import React from "react";
-import {Button, Card, Col, Menu, message, Row, Table} from "antd";
+import { Button, Card, Col, Menu, message, Row, Table} from "antd";
 import { requestApi } from "../config/functions";
 import MenuList from "../component/MenuList";
+import "../css/ClockIn.css"
 
 class CheckIn extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            dataSource: [],
+            dataSource: {},
             amount: 0,
             Calendar:[]
         }
@@ -55,8 +56,13 @@ class CheckIn extends React.Component {
             })
     }
     componentDidMount() {
-        // this.getTableData()
-        this.InitCalendar();
+        (async ()=>{})()
+            .then(()=>{
+                this.InitCalendar();
+            })
+            .then(()=>{
+                this.getTableData()
+            })
     }
 
     InitCalendar(){
@@ -71,7 +77,7 @@ class CheckIn extends React.Component {
     }
 
     render() {
-        return <div className="container">
+        return <div className="container ClockIn">
             <Row>
                 <Col span={24}>
                     <MenuList />
@@ -145,7 +151,18 @@ class CheckIn extends React.Component {
                                                     <Card
                                                         title={item.Date}
                                                     >
-
+                                                        {
+                                                            this.state.dataSource[item.Date]
+                                                            ?<div className={this.state.dataSource[item.Date].Result>=0?"Up":"Down"}>
+                                                                <div className={"DateContent"}>
+                                                                    S:{this.state.dataSource[item.Date].working_hours?this.state.dataSource[item.Date].working_hours.substring(10):""}
+                                                                    <hr/>
+                                                                    E:{this.state.dataSource[item.Date].off_work_time?this.state.dataSource[item.Date].off_work_time.substring(10):""}
+                                                                    <hr/>
+                                                                    R:{this.state.dataSource[item.Date].Result} min
+                                                                </div>
+                                                            </div> :""
+                                                        }
                                                     </Card>
                                                 </Col>
                                             )
