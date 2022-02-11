@@ -922,8 +922,8 @@ class PointTable extends React.Component {
                         </Row>
                     </Modal>
                 </Row>
-            </div>
-        </Hotkeys>
+            </div >
+        </Hotkeys >
     }
 }
 
