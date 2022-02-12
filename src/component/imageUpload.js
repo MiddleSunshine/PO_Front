@@ -1,8 +1,9 @@
 import React from "react";
-import { Row, Col, Input, message, Upload, Select, Form, Image } from 'antd';
+import { Row, Col, Input, message, Upload, Select, Form, Image, Button } from 'antd';
 import { requestApi } from "../config/functions";
 import { InboxOutlined } from '@ant-design/icons';
 import MenuList from "./MenuList";
+import Clipboard from 'clipboard';
 
 const BUCKET_LONG_FILE = 'oss-file-cache';
 const BUCKET_TEMP_FILE = 'cross-device';
@@ -27,6 +28,14 @@ class ImageUpload extends React.Component {
             }
         );
         document.title = "Upload Image";
+        const copy = new Clipboard('.imageUrl');
+        copy.on('success', e => {
+            message.success("Copy Success");
+        });
+        copy.on('error', function (e) {
+            console.error('Action:', e.action);
+            console.error('Trigger:', e.trigger);
+        });
     }
 
     handlePaste(event) {
@@ -40,7 +49,7 @@ class ImageUpload extends React.Component {
                     })
                 break;
             default:
-                message.warn("Image Not Exists");
+            // message.warn("Image Not Exists");
         }
     }
 
@@ -119,10 +128,26 @@ class ImageUpload extends React.Component {
                             </Upload.Dragger>
                         </Form.Item>
                         <Form.Item
+                            label={"Copy Image Url"}
+                        >
+                            <Button
+                                data-clipboard-text={this.state.imageUrl}
+                                className="imageUrl"
+                                type="primary"
+                            >
+                                Copy Image Url
+                            </Button>
+                        </Form.Item>
+                        <Form.Item
                             label={"Url"}
                         >
                             <Input
                                 value={this.state.imageUrl}
+                                onChange={(e) => {
+                                    this.setState({
+                                        imageUrl: e.target.value
+                                    })
+                                }}
                             />
                         </Form.Item>
                         <Form.Item
