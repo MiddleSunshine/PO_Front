@@ -169,6 +169,21 @@ class MenuList extends React.Component {
                                 </Menu.Item>
                             </Menu.ItemGroup>
                         </Menu.SubMenu>
+                        <Menu.SubMenu
+                            title={"Tools"}
+                        >
+                            <Menu.ItemGroup
+                                title={"Common"}
+                            >
+                                <Menu.Item>
+                                    <a
+                                        href={"/image"}
+                                        target={"_blank"}
+                                        rel="noreferrer"
+                                    >Image Upload</a>
+                                </Menu.Item>
+                            </Menu.ItemGroup>
+                        </Menu.SubMenu>
                     </Menu>
                 </Col>
             </Row>

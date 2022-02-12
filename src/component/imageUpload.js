@@ -1,7 +1,8 @@
 import React from "react";
 import { Row, Col, Input, message, Upload, Select, Form, Image } from 'antd';
-import { getBackUrl, requestApi } from "../config/functions";
+import { requestApi } from "../config/functions";
 import { InboxOutlined } from '@ant-design/icons';
+import MenuList from "./MenuList";
 
 const BUCKET_LONG_FILE = 'oss-file-cache';
 const BUCKET_TEMP_FILE = 'cross-device';
@@ -25,6 +26,7 @@ class ImageUpload extends React.Component {
                 this.handlePaste(e);
             }
         );
+        document.title = "Upload Image";
     }
 
     handlePaste(event) {
@@ -62,6 +64,12 @@ class ImageUpload extends React.Component {
 
     render() {
         return <div className="container">
+            <Row>
+                <Col span={24}>
+                    <MenuList />
+                </Col>
+            </Row>
+            <hr />
             <Row>
                 <Col span={24}>
                     <Form
