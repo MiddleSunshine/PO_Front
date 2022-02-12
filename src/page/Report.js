@@ -2,7 +2,6 @@ import React from "react";
 import ReactECharts from "echarts-for-react";
 import config from "../config/setting";
 import { DatePicker, Button, Row, Col } from 'antd';
-import Road from "../component/road";
 import { requestApi } from "../config/functions";
 import MenuList from "../component/MenuList";
 

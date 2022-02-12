@@ -1,7 +1,6 @@
 import React from "react";
 import MenuList from "../component/MenuList";
 import PointEdit from "../component/PointEdit";
-import Road from "../component/road";
 
 class PointEditor extends React.Component {
     constructor(props) {

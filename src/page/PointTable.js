@@ -17,7 +17,7 @@ import {
     PlusCircleOutlined,
     UnorderedListOutlined,
     FormOutlined,
-    MinusCircleOutlined,
+    MinusCircleOutlined
 } from '@ant-design/icons';
 import "../css/PointTable.css"
 import config, { SEARCHABLE_POINT, SEARCHABLE_TITLE } from "../config/setting";
@@ -427,6 +427,11 @@ class PointTable extends React.Component {
         >
             <div className="container Point_Table">
                 <Row>
+                    <Col span={24}>
+                        <MenuList />
+                    </Col>
+                </Row>
+                <Row>
                     <PageHeader
                         title={
                             <Tooltip
@@ -443,7 +448,6 @@ class PointTable extends React.Component {
                             </Tooltip>
                         }
                         subTitle={"Status:" + this.state.parentPoint.status + " / Point:" + this.state.parentPoint.Point}
-                        breadcrumb={<MenuList />}
                         footer={this.state.parentPoint.note}
                         ghost={true}
                     />
@@ -892,16 +896,21 @@ class PointTable extends React.Component {
                                                                 }}
                                                             />
                                                         </Col>
-                                                        <Col span={1}>
-                                                            <Button
-                                                                icon={<FormOutlined />}
-                                                                type={"link"}
-                                                                href={"/point/edit/" + point.ID}// 
+                                                        <Col span={1} offset={1}>
+                                                            <a
+                                                                href={"/point/edit/"+point.ID}
                                                                 target={"_blank"}
-                                                            ></Button>
+                                                            >
+                                                                <FormOutlined />
+                                                            </a>
                                                         </Col>
-                                                        <Col span={21} offset={1}>
-                                                            <a target={"_blank"} href={"/pointTable/" + point.ID}>{point.keyword}</a>
+                                                        <Col span={20}>
+                                                            <a
+                                                                href={"/pointTable/"+point.ID}
+                                                                target={"_blank"}
+                                                            >
+                                                                {point.keyword}
+                                                            </a>
                                                         </Col>
                                                     </Row>
                                                 </Form.Item>

@@ -1,6 +1,5 @@
 import React from "react";
 import { Row, Col, Button, Modal, Tabs, PageHeader, message, Switch } from 'antd'
-import Road from "../component/road";
 import PlanDetail from "../component/PlanDetail";
 import PlanDetailEdit from "../component/PlanDetailEdit";
 import {
