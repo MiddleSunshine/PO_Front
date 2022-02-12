@@ -5,8 +5,8 @@ export function requestApi(api,option={}){
     return fetch("http://"+document.domain+":8091"+"/PO_Back/"+api,option);
 }
 
-export function now(){
-    return moment().add(8,'h');
+export function getBackUrl() {
+    return "http://192.168.1.61:8091/PO_Back/";
 }
 
 export function openLocalMarkdownFile(filePath,createWhileFileNotExists=false){
