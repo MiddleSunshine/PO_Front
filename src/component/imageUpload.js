@@ -1,5 +1,5 @@
 import React from "react";
-import { Row, Col, Input, message, Upload, Select, Form } from 'antd';
+import { Row, Col, Input, message, Upload, Select, Form, Image } from 'antd';
 import { getBackUrl, requestApi } from "../config/functions";
 import { InboxOutlined } from '@ant-design/icons';
 
@@ -16,6 +16,7 @@ class ImageUpload extends React.Component {
             bucket: BUCKET_TEMP_FILE
         }
         this.handlePaste = this.handlePaste.bind(this);
+        this.uploadFile = this.uploadFile.bind(this);
     }
     componentDidMount() {
         document.addEventListener(
@@ -33,22 +34,30 @@ class ImageUpload extends React.Component {
                     .then(() => {
                         return event.clipboardData.items[0].getAsFile()
                     }).then((file) => {
-                        let format = new FormData();
-                        format.append("myfile", file);
-                        requestApi(BACK_URL + "&bucket=" + this.state.bucket,
-                            {
-                                method: "post",
-                                mode: "cors",
-                                body: format
-                            })
-                            .then((res) => {
-
-                            })
+                        this.uploadFile(file);
                     })
                 break;
             default:
                 message.warn("Image Not Exists");
         }
+    }
+
+    uploadFile(file) {
+        let format = new FormData();
+        format.append("myfile", file);
+        requestApi(BACK_URL + "&bucket=" + this.state.bucket,
+            {
+                method: "post",
+                mode: "cors",
+                body: format
+            })
+            .then((res) => {
+                res.json().then((json) => {
+                    this.setState({
+                        imageUrl: json.Data.Url
+                    })
+                })
+            })
     }
 
     render() {
@@ -85,11 +94,10 @@ class ImageUpload extends React.Component {
                             label={"Drag File"}
                         >
                             <Upload.Dragger
-                                name={"singleFile"}
+                                // name={"singleFile"}
                                 multiple={false}
-                                action={getBackUrl() + BACK_URL + "&bucket=" + this.state.bucket}
-                                onChange={(info) => {
-                                    console.log(info);
+                                customRequest={(e) => {
+                                    this.uploadFile(e.file);
                                 }}
                             >
                                 <p className="ant-upload-drag-icon">
@@ -112,7 +120,7 @@ class ImageUpload extends React.Component {
                         <Form.Item
                             label={"Image Check"}
                         >
-                            <image
+                            <Image
                                 src={this.state.imageUrl}
                             />
                         </Form.Item>
