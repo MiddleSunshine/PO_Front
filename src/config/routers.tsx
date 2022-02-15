@@ -19,6 +19,7 @@ import PointSummary from '../page/PointSummary';
 import EditPointSummaryFile from '../component/EditPointSummaryFile';
 import CheckList from '../page/CheckList';
 import CheckListHistory from "../page/CheckListHistory";
+import PointHistory from "../page/PointHistory";
 
 interface router {
     path: string,
@@ -94,6 +95,10 @@ const routers: Array<router> = [
     {
         path: "/point/edit/:pid",
         component: PointEditor
+    },
+    {
+        path:"/pointHistory/:pid",
+        component:PointHistory
     },
     {
         path: "/pointTable/:pid",
