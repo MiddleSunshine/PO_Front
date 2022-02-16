@@ -9,6 +9,7 @@ import {
     UnorderedListOutlined,
     DeploymentUnitOutlined
 } from '@ant-design/icons';
+import MenuList from "../component/MenuList";
 
 class PointTree extends React.Component{
     constructor(props) {
@@ -76,6 +77,12 @@ class PointTree extends React.Component{
 
     render() {
         return <div className="container">
+            <Row>
+                <Col span={24}>
+                    <MenuList/>
+                </Col>
+            </Row>
+            <br/>
             <Row>
                 <Col span={6}>
                     <Tree

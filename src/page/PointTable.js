@@ -513,32 +513,41 @@ class PointTable extends React.Component {
                             Mind Map
                         </Button>
                     </Col>
-                    <Col span={6}>
-                        <Select
-                            style={{ width: "100%" }}
-                            mode={"multiple"}
-                            placeholder={"Status Filter"}
-                            showSearch={true}
-                            onChange={(newSeletcedValue) => {
-                                this.setState({
-                                    statusFilter: newSeletcedValue
-                                })
-                            }}
-                            onBlur={() => {
-                                this.getPointsByPID(this.state.id);
-                            }}
+                    <Col span={3}>
+                        <Button
+                            type={"link"}
+                            href={"/pointTree/" + this.state.parentPoint.ID}
+                            target={"_blank"}
                         >
-                            {
-                                config.statusMap.map((Item, index) => {
-                                    return (
-                                        <Select.Option value={Item.value}>
-                                            {Item.label}
-                                        </Select.Option>
-                                    )
-                                })
-                            }
-                        </Select>
+                            Tree Mode
+                        </Button>
                     </Col>
+                    {/*<Col span={6}>*/}
+                    {/*    <Select*/}
+                    {/*        style={{ width: "100%" }}*/}
+                    {/*        mode={"multiple"}*/}
+                    {/*        placeholder={"Status Filter"}*/}
+                    {/*        showSearch={true}*/}
+                    {/*        onChange={(newSeletcedValue) => {*/}
+                    {/*            this.setState({*/}
+                    {/*                statusFilter: newSeletcedValue*/}
+                    {/*            })*/}
+                    {/*        }}*/}
+                    {/*        onBlur={() => {*/}
+                    {/*            this.getPointsByPID(this.state.id);*/}
+                    {/*        }}*/}
+                    {/*    >*/}
+                    {/*        {*/}
+                    {/*            config.statusMap.map((Item, index) => {*/}
+                    {/*                return (*/}
+                    {/*                    <Select.Option value={Item.value}>*/}
+                    {/*                        {Item.label}*/}
+                    {/*                    </Select.Option>*/}
+                    {/*                )*/}
+                    {/*            })*/}
+                    {/*        }*/}
+                    {/*    </Select>*/}
+                    {/*</Col>*/}
                 </Row>
                 <hr />
                 <Row>
