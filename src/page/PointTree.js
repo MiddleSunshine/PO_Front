@@ -20,7 +20,8 @@ class PointTree extends React.Component{
             treeData:[],
             points:[],
             selectedPoint:{},
-            editPointID:-1
+            editPointID:-1,
+            asyncData:true
         }
         this.getTreeData=this.getTreeData.bind(this);
         this.newPointPreview=this.newPointPreview.bind(this);
@@ -72,6 +73,10 @@ class PointTree extends React.Component{
                     this.setState({
                         treeData:json.Data.Data
                     })
+                }).then(()=>{
+                    this.setState({
+                        asyncData:false
+                    })
                 })
             })
     }
@@ -86,8 +91,16 @@ class PointTree extends React.Component{
             </Row>
             <br/>
             <Row>
-                <Col span={6}>
-                    <Tree
+                <Col
+                    span={6}
+                    className={"MenuPart"}
+                    style={{height:height+"px"}}
+                >
+                    {
+                        this.state.asyncData
+                        ?''
+                        :<Tree
+                        defaultExpandAll={true}
                         treeData={this.state.treeData}
                         checkStrictly={true}
                         checkable={true}
@@ -99,6 +112,8 @@ class PointTree extends React.Component{
                             }
                         }}
                     />
+                    }
+                    
                 </Col>
                 <Col 
                     span={18}
@@ -124,7 +139,7 @@ class PointTree extends React.Component{
                                     extra={
                                         <Button
                                             icon={<CloseOutlined />}
-                                            type="primary"
+                                            // type="primary"
                                             shape="circle"
                                             onClick={()=>{
                                                 this.deletePointPreview(point.ID);

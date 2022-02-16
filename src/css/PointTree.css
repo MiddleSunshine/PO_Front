@@ -1,8 +1,14 @@
 .PointTree{
-
+    scrollbar-width: none;
 }
-
+.PointTree .MenuPart{
+    overflow: auto;
+}
 .PointTree .ContentPart{
     overflow: auto;
     /* height: 300px; */
+}
+
+.PointTree ::-webkit-scrollbar{
+    display: none;
 }
