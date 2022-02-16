@@ -1,0 +1,26 @@
+.ClockIn{
+
+}
+
+.ClockIn .ant-card-body{
+    min-height: 118px !important;
+    padding: 0px !important;
+}
+.ClockIn .ant-card-head{
+    font-weight: bolder;
+}
+.ClockIn .Up{
+    background-color: #32D74B;
+    color: white;
+}
+
+.ClockIn .Down{
+    background-color: #FF453A;
+    color: white;
+}
+
+.ClockIn .DateContent{
+    padding-top: 10px;
+    padding-bottom: 10px;
+    padding-left: 10px;
+}

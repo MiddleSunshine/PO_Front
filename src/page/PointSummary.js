@@ -1,11 +1,11 @@
 import { Button, Card, Col, Divider, Drawer, message, PageHeader, Row, Tag } from "antd";
 import React from "react";
 import PointSummaryEdit from "../component/PointSummaryEdit";
-import Road from "../component/road";
 import { requestApi } from "../config/functions";
 import { FormOutlined, ShareAltOutlined, EyeOutlined } from '@ant-design/icons';
 import "../css/PointSummary.css";
 import SummaryPoints from "../component/SummaryPoints";
+import MenuList from "../component/MenuList";
 
 class PointSummary extends React.Component {
     constructor(props) {
@@ -53,7 +53,7 @@ class PointSummary extends React.Component {
     }
     render() {
         return <div className="container PointSummary">
-            <Road />
+            <MenuList />
             <hr />
             <Row>
                 <Col span={24}>

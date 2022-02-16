@@ -5,13 +5,11 @@ import {
     Col,
     Drawer,
     Button,
-    Tag,
     Input,
     message,
     Modal,
     Checkbox, Form, PageHeader, Tooltip, Badge, Select, Collapse
 } from "antd";
-import Road from "../component/road";
 import { requestApi } from "../config/functions";
 import PointEdit from "../component/PointEdit";
 import Hotkeys from 'react-hot-keys'
@@ -19,11 +17,12 @@ import {
     PlusCircleOutlined,
     UnorderedListOutlined,
     FormOutlined,
-    DingdingOutlined
+    MinusCircleOutlined
 } from '@ant-design/icons';
 import "../css/PointTable.css"
-import config from "../config/setting";
+import config, { SEARCHABLE_POINT, SEARCHABLE_TITLE } from "../config/setting";
 import SubPointList from "../component/SubPointList";
+import MenuList from "../component/MenuList";
 
 var hotkeys_maps = [
     { hotkey: "shift+e", label: "Edit" },
@@ -77,6 +76,7 @@ class PointTable extends React.Component {
             //
             newPointModalVisible: false,
             newPointKeyword: "",
+            newPointType: "",
             newPointID: "",
             newPointPID: "",
             newPointList: []
@@ -321,6 +321,7 @@ class PointTable extends React.Component {
             newPointPID: PID,
             newPointKeyword: "",
             newPointModalVisible: true,
+            newPointType: SEARCHABLE_POINT,
             newPointID: 0,
             newPointList: []
         })
@@ -341,13 +342,19 @@ class PointTable extends React.Component {
                     message.error("System Error");
                 })
         } else {
+            let newPoint = {
+                keyword: this.state.newPointKeyword,
+                SearchAble: this.state.newPointType
+            };
+            if (this.state.newPointType == SEARCHABLE_TITLE) {
+                newPoint.status = config.statusMap[2].value;
+                newPoint.Point = 0;
+            }
             requestApi("/index.php?action=Points&method=Save", {
                 method: "post",
                 mode: "cors",
                 body: JSON.stringify({
-                    point: {
-                        keyword: this.state.newPointKeyword
-                    },
+                    point: newPoint,
                     PID: this.state.newPointPID
                 })
             })
@@ -420,6 +427,11 @@ class PointTable extends React.Component {
         >
             <div className="container Point_Table">
                 <Row>
+                    <Col span={24}>
+                        <MenuList />
+                    </Col>
+                </Row>
+                <Row>
                     <PageHeader
                         title={
                             <Tooltip
@@ -436,7 +448,6 @@ class PointTable extends React.Component {
                             </Tooltip>
                         }
                         subTitle={"Status:" + this.state.parentPoint.status + " / Point:" + this.state.parentPoint.Point}
-                        breadcrumb={<Road />}
                         footer={this.state.parentPoint.note}
                         ghost={true}
                     />
@@ -502,32 +513,41 @@ class PointTable extends React.Component {
                             Mind Map
                         </Button>
                     </Col>
-                    <Col span={6}>
-                        <Select
-                            style={{ width: "100%" }}
-                            mode={"multiple"}
-                            placeholder={"Status Filter"}
-                            showSearch={true}
-                            onChange={(newSeletcedValue) => {
-                                this.setState({
-                                    statusFilter: newSeletcedValue
-                                })
-                            }}
-                            onBlur={() => {
-                                this.getPointsByPID(this.state.id);
-                            }}
+                    <Col span={3}>
+                        <Button
+                            type={"link"}
+                            href={"/pointTree/" + this.state.parentPoint.ID}
+                            target={"_blank"}
                         >
-                            {
-                                config.statusMap.map((Item, index) => {
-                                    return (
-                                        <Select.Option value={Item.value}>
-                                            {Item.label}
-                                        </Select.Option>
-                                    )
-                                })
-                            }
-                        </Select>
+                            Tree Mode
+                        </Button>
                     </Col>
+                    {/*<Col span={6}>*/}
+                    {/*    <Select*/}
+                    {/*        style={{ width: "100%" }}*/}
+                    {/*        mode={"multiple"}*/}
+                    {/*        placeholder={"Status Filter"}*/}
+                    {/*        showSearch={true}*/}
+                    {/*        onChange={(newSeletcedValue) => {*/}
+                    {/*            this.setState({*/}
+                    {/*                statusFilter: newSeletcedValue*/}
+                    {/*            })*/}
+                    {/*        }}*/}
+                    {/*        onBlur={() => {*/}
+                    {/*            this.getPointsByPID(this.state.id);*/}
+                    {/*        }}*/}
+                    {/*    >*/}
+                    {/*        {*/}
+                    {/*            config.statusMap.map((Item, index) => {*/}
+                    {/*                return (*/}
+                    {/*                    <Select.Option value={Item.value}>*/}
+                    {/*                        {Item.label}*/}
+                    {/*                    </Select.Option>*/}
+                    {/*                )*/}
+                    {/*            })*/}
+                    {/*        }*/}
+                    {/*    </Select>*/}
+                    {/*</Col>*/}
                 </Row>
                 <hr />
                 <Row>
@@ -579,7 +599,7 @@ class PointTable extends React.Component {
                                                         style={{ color: "white" }}
                                                         target={"_blank"}
                                                         href={"/pointTable/" + point.ID}
-                                                    >{config.statusLabelMap[point.status]}
+                                                    >{point.SearchAble == SEARCHABLE_POINT ? config.statusLabelMap[point.status] : "Title"}
                                                     </a>
                                                 </Tooltip>
                                             }
@@ -596,20 +616,11 @@ class PointTable extends React.Component {
                                                             this.recordActiveParentPoint(point)
                                                         }}
                                                     >
-                                                        <Row>
-                                                            <Col span={2}>
-                                                                <Tooltip
-                                                                    title={"New Sub Point"}
-                                                                >
-                                                                    <DingdingOutlined
-                                                                        onClick={() => {
-                                                                            this.openNewPointModal(point.ID);
-                                                                        }}
-                                                                        style={{ cursor: "pointer" }}
-                                                                    />
-                                                                </Tooltip>
-                                                            </Col>
-                                                            <Col span={21}>
+                                                        <Row
+                                                            align={"middle"}
+                                                            justify={"start"}
+                                                        >
+                                                            <Col span={23}>
                                                                 {
                                                                     (this.state.editPoint.ID == point.ID && !this.state.editPartVisible)
                                                                         ? <Input
@@ -630,43 +641,40 @@ class PointTable extends React.Component {
                                                                                 this.finishInput();
                                                                             }}
                                                                         />
-                                                                        : <Tag
-                                                                            closable={true}
-                                                                            color={config.statusBackGroupColor[point.status]}
-                                                                            onClick={() => {
-                                                                                this.openDrawer(point, false);
-                                                                            }}
-                                                                            onClose={(e) => {
-                                                                                e.preventDefault();
-                                                                                this.removeCollection(point.ID, this.state.id);
-                                                                            }}
+                                                                        : <Row
+                                                                            justify={"start"}
+                                                                            align={"middle"}
                                                                         >
-                                                                            <span
-                                                                                style={{
-                                                                                    fontSize: outsideIndexActive ? "20px" : "16px",
-                                                                                    color: outsideIndexActive ? "black" : "white"
+                                                                            <Button
+                                                                                type={"primary"}
+                                                                                shape={"circle"}
+                                                                                size={"small"}
+                                                                                onClick={(e) => {
+                                                                                    e.preventDefault();
+                                                                                    this.removeCollection(point.ID, this.state.id);
                                                                                 }}
                                                                             >
-                                                                                {point.keyword}
-                                                                            </span>
-                                                                        </Tag>
+                                                                                {outsideIndex + 1}
+                                                                            </Button>
+                                                                            <Button
+                                                                                ghost={true}
+                                                                                onClick={() => {
+                                                                                    this.openDrawer(point, false);
+                                                                                }}
+                                                                            >
+                                                                                <span
+                                                                                    style={{
+                                                                                        fontSize: outsideIndexActive ? "18px" : "15px",
+                                                                                        color: outsideIndexActive ? "black" : point.SearchAble == SEARCHABLE_POINT ? config.statusBackGroupColor[point.status] : 'black'
+                                                                                    }}
+                                                                                >
+                                                                                    {point.keyword}
+                                                                                </span>
+                                                                            </Button>
+                                                                        </Row>
                                                                 }
                                                             </Col>
                                                         </Row>
-                                                        {point.note
-                                                            ? <Row
-                                                                justify={"end"}
-                                                                align={"middle"}
-                                                            >
-                                                                <Col
-                                                                    span={24}
-                                                                    style={{ textAlign: "right" }}
-                                                                >
-                                                                    <span className={"title_note"}>{point.note}</span>
-                                                                </Col>
-                                                            </Row>
-                                                            : ''
-                                                        }
                                                     </div>
                                                 }
                                             >
@@ -718,18 +726,25 @@ class PointTable extends React.Component {
                                                                                         }}
                                                                                     />
                                                                                     :
-                                                                                    <Tag
-                                                                                        closable={true}
-                                                                                        color={color}
-                                                                                        onClose={(e) => {
-                                                                                            this.removeCollection(subPoint.ID, point.ID)
-                                                                                            e.preventDefault();
-                                                                                        }}
+                                                                                    <Row
+                                                                                        justify={"start"}
+                                                                                        align={"middle"}
                                                                                     >
+                                                                                        <Button
+                                                                                            type={"link"}
+                                                                                            style={{ color: color }}
+                                                                                            icon={<MinusCircleOutlined />}
+                                                                                            onClick={(e) => {
+                                                                                                this.removeCollection(subPoint.ID, point.ID)
+                                                                                                e.preventDefault();
+                                                                                            }}
+                                                                                            size={"small"}
+                                                                                        >
+                                                                                        </Button>
                                                                                         <span
                                                                                             style={{
-                                                                                                fontSize: insideActive ? "20px" : "14px",
-                                                                                                color: insideActive ? "black" : "white"
+                                                                                                fontSize: insideActive ? "16px" : "14px",
+                                                                                                color: insideActive ? "black" : color
                                                                                             }}
                                                                                             onClick={() => {
                                                                                                 this.openDrawer(subPoint, false);
@@ -737,7 +752,7 @@ class PointTable extends React.Component {
                                                                                         >
                                                                                             {subPoint.keyword}
                                                                                         </span>
-                                                                                    </Tag>
+                                                                                    </Row>
                                                                             }
                                                                             extra={
                                                                                 <Badge.Ribbon
@@ -748,7 +763,7 @@ class PointTable extends React.Component {
                                                                                             target={"_blank"}
                                                                                             style={{ color: "white" }}
                                                                                         >
-                                                                                            {config.statusLabelMap[subPoint.status]}
+                                                                                            {subPoint.SearchAble == SEARCHABLE_POINT ? config.statusLabelMap[subPoint.status] : "Title"}
                                                                                         </a>
                                                                                     }
                                                                                 >
@@ -764,7 +779,8 @@ class PointTable extends React.Component {
                                                                                     )
                                                                                 }}
                                                                             >
-                                                                                File : {subPoint.file}<br />Note : {subPoint.note}
+                                                                                File : {subPoint.file}<br />Note
+                                                                                : {subPoint.note}
                                                                             </div>
                                                                         </Collapse.Panel>
                                                                     )
@@ -826,6 +842,25 @@ class PointTable extends React.Component {
                             this.newPoint()
                         }}
                     >
+                        <Row style={{ paddingBottom: "5px" }}>
+                            <Col span={24}>
+                                <Select
+                                    value={this.state.newPointType}
+                                    onChange={(newValue) => {
+                                        this.setState({
+                                            newPointType: newValue
+                                        });
+                                    }}
+                                >
+                                    <Select.Option value={SEARCHABLE_POINT}>
+                                        Point
+                                    </Select.Option>
+                                    <Select.Option value={SEARCHABLE_TITLE}>
+                                        Title
+                                    </Select.Option>
+                                </Select>
+                            </Col>
+                        </Row>
                         <Row>
                             <Input
                                 value={this.state.newPointKeyword}
@@ -870,8 +905,21 @@ class PointTable extends React.Component {
                                                                 }}
                                                             />
                                                         </Col>
-                                                        <Col span={22} offset={1}>
-                                                            {point.keyword}
+                                                        <Col span={1} offset={1}>
+                                                            <a
+                                                                href={"/point/edit/"+point.ID}
+                                                                target={"_blank"}
+                                                            >
+                                                                <FormOutlined />
+                                                            </a>
+                                                        </Col>
+                                                        <Col span={20}>
+                                                            <a
+                                                                href={"/pointTable/"+point.ID}
+                                                                target={"_blank"}
+                                                            >
+                                                                {point.keyword}
+                                                            </a>
                                                         </Col>
                                                     </Row>
                                                 </Form.Item>
@@ -883,8 +931,8 @@ class PointTable extends React.Component {
                         </Row>
                     </Modal>
                 </Row>
-            </div>
-        </Hotkeys>
+            </div >
+        </Hotkeys >
     }
 }
 

@@ -2,7 +2,7 @@ import React from "react";
 import {Form, Input, Select, Button, message, Switch,Row,Col} from "antd";
 import SimpleMDE from "react-simplemde-editor";
 import "easymde/dist/easymde.min.css";
-import config from "../config/setting";
+import config, {SEARCHABLE_POINT, SEARCHABLE_TITLE} from "../config/setting";
 import {openLocalMarkdownFile, requestApi} from "../config/functions";
 import MarkdownPreview from '@uiw/react-markdown-preview';
 
@@ -26,7 +26,8 @@ class PointEdit extends React.Component{
                 url:"",
                 status:"new",
                 Deleted:'0',
-                Favourite:false
+                Favourite:false,
+                SearchAble:SEARCHABLE_POINT
             },
             fileContent:"",
             localFilePath:'',
@@ -181,6 +182,23 @@ class PointEdit extends React.Component{
                                 }}
                                 />
                         }
+                    </Form.Item>
+                    <Form.Item
+                        label={"Type"}
+                    >
+                        <Select
+                            value={this.state.point.SearchAble}
+                            onChange={(newValue)=>{
+                                this.handleChange(newValue,'SearchAble');
+                            }}
+                        >
+                            <Select.Option value={SEARCHABLE_POINT}>
+                                Point
+                            </Select.Option>
+                            <Select.Option value={SEARCHABLE_TITLE}>
+                                Title
+                            </Select.Option>
+                        </Select>
                     </Form.Item>
                     <Form.Item
                         label={"Keyword"}

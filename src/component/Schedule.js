@@ -13,10 +13,10 @@ import {
     Tooltip,
     Timeline, Button
 } from 'antd';
-import Road from './road';
 import SimpleMDE from "react-simplemde-editor";
 import moment from "moment";
-import {now, requestApi} from "../config/functions";
+import { now, requestApi } from "../config/functions";
+import MenuList from './MenuList';
 
 var dateFormat = "YYYY-MM-DD HH:mm:ss";
 
@@ -35,7 +35,7 @@ class Schedule extends React.Component {
             newModalVisible: false,
             filterYear: "",
             filterMonth: "",
-            filterPlanIDs:""
+            filterPlanIDs: ""
         };
         this.dayRender = this.dayRender.bind(this);
         this.closeModal = this.closeModal.bind(this);
@@ -66,7 +66,7 @@ class Schedule extends React.Component {
                 plans.push(Item);
             })
             if (this.state.plans[date].length > 2) {
-                plans.splice(2, 100, {ID: 0, Name: "..."})
+                plans.splice(2, 100, { ID: 0, Name: "..." })
             }
             return <div>
                 {plans.map((Item) => {
@@ -75,13 +75,13 @@ class Schedule extends React.Component {
                             key={Item.ID}
                             onClick={(e) => {
                                 e.stopPropagation();
-                                if (!Item.FinishTime && Item.ID!=0){
+                                if (!Item.FinishTime && Item.ID != 0) {
                                     return false;
                                 }
-                                if (Item.ID==0){
+                                if (Item.ID == 0) {
                                     this.openModal(date);
-                                }else{
-                                    this.openNewPlanItemModal(dateMoment,Item)
+                                } else {
+                                    this.openNewPlanItemModal(dateMoment, Item)
                                 }
                             }}
                         >
@@ -89,7 +89,7 @@ class Schedule extends React.Component {
                                 title={Item.Name}
                             >
                                 <Badge
-                                    text={Item.Name.length>8?(Item.Name.substring(0,6)+"..."):Item.Name}
+                                    text={Item.Name.length > 8 ? (Item.Name.substring(0, 6) + "...") : Item.Name}
                                     status={Item.FinishTime ? "success" : "processing"}
                                 />
                             </Tooltip>
@@ -99,7 +99,7 @@ class Schedule extends React.Component {
                 <div onClick={() => {
                     this.openNewPlanItemModal(dateMoment);
                 }}
-                     style={{color: "white"}}
+                    style={{ color: "white" }}
                 >
                     New Plan Item
                 </div>
@@ -108,7 +108,7 @@ class Schedule extends React.Component {
             return <div onClick={() => {
                 this.openNewPlanItemModal(dateMoment);
             }}
-                        style={{color: "white"}}
+                style={{ color: "white" }}
             >
                 New Plan Item
             </div>;
@@ -132,10 +132,10 @@ class Schedule extends React.Component {
         });
     }
 
-    openNewPlanItemModal(date,planItem={}) {
-        let temp={
+    openNewPlanItemModal(date, planItem = {}) {
+        let temp = {
             ...planItem,
-            FinishTime:date.format(dateFormat).toString()
+            FinishTime: date.format(dateFormat).toString()
         }
         this.setState({
             planItem: temp,
@@ -198,7 +198,7 @@ class Schedule extends React.Component {
                 body: JSON.stringify({
                     Year: this.state.filterYear,
                     Month: this.state.filterMonth,
-                    PlanIDs:this.state.filterPlanIDs
+                    PlanIDs: this.state.filterPlanIDs
                 })
             }
         )
@@ -213,8 +213,12 @@ class Schedule extends React.Component {
 
     render() {
         return <div>
-            <Road/>
-            <hr/>
+            <Row>
+                <Col span={24}>
+                    <MenuList />
+                </Col>
+            </Row>
+            <hr />
             <Row>
                 <Col span={1}>
                     Plan
@@ -224,19 +228,19 @@ class Schedule extends React.Component {
                         showSearch={true}
                         mode="multiple"
                         style={{ width: '100%' }}
-                        onChange={(selectedPlanIds)=>{
-                            (async ()=>{})()
-                                .then(()=>{
+                        onChange={(selectedPlanIds) => {
+                            (async () => { })()
+                                .then(() => {
                                     this.setState({
-                                        filterPlanIDs:selectedPlanIds
+                                        filterPlanIDs: selectedPlanIds
                                     })
-                                }).then(()=>{
+                                }).then(() => {
                                     this.getCalendarData()
-                            })
+                                })
                         }}
                     >
-                        {this.state.activePlans.map((Item)=>{
-                            return(
+                        {this.state.activePlans.map((Item) => {
+                            return (
                                 <Select.Option
                                     value={Item.ID}
                                     key={Item.ID}
@@ -255,7 +259,7 @@ class Schedule extends React.Component {
                 {/*    </Button>*/}
                 {/*</Col>*/}
             </Row>
-            <hr/>
+            <hr />
             <div>
                 <Calendar
                     dateCellRender={this.dayRender}
@@ -269,8 +273,8 @@ class Schedule extends React.Component {
                                         filterMonth: date.format("MM").toString(),
                                     })
                                 }).then(() => {
-                                this.getCalendarData()
-                            })
+                                    this.getCalendarData()
+                                })
                         }
 
                     }}
@@ -321,16 +325,16 @@ class Schedule extends React.Component {
                                         /
                                     </Col>
                                     <Col
-                                        style={{cursor:"pointer"}}
+                                        style={{ cursor: "pointer" }}
                                         span={9}
-                                        onClick={()=>{
-                                            (async ()=>{})()
-                                                .then(()=>{
+                                        onClick={() => {
+                                            (async () => { })()
+                                                .then(() => {
                                                     this.closeModal()
                                                 })
-                                                .then(()=>{
+                                                .then(() => {
                                                     this.openNewPlanItemModal(
-                                                        moment(Item.FinishTime,dateFormat),
+                                                        moment(Item.FinishTime, dateFormat),
                                                         Item
                                                     );
                                                 })

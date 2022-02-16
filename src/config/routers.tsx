@@ -17,6 +17,10 @@ import Decision from "../page/Decition";
 import OKR from "../page/OKR";
 import PointSummary from '../page/PointSummary';
 import EditPointSummaryFile from '../component/EditPointSummaryFile';
+import CheckList from '../page/CheckList';
+import CheckListHistory from "../page/CheckListHistory";
+import PointHistory from "../page/PointHistory";
+import PointTree from "../page/PointTree";
 
 interface router {
     path: string,
@@ -25,6 +29,14 @@ interface router {
 }
 
 const routers: Array<router> = [
+    {
+        path: "/Psychotherapy/CheckListHistory",
+        component: CheckListHistory
+    },
+    {
+        path: "/Psychotherapy/CheckList",
+        component: CheckList
+    },
     {
         path: "/PointSummaryEdit/:ID/:Edit",
         component: EditPointSummaryFile
@@ -84,6 +96,14 @@ const routers: Array<router> = [
     {
         path: "/point/edit/:pid",
         component: PointEditor
+    },
+    {
+        path:"/pointTree/:pid",
+        component:PointTree
+    },
+    {
+        path:"/pointHistory/:pid",
+        component:PointHistory
     },
     {
         path: "/pointTable/:pid",

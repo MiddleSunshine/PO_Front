@@ -1,91 +1,123 @@
 import React from "react";
 import config from "../config/setting";
-import {Table, Layout, Row, Col, Button,Modal,Tag} from 'antd'
-import {SketchOutlined} from '@ant-design/icons'
+import { Table, Layout, Row, Col, Button, Modal, Tag, message } from 'antd'
+import { SketchOutlined } from '@ant-design/icons'
 import WillingDetail from "../component/WillingDetail";
-import Road from "../component/road";
-import {requestApi} from "../config/functions";
+import { requestApi } from "../config/functions";
+import MenuList from "../component/MenuList";
 
-const {Header, Footer,Content} = Layout;
+const { Header, Footer, Content } = Layout;
 
-class Willing extends React.Component{
+class Willing extends React.Component {
     constructor(props) {
         super(props);
-        this.state={
-            data:[],
-            showModal:false,
-            editID:'',
-            newAmount:0,
-            exchangedAmount:0
+        this.state = {
+            data: [],
+            showModal: false,
+            editID: '',
+            newAmount: 0,
+            exchangedAmount: 0,
+            displayExchangedWilling: false,
+            displayAllPoint: false
         }
-        this.getWillingList=this.getWillingList.bind(this);
-        this.switchModal=this.switchModal.bind(this);
+        this.getWillingList = this.getWillingList.bind(this);
+        this.switchModal = this.switchModal.bind(this);
+        this.deleteWilling = this.deleteWilling.bind(this);
     }
     componentDidMount() {
         this.getWillingList();
-        document.title="Willing";
+        document.title = "Willing";
     }
 
-    switchModal(open=true){
-        (async ()=>{})()
-            .then(()=>{
+    switchModal(open = true) {
+        (async () => { })()
+            .then(() => {
                 this.setState({
-                    showModal:open
+                    showModal: open
                 });
-            }).then(()=>{
+            }).then(() => {
                 this.getWillingList();
-        })
+            })
     }
 
-    updateWilling(index){
-        let ID=0;
-        if (index!==-1){
-            ID=this.state.data[index].ID;
+    updateWilling(index) {
+        let ID = 0;
+        if (index !== -1) {
+            ID = this.state.data[index].ID;
         }
-        (async ()=>{})().then(()=>{
+        (async () => { })().then(() => {
             this.setState({
-                editID:ID
+                editID: ID
             });
-        }).then(()=>{
+        }).then(() => {
             this.switchModal();
         })
     }
 
-    getWillingList(){
+    getWillingList() {
         requestApi("/index.php?action=Willing&method=list")
-            .then((res)=>{
-                res.json().then((json)=>{
+            .then((res) => {
+                res.json().then((json) => {
                     this.setState({
-                        data:json.Data.Points,
-                        newAmount:json.Data.amount.Point,
-                        exchangedAmount:json.Data.amount.exchanged
+                        data: json.Data.Points,
+                        newAmount: json.Data.amount.Point,
+                        exchangedAmount: json.Data.amount.exchanged
                     })
                 })
             })
     }
-    render(){
-        return(
+
+    deleteWilling(ID, forceDelete = false) {
+        if (ID) {
+            if (forceDelete) {
+                requestApi("/index.php?action=Willing&method=CommonDelete&ID=" + ID)
+                    .then((res) => {
+                        res.json().then((json) => {
+                            if (json.Status == 1) {
+                                message.success("Delete Success");
+                                this.getWillingList();
+                            } else {
+                                message.warn(json.Message);
+                            }
+                        })
+                    })
+            } else {
+                Modal.confirm({
+                    title: "Delete Confirm",
+                    content: "Are you sure to delete this willing ?",
+                    onOk: (() => {
+                        this.deleteWilling(ID, true);
+                    })
+                })
+            }
+        }
+    }
+
+    render() {
+        return (
             <Layout className={"po_index"}>
                 <Header>
                     <Row align={"middle"} justify={"start"}>
                         <Col span={1}>
-                            <SketchOutlined style={{color:"white",fontSize:"35px"}} />
+                            <SketchOutlined style={{ color: "white", fontSize: "35px" }} />
                         </Col>
                         <Col span={23}>
-                            <h1 style={{lineHeight: "64px"}}>Desire is normal</h1>
+                            <h1 style={{ lineHeight: "64px" }}>Desire is normal</h1>
                         </Col>
                     </Row>
                 </Header>
-                <Content style={{paddingLeft:"15px",paddingRight:"15px"}}>
+                <Content style={{ paddingLeft: "15px", paddingRight: "15px" }}>
                     <Row>
-                        <Road />
+                        <Col span={24}>
+                            <MenuList />
+                        </Col>
                     </Row>
-                    <hr/>
+                    <hr />
                     <Row>
                         <Col span={4}>
                             <Button
                                 type={"primary"}
-                                onClick={()=>this.updateWilling(-1)}
+                                onClick={() => this.updateWilling(-1)}
                             >
                                 New Willing
                             </Button>
@@ -94,6 +126,12 @@ class Willing extends React.Component{
                             <Button
                                 ghost={true}
                                 type={"primary"}
+                                onClick={() => {
+                                    this.setState({
+                                        displayExchangedWilling: false,
+                                        displayAllPoint: false
+                                    });
+                                }}
                             >
                                 Your Points Left:{this.state.newAmount}
                             </Button>
@@ -102,29 +140,58 @@ class Willing extends React.Component{
                             <Button
                                 ghost={true}
                                 type={"primary"}
+                                onClick={() => {
+                                    this.setState({
+                                        displayExchangedWilling: true,
+                                        displayAllPoint: false
+                                    });
+                                }}
                             >
                                 Exchanged Point:{this.state.exchangedAmount}
                             </Button>
                         </Col>
+                        <Col span={6}>
+                            <Button
+                                ghost={true}
+                                type={"primary"}
+                                onClick={() => {
+                                    this.setState({
+                                        displayAllPoint: true
+                                    })
+                                }}
+                            >
+                                All Point
+                            </Button>
+                        </Col>
                     </Row>
-                    <hr/>
+                    <hr />
                     <Table
-                        dataSource={this.state.data}
+                        dataSource={this.state.data.filter((item) => {
+                            if (!this.state.displayAllPoint) {
+                                if (this.state.displayExchangedWilling) {
+                                    return item.status != 'new';
+                                } else {
+                                    return item.status == 'new';
+                                }
+                            }
+                            return true;
+
+                        })}
                         columns={[
                             {
-                                title:"CreateTime",
+                                title: "CreateTime",
                                 dataIndex: "AddTime",
-                                key:"ID",
+                                key: "ID",
                             },
                             {
-                                title:"Title",
-                                dataIndex:"note",
-                                key:"ID",
-                                render:(text,record,index)=>{
-                                    return(
+                                title: "Title",
+                                dataIndex: "note",
+                                key: "ID",
+                                render: (text, record, index) => {
+                                    return (
                                         <Button
                                             type={"link"}
-                                            onClick={()=>{
+                                            onClick={() => {
                                                 this.updateWilling(index);
                                             }}
                                         >
@@ -134,50 +201,50 @@ class Willing extends React.Component{
                                 }
                             },
                             {
-                                title:"Point",
+                                title: "Point",
                                 dataIndex: "Point",
-                                key:"ID",
-                                render:(text,record)=>{
-                                    let style={};
-                                    switch (record.status){
+                                key: "ID",
+                                render: (text, record) => {
+                                    let style = {};
+                                    switch (record.status) {
                                         case "new":
-                                            style={color:"gold"}
+                                            style = { color: "gold" }
                                             break;
                                         default:
-                                            style={color:"gray",textDecoration:"line-through"}
+                                            style = { color: "gray", textDecoration: "line-through" }
                                             break;
                                     }
-                                    return(
+                                    return (
                                         <span style={style}>{text}</span>
                                     )
                                 },
-                                sorter:(a,b)=>{
-                                    return a.Point-b.Point;
+                                sorter: (a, b) => {
+                                    return a.Point - b.Point;
                                 }
                             },
                             {
-                                title:"Status",
+                                title: "Status",
                                 dataIndex: "status",
-                                key:"ID",
-                                onFilter:(value,record)=>{
-                                    return value===record.status
+                                key: "ID",
+                                onFilter: (value, record) => {
+                                    return value === record.status
                                 },
-                                filters:config.willingStatus.map((Item)=>{
+                                filters: config.willingStatus.map((Item) => {
                                     return {
-                                        text:Item.label,
-                                        value:Item.value
+                                        text: Item.label,
+                                        value: Item.value
                                     }
                                 }),
-                                render:(text,record)=>{
+                                render: (text, record) => {
                                     let dom;
-                                    switch (record.status){
+                                    switch (record.status) {
                                         case "new":
-                                            dom=<Tag color="processing">
+                                            dom = <Tag color="processing">
                                                 Created @ {record.AddTime}
                                             </Tag>
                                             break;
                                         default:
-                                            dom=<Tag color={"success"}>
+                                            dom = <Tag color={"success"}>
                                                 Exchanged
                                             </Tag>
                                             break;
@@ -186,25 +253,25 @@ class Willing extends React.Component{
                                 }
                             },
                             {
-                                title:"Option",
-                                dataIndex:'status',
-                                render:(text,record,index)=>{
-                                    let show,type;
-                                    switch (record.status){
+                                title: "Option",
+                                dataIndex: 'status',
+                                render: (text, record, index) => {
+                                    let show, type;
+                                    switch (record.status) {
                                         case "new":
-                                            show="Exchange";
-                                            type="primary";
+                                            show = "Exchange";
+                                            type = "primary";
                                             break;
                                         default:
-                                            show="Exchanged @ "+record.LastUpdateTime;
-                                            type="link";
+                                            show = "Exchanged @ " + record.LastUpdateTime;
+                                            type = "link";
                                             break;
                                     }
-                                    return(
+                                    return (
                                         <div>
                                             <Button
                                                 type={type}
-                                                onClick={()=>{
+                                                onClick={() => {
                                                     this.updateWilling(index)
                                                 }}
                                             >
@@ -214,8 +281,8 @@ class Willing extends React.Component{
                                             <Button
                                                 type={"primary"}
                                                 danger
-                                                onClick={()=>{
-
+                                                onClick={() => {
+                                                    this.deleteWilling(record.ID);
                                                 }}
                                             >
                                                 Delete
@@ -231,8 +298,8 @@ class Willing extends React.Component{
                 <Footer>
                     <Modal
                         visible={this.state.showModal}
-                        onOk={()=>this.switchModal(false)}
-                        onCancel={()=>this.switchModal(false)}
+                        onOk={() => this.switchModal(false)}
+                        onCancel={() => this.switchModal(false)}
                     >
                         <WillingDetail
                             ID={this.state.editID}
