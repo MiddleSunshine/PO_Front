@@ -10,6 +10,7 @@ import {
     DeploymentUnitOutlined
 } from '@ant-design/icons';
 import MenuList from "../component/MenuList";
+import "../css/PointTree.css";
 
 class PointTree extends React.Component{
     constructor(props) {
@@ -76,7 +77,8 @@ class PointTree extends React.Component{
     }
 
     render() {
-        return <div className="container">
+        let height=window.screen.availHeight-200;
+        return <div className="container PointTree">
             <Row>
                 <Col span={24}>
                     <MenuList/>
@@ -98,7 +100,11 @@ class PointTree extends React.Component{
                         }}
                     />
                 </Col>
-                <Col span={18}>
+                <Col 
+                    span={18}
+                    className={"ContentPart"}
+                    style={{height:height+"px"}}
+                >
                     {
                         this.state.points.map((point,outsideIndex)=>{
                             return(
