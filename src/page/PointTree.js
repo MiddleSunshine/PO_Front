@@ -1,7 +1,14 @@
 import React from "react";
-import {Card, Col, Row, Tree} from "antd";
+import {Button, Card, Col, Drawer, Row, Tree} from "antd";
 import {requestApi} from "../config/functions";
 import MarkdownPreview from "@uiw/react-markdown-preview";
+import PointEdit from "../component/PointEdit";
+import {
+    CloseOutlined,
+    FormOutlined,
+    UnorderedListOutlined,
+    DeploymentUnitOutlined
+} from '@ant-design/icons';
 
 class PointTree extends React.Component{
     constructor(props) {
@@ -10,7 +17,8 @@ class PointTree extends React.Component{
             PID:props.match.params.pid,
             treeData:[],
             points:[],
-            selectedPoint:{}
+            selectedPoint:{},
+            editPointID:-1
         }
         this.getTreeData=this.getTreeData.bind(this);
         this.newPointPreview=this.newPointPreview.bind(this);
@@ -34,7 +42,7 @@ class PointTree extends React.Component{
                     let points=this.state.points;
                     let selectedPoints=this.state.selectedPoint;
                     selectedPoints[ID]=1;
-                    points.push(point);
+                    points.unshift(point);
                     this.setState({
                         points:points,
                         selectedPoint:selectedPoints
@@ -45,7 +53,7 @@ class PointTree extends React.Component{
 
     deletePointPreview(ID){
         let points=this.state.points.filter((point)=>{
-            return point.ID-ID>0;
+            return point.ID-ID!=0;
         });
         let selectedPoints=this.state.selectedPoint;
         delete selectedPoints[ID];
@@ -69,10 +77,9 @@ class PointTree extends React.Component{
     render() {
         return <div className="container">
             <Row>
-                <Col span={8}>
+                <Col span={6}>
                     <Tree
                         treeData={this.state.treeData}
-                        // defaultExpandAll={true}
                         checkStrictly={true}
                         checkable={true}
                         onCheck={(checkedKeys,info)=>{
@@ -84,22 +91,92 @@ class PointTree extends React.Component{
                         }}
                     />
                 </Col>
-                <Col span={16}>
+                <Col span={18}>
                     {
                         this.state.points.map((point,outsideIndex)=>{
                             return(
                                 <Card
+                                    headStyle={{backgroundColor:"#f0f0f0",fontWeight:"bolder"}}
                                     key={point.ID}
-                                    title={point.keyword}
+                                    title={
+                                        <h3
+                                            onClick={()=>{
+                                                this.setState({
+                                                    editPointID:point.ID
+                                                });
+                                            }}
+                                            style={{cursor:"pointer"}}
+                                        >{point.keyword}</h3>
+                                    }
+                                    extra={
+                                        <Button
+                                            icon={<CloseOutlined />}
+                                            type="primary"
+                                            shape="circle"
+                                            onClick={()=>{
+                                                this.deletePointPreview(point.ID);
+                                            }}
+                                            size={"small"}
+                                        />
+                                    }
+                                    actions={[
+                                        <FormOutlined
+                                            onClick={()=>{
+                                                window.open("/point/edit/"+point.ID);
+                                            }}
+                                        />,
+                                        <UnorderedListOutlined
+                                            onClick={()=>{
+                                                window.open("/pointTable/"+point.ID);
+                                            }}
+                                        />,
+                                        <DeploymentUnitOutlined
+                                            onClick={()=>{
+                                                window.open("/pointRoad/"+point.ID);
+                                            }}
+                                        />
+                                    ]}
                                 >
-                                    <MarkdownPreview
-                                        source={point.FileContent}
-                                    />
+                                    <Row>
+                                        <Col span={24}>
+                                            Note:{point.note}
+                                        </Col>
+                                    </Row>
+                                    <hr/>
+                                    <Row>
+                                        <Col span={24}>
+                                            <MarkdownPreview
+                                                source={point.FileContent}
+                                            />
+                                        </Col>
+                                    </Row>
                                 </Card>
                             )
                         })
                     }
                 </Col>
+            </Row>
+            <Row>
+                <Drawer
+                    title={"Point Edit"}
+                    width={800}
+                    placement={"right"}
+                    visible={this.state.editPointID>0}
+                    onClose={()=>{
+                        (async ()=>{})()
+                            .then(()=>{
+                                this.setState({
+                                    editPointID:-1
+                                });
+                            }).then(()=>{
+                                this.getTreeData(this.state.PID);
+                        })
+                    }}
+                >
+                    <PointEdit
+                        ID={this.state.editPointID}
+                    />
+                </Drawer>
             </Row>
         </div>
     }
