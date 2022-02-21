@@ -662,14 +662,18 @@ class PointTable extends React.Component {
                                                                                     this.openDrawer(point, false);
                                                                                 }}
                                                                             >
-                                                                                <span
-                                                                                    style={{
-                                                                                        fontSize: outsideIndexActive ? "18px" : "15px",
-                                                                                        color: outsideIndexActive ? "black" : point.SearchAble == SEARCHABLE_POINT ? config.statusBackGroupColor[point.status] : 'black'
-                                                                                    }}
+                                                                                <Tooltip
+                                                                                    title={point.keyword}
                                                                                 >
-                                                                                    {point.keyword}
-                                                                                </span>
+                                                                                    <span
+                                                                                        style={{
+                                                                                            fontSize: outsideIndexActive ? "18px" : "15px",
+                                                                                            color: outsideIndexActive ? "black" : point.SearchAble == SEARCHABLE_POINT ? config.statusBackGroupColor[point.status] : 'black'
+                                                                                        }}
+                                                                                    >
+                                                                                        {point.keyword.length > 15 ? (point.keyword.substring(0, 15) + "...") : point.keyword}
+                                                                                    </span>
+                                                                                </Tooltip>
                                                                             </Button>
                                                                         </Row>
                                                                 }
@@ -907,7 +911,7 @@ class PointTable extends React.Component {
                                                         </Col>
                                                         <Col span={1} offset={1}>
                                                             <a
-                                                                href={"/point/edit/"+point.ID}
+                                                                href={"/point/edit/" + point.ID}
                                                                 target={"_blank"}
                                                             >
                                                                 <FormOutlined />
@@ -915,7 +919,7 @@ class PointTable extends React.Component {
                                                         </Col>
                                                         <Col span={20}>
                                                             <a
-                                                                href={"/pointTable/"+point.ID}
+                                                                href={"/pointTable/" + point.ID}
                                                                 target={"_blank"}
                                                             >
                                                                 {point.keyword}
