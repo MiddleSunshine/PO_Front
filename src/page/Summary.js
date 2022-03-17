@@ -2,6 +2,7 @@ import React from "react";
 import config from "../config/setting";
 import ReactECharts from 'echarts-for-react';
 import {requestApi} from "../config/functions";
+import {Input} from "antd";
 
 /**
  * echart文档演示
@@ -11,21 +12,22 @@ class Summary extends React.Component{
     constructor(props) {
         super([props]);
         this.state={
-            pid:props.match.params.pid,
+            pid:-1,
             data:[],
             connection:[],
-            categories:[]
+            categories:[],
         }
         this.getData=this.getData.bind(this);
     }
     componentDidMount() {
-        this.getData(this.state.pid).then(()=>{
-            document.title="Summary";
-        })
+        document.title="Summary";
     }
 
     getData(pid){
-        return requestApi("/index.php?action=Summary&method=Index2&pid="+pid)
+        if (pid<0){
+            return false;
+        }
+        requestApi("/index.php?action=Summary&method=Index2&pid="+pid)
             .then((res)=>{
                 res.json().then((json)=>{
                     let data=json.Data.point;
@@ -82,10 +84,27 @@ class Summary extends React.Component{
         };
         return (
             <div className="container">
-                <ReactECharts
-                    option={option}
-                    style={{ height: '700px', width: '100%' }}
+                <Input
+                    value={this.state.pid}
+                    onChange={(e)=>{
+                        this.setState({
+                            pid:e.target.value
+                        })
+                    }}
+                    placeholder={"set the id"}
+                    onPressEnter={()=>{
+                        this.getData(this.state.pid)
+                    }}
                 />
+                {
+                    this.state.pid<0
+                        ?null
+                        :<ReactECharts
+                            option={option}
+                            style={{ height: '700px', width: '100%' }}
+                        />
+                }
+
             </div>
         )
     }

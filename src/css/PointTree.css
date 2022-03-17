@@ -7,8 +7,15 @@
 .PointTree .ContentPart{
     overflow: auto;
     /* height: 300px; */
+    border-left: 1px solid #9A9A9A;
+    padding-left: 5px;
 }
 
 .PointTree ::-webkit-scrollbar{
     display: none;
+}
+
+.PointTree .ant-tree .ant-tree-node-content-wrapper{
+    white-space: nowrap;
+    overflow: scroll;
 }

@@ -1,5 +1,5 @@
 import React from "react";
-import {Button, Card, Col, Drawer, Row, Tree} from "antd";
+import {Button, Card, Col, Drawer, Input, InputNumber, Row, Select, Tree} from "antd";
 import {requestApi} from "../config/functions";
 import MarkdownPreview from "@uiw/react-markdown-preview";
 import PointEdit from "../component/PointEdit";
@@ -11,6 +11,10 @@ import {
 } from '@ant-design/icons';
 import MenuList from "../component/MenuList";
 import "../css/PointTree.css";
+import {Option} from "antd/es/mentions";
+
+const MODE_CONTENT='content';
+const MODE_STATUS='status';
 
 class PointTree extends React.Component{
     constructor(props) {
@@ -21,7 +25,8 @@ class PointTree extends React.Component{
             points:[],
             selectedPoint:{},
             editPointID:-1,
-            asyncData:true
+            asyncData:true,
+            treeWidth:6
         }
         this.getTreeData=this.getTreeData.bind(this);
         this.newPointPreview=this.newPointPreview.bind(this);
@@ -45,7 +50,7 @@ class PointTree extends React.Component{
                     let points=this.state.points;
                     let selectedPoints=this.state.selectedPoint;
                     selectedPoints[ID]=1;
-                    points.unshift(point);
+                    points.push(point);
                     this.setState({
                         points:points,
                         selectedPoint:selectedPoints
@@ -66,8 +71,8 @@ class PointTree extends React.Component{
         })
     }
 
-    getTreeData(PID){
-        requestApi("index.php?action=PointMindMap&method=TreeMode&PID="+PID)
+    getTreeData(PID,mode=MODE_CONTENT){
+        requestApi("index.php?action=PointMindMap&method=TreeMode&PID="+PID+"&mode="+mode)
             .then((res)=>{
                 res.json().then((json)=>{
                     this.setState({
@@ -91,8 +96,40 @@ class PointTree extends React.Component{
             </Row>
             <br/>
             <Row>
+                <Col span={2}>
+                    <InputNumber
+                        value={this.state.treeWidth}
+                        onChange={(value)=>{
+                            this.setState({
+                                treeWidth:value
+                            })
+                        }}
+                    />
+                </Col>
+                <Col span={6}>
+                    <Select
+                        onChange={(newValue)=>{
+                            this.getTreeData(this.state.PID,newValue)
+                        }}
+                        defaultValue={MODE_CONTENT}
+                    >
+                        <Option
+                            value={MODE_CONTENT}
+                        >
+                            Content
+                        </Option>
+                        <Option
+                            value={MODE_STATUS}
+                        >
+                            Status
+                        </Option>
+                    </Select>
+                </Col>
+            </Row>
+            <hr/>
+            <Row>
                 <Col
-                    span={6}
+                    span={this.state.treeWidth}
                     className={"MenuPart"}
                     style={{height:height+"px"}}
                 >
@@ -116,7 +153,7 @@ class PointTree extends React.Component{
                     
                 </Col>
                 <Col 
-                    span={18}
+                    span={24-this.state.treeWidth}
                     className={"ContentPart"}
                     style={{height:height+"px"}}
                 >
