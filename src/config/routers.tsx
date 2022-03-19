@@ -21,6 +21,7 @@ import CheckList from '../page/CheckList';
 import CheckListHistory from "../page/CheckListHistory";
 import PointHistory from "../page/PointHistory";
 import PointTree from "../page/PointTree";
+import PointsSang from "../page/PointsSang";
 
 interface router {
     path: string,
@@ -108,6 +109,10 @@ const routers: Array<router> = [
     {
         path: "/pointTable/:pid",
         component: PointTable
+    },
+    {
+        path:"/pointsSang/:pid",
+        component:PointsSang
     },
     {
         path: "/points/:pid",

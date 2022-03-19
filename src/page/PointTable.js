@@ -522,6 +522,15 @@ class PointTable extends React.Component {
                             Tree Mode
                         </Button>
                     </Col>
+                    <Col span={3}>
+                        <Button
+                            type={"link"}
+                            href={"/pointsSang/" + this.state.parentPoint.ID}
+                            target={"_blank"}
+                        >
+                            sankey
+                        </Button>
+                    </Col>
                     {/*<Col span={6}>*/}
                     {/*    <Select*/}
                     {/*        style={{ width: "100%" }}*/}

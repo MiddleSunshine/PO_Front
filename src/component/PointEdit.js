@@ -155,33 +155,27 @@ class PointEdit extends React.Component{
                     <Form.Item
                         label={"Favourite"}
                     >
-                        {this.state.point.Favourite} /&nbsp;&nbsp;
-                        {
-                            this.state.point.Favourite==='Favourite'
-                            ?<Switch
-                                    checkedChildren={"Yes"}
-                                    unCheckedChildren={"No"}
-                                    defaultChecked
-                                    onChange={(newValue)=>{
-                                    let point=this.state.point;
-                                    point.Favourite=newValue?'Favourite':'';
-                                    this.setState({
-                                        point:point
-                                    });
-                                }}
-                                />
-                                :<Switch
-                                    checkedChildren={"Yes"}
-                                    unCheckedChildren={"No"}
-                                    onChange={(newValue)=>{
-                                    let point=this.state.point;
-                                    point.Favourite=newValue?'Favourite':'';
-                                    this.setState({
-                                        point:point
-                                    });
-                                }}
-                                />
-                        }
+                        <Select
+                            value={this.state.point.Favourite=='Favourite'?'Favourite':'NotFavourite'}
+                            onChange={(newValue)=>{
+                                let point=this.state.point;
+                                point.Favourite=newValue?'Favourite':'';
+                                this.setState({
+                                    point:point
+                                });
+                            }}
+                        >
+                            <Option
+                                value={'Favourite'}
+                            >
+                                Yes
+                            </Option>
+                            <Option
+                                value={'NotFavourite'}
+                            >
+                                No
+                            </Option>
+                        </Select>
                     </Form.Item>
                     <Form.Item
                         label={"Type"}

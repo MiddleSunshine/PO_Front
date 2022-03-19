@@ -21,3 +21,7 @@
 .po_index .ant-layout, .ant-layout *{
     height: 100%;
 }
+
+.po_index .ant-list-split .ant-list-item{
+    background-color: white;
+}
