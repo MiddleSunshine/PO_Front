@@ -23,6 +23,7 @@ import "../css/PointTable.css"
 import config, { SEARCHABLE_POINT, SEARCHABLE_TITLE } from "../config/setting";
 import SubPointList from "../component/SubPointList";
 import MenuList from "../component/MenuList";
+import Favourite from "../component/Favourite";
 
 var hotkeys_maps = [
     { hotkey: "shift+e", label: "Edit" },
@@ -808,6 +809,7 @@ class PointTable extends React.Component {
                         })
                     }
                 </Row>
+                <Favourite />
                 <Row>
                     <Drawer
                         title={

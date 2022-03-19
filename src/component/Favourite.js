@@ -1,19 +1,23 @@
 import React from "react";
 import {requestApi} from "../config/functions";
-import {Affix, Avatar, Button, Col, List, message, Modal, Popconfirm, Row} from "antd";
-import {FormOutlined, StarOutlined,DeleteOutlined} from '@ant-design/icons';
+import {Affix, Avatar, Button, Col, Comment, List, message, Modal, Popconfirm, Row} from "antd";
+import {FormOutlined, StarOutlined,DeleteOutlined,MessageOutlined} from '@ant-design/icons';
 import config from "../config/setting";
+import MarkdownPreview from "@uiw/react-markdown-preview";
 
 class Favourite extends React.Component{
     constructor(props) {
         super(props);
         this.state={
             favouritePoints:[],
-            modelVisible:false
+            comments:[],
+            commentsModalVisible:false,
+            favouritePointsModalVisible:false
         }
         this.getFavourite=this.getFavourite.bind(this);
-        this.showModal=this.showModal.bind(this);
+        this.showFavouriteModal=this.showFavouriteModal.bind(this);
         this.removeFavorite=this.removeFavorite.bind(this);
+        this.showCommentsModal=this.showCommentsModal.bind(this);
     }
 
     getFavourite() {
@@ -27,14 +31,14 @@ class Favourite extends React.Component{
             })
     }
 
-    showModal(){
+    showFavouriteModal(){
         (async ()=>{})()
             .then(()=>{
                 this.getFavourite();
             })
             .then(()=>{
                 this.setState({
-                    modelVisible:true
+                    favouritePointsModalVisible:true
                 })
             })
     }
@@ -57,18 +61,49 @@ class Favourite extends React.Component{
             })
     }
 
+    showCommentsModal(){
+        requestApi("/index.php?action=PointsComments&method=GetLastComment")
+            .then((res)=>{
+                res.json().then((json)=>{
+                    this.setState({
+                        comments:json.Data.Comments,
+                        commentsModalVisible:true
+                    })
+                })
+            })
+    }
+
     render() {
         return <Row>
             <Col span={24}>
                 <Row>
-                    <Col span={1} offset={23}>
+                    <Col span={1} offset={22}>
                         <Affix
                             offsetBottom={true}
                         >
                             <Button
-                                onClick={this.showModal}
+                                shape={"circle"}
+                                onClick={()=>{
+                                    this.showFavouriteModal();
+                                }}
                                 icon={<StarOutlined />}
                                 type={"primary"}
+                            >
+
+                            </Button>
+                        </Affix>
+                    </Col>
+                    <Col span={1}>
+                        <Affix
+                            offsetBottom={true}
+                        >
+                            <Button
+                                shape={"circle"}
+                                type={"primary"}
+                                icon={<MessageOutlined />}
+                                onClick={()=>{
+                                    this.showCommentsModal()
+                                }}
                             >
 
                             </Button>
@@ -79,10 +114,10 @@ class Favourite extends React.Component{
                     <Modal
                         width={1000}
                         title={"Poins"}
-                        visible={this.state.modelVisible}
+                        visible={this.state.favouritePointsModalVisible}
                         onCancel={()=>{
                             this.setState({
-                                modelVisible:false
+                                favouritePointsModalVisible:false
                             })
                         }}
                     >
@@ -134,6 +169,58 @@ class Favourite extends React.Component{
                                             }
                                             description={Item.note}
                                         />
+                                    </List.Item>
+                                )
+                            }}
+                        />
+                    </Modal>
+                </Row>
+                <Row>
+                    <Modal
+                        width={1000}
+                        visible={this.state.commentsModalVisible}
+                        title={"Recent Comments"}
+                        onCancel={()=>{
+                            this.setState({
+                                commentsModalVisible:false
+                            })
+                        }}
+                    >
+                        <List
+                            dataSource={this.state.comments}
+                            renderItem={(Item)=>{
+                                return(
+                                    <List.Item>
+                                        <List.Item.Meta
+                                            avatar={
+                                                <Button
+                                                    type={"link"}
+                                                    href={"/point/edit/" + Item.Point.ID}
+                                                    target={"_blank"}
+                                                    icon={<FormOutlined/>}
+                                                >
+                                                </Button>
+                                        }
+                                            title={
+                                                <Button
+                                                    type={"link"}
+                                                    target={"_blank"}
+                                                    href={"/pointTable/"+Item.Point.ID}
+                                                >
+                                                    {Item.Point.keyword} / {Item.Point.status}
+                                                </Button>
+                                            }
+                                            description={
+                                                <Comment
+                                                    author={Item.Comment}
+                                                    datetime={Item.LastUpdateTime}
+                                                    content={<MarkdownPreview
+                                                        source={Item.Md}
+                                                    />}
+                                                />
+                                            }
+                                        >
+                                        </List.Item.Meta>
                                     </List.Item>
                                 )
                             }}

@@ -1,5 +1,5 @@
 import React from "react";
-import {Form, Input, Select, Button, message, Switch, Row, Col, Drawer} from "antd";
+import {Form, Input, Select, Button, message, Switch, Row, Col, Drawer, InputNumber} from "antd";
 import SimpleMDE from "react-simplemde-editor";
 import "easymde/dist/easymde.min.css";
 import config, {SEARCHABLE_POINT, SEARCHABLE_TITLE} from "../config/setting";
@@ -35,7 +35,8 @@ class PointEdit extends React.Component{
             editFile:false,
             fileChanged:false,
             disableEdieFile:false,
-            editComment:false
+            editComment:false,
+            commentDrawerWidth:1000
         }
         this.getPointDetail=this.getPointDetail.bind(this);
         this.handleChange=this.handleChange.bind(this);
@@ -337,9 +338,19 @@ class PointEdit extends React.Component{
                     }
                 </Form>
                 <Drawer
-                    title={"Comments"}
+                    title={
+                    <InputNumber
+                        value={this.state.commentDrawerWidth}
+                        onChange={(newValue)=>{
+                            this.setState({
+                                commentDrawerWidth:newValue
+                            })
+                        }}
+                    />
+                    }
                     placement={"right"}
                     size={"large"}
+                    width={this.state.commentDrawerWidth}
                     visible={this.state.editComment}
                     onClose={()=>{
                         this.setState({
