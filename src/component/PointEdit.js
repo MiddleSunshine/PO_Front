@@ -1,10 +1,11 @@
 import React from "react";
-import {Form, Input, Select, Button, message, Switch,Row,Col} from "antd";
+import {Form, Input, Select, Button, message, Switch, Row, Col, Drawer} from "antd";
 import SimpleMDE from "react-simplemde-editor";
 import "easymde/dist/easymde.min.css";
 import config, {SEARCHABLE_POINT, SEARCHABLE_TITLE} from "../config/setting";
 import {openLocalMarkdownFile, requestApi} from "../config/functions";
 import MarkdownPreview from '@uiw/react-markdown-preview';
+import PointsComments from "./PointsComments";
 
 const {Option}=Select;
 
@@ -34,6 +35,7 @@ class PointEdit extends React.Component{
             editFile:false,
             fileChanged:false,
             disableEdieFile:false,
+            editComment:false
         }
         this.getPointDetail=this.getPointDetail.bind(this);
         this.handleChange=this.handleChange.bind(this);
@@ -147,6 +149,27 @@ class PointEdit extends React.Component{
                     labelCol={{ span: 4 }}
                     wrapperCol={{ span: 16 }}
                 >
+                    <Form.Item
+                        label={"Option"}
+                    >
+                        <Button
+                            type={"primary"}
+                            onClick={()=>this.savePoint()}
+                        >
+                            Save
+                        </Button>
+                        &nbsp;&nbsp;
+                        <Button
+                            type={"primary"}
+                            onClick={()=>{
+                                this.setState({
+                                    editComment:!this.state.editComment
+                                })
+                            }}
+                        >
+                            Comments
+                        </Button>
+                    </Form.Item>
                     <Form.Item
                         label={"Info"}
                     >
@@ -312,17 +335,22 @@ class PointEdit extends React.Component{
                             }
                         </Form.Item>
                     }
-                    <Form.Item
-                        label={"Option"}
-                    >
-                        <Button
-                            type={"primary"}
-                            onClick={()=>this.savePoint()}
-                        >
-                            Save
-                        </Button>
-                    </Form.Item>
                 </Form>
+                <Drawer
+                    title={"Comments"}
+                    placement={"right"}
+                    size={"large"}
+                    visible={this.state.editComment}
+                    onClose={()=>{
+                        this.setState({
+                            editComment:false
+                        })
+                    }}
+                >
+                    <PointsComments
+                        PID={this.state.ID}
+                    />
+                </Drawer>
             </div>
         );
     }

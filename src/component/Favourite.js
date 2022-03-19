@@ -39,10 +39,6 @@ class Favourite extends React.Component{
             })
     }
 
-    componentDidMount() {
-        this.showModal();
-    }
-
     removeFavorite(point){
         point.Favourite='';
         requestApi("/index.php?action=Points&method=UpdatePoint",{
