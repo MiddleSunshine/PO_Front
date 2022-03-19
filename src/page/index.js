@@ -6,6 +6,7 @@ import {requestApi} from "../config/functions";
 import Welcome from "../component/Welcome";
 import MenuList from '../component/MenuList';
 import config from "../config/setting";
+import Favourite from "../component/Favourite";
 
 const {Header, Footer, Content} = Layout;
 
@@ -84,8 +85,7 @@ class Index extends React.Component {
                             />
                         </Col>
                     </Row>
-                </Content>
-                <Footer>
+                    <br />
                     <Row
                         align={"middle"} justify={"start"}
                     >
@@ -93,47 +93,50 @@ class Index extends React.Component {
                             {
                                 this.state.points.length>0?
                                     <List
-                                    bordered={true}
-                                    dataSource={this.state.points}
-                                    renderItem={(Item) => {
-                                        return (
-                                            <List.Item
-                                                actions={[
-                                                    <Button
-                                                        type={"link"}
-                                                        href={"/point/edit/" + Item.ID}
-                                                        target={"_blank"}
-                                                        icon={<FormOutlined/>}
-                                                    >
-
-                                                    </Button>
-                                                ]}
-                                            >
-                                                <List.Item.Meta
-                                                    avatar={
-                                                        <Avatar>
-                                                            {Item.SearchAble}
-                                                        </Avatar>
-                                                    }
-                                                    title={
+                                        bordered={true}
+                                        dataSource={this.state.points}
+                                        renderItem={(Item) => {
+                                            return (
+                                                <List.Item
+                                                    actions={[
                                                         <Button
-                                                            style={{color: config.statusBackGroupColor[Item.status]}}
                                                             type={"link"}
-                                                            href={"/pointTable/" + Item.ID}
+                                                            href={"/point/edit/" + Item.ID}
                                                             target={"_blank"}
+                                                            icon={<FormOutlined/>}
                                                         >
-                                                            {Item.keyword}
+
                                                         </Button>
-                                                    }
-                                                    description={Item.note}
-                                                />
-                                            </List.Item>
-                                        )
-                                    }}
-                                />:''
+                                                    ]}
+                                                >
+                                                    <List.Item.Meta
+                                                        avatar={
+                                                            <Avatar>
+                                                                {Item.SearchAble}
+                                                            </Avatar>
+                                                        }
+                                                        title={
+                                                            <Button
+                                                                style={{color: config.statusBackGroupColor[Item.status]}}
+                                                                type={"link"}
+                                                                href={"/pointTable/" + Item.ID}
+                                                                target={"_blank"}
+                                                            >
+                                                                {Item.keyword}
+                                                            </Button>
+                                                        }
+                                                        description={Item.note}
+                                                    />
+                                                </List.Item>
+                                            )
+                                        }}
+                                    />:''
                             }
                         </Col>
                     </Row>
+                </Content>
+                <Footer>
+                    <Favourite />
                 </Footer>
                 <Row>
                     <Welcome/>
