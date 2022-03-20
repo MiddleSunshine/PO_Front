@@ -1,6 +1,6 @@
 import React from "react";
 import {requestApi} from "../config/functions";
-import {Affix, Avatar, Button, Col, Comment, List, message, Modal, Popconfirm, Row} from "antd";
+import {Affix, Avatar, Button, Col, Comment, Input, List, message, Modal, Popconfirm, Row} from "antd";
 import {FormOutlined, StarOutlined,DeleteOutlined,MessageOutlined} from '@ant-design/icons';
 import config from "../config/setting";
 import MarkdownPreview from "@uiw/react-markdown-preview";
@@ -12,7 +12,8 @@ class Favourite extends React.Component{
             favouritePoints:[],
             comments:[],
             commentsModalVisible:false,
-            favouritePointsModalVisible:false
+            favouritePointsModalVisible:false,
+            commentLimit:20
         }
         this.getFavourite=this.getFavourite.bind(this);
         this.showFavouriteModal=this.showFavouriteModal.bind(this);
@@ -61,8 +62,11 @@ class Favourite extends React.Component{
             })
     }
 
-    showCommentsModal(){
-        requestApi("/index.php?action=PointsComments&method=GetLastComment")
+    showCommentsModal(limit=20){
+        if (parseInt(limit)<0){
+            limit=20;
+        }
+        requestApi("/index.php?action=PointsComments&method=GetLastComment&limit="+limit)
             .then((res)=>{
                 res.json().then((json)=>{
                     this.setState({
@@ -179,7 +183,19 @@ class Favourite extends React.Component{
                     <Modal
                         width={1000}
                         visible={this.state.commentsModalVisible}
-                        title={"Recent Comments"}
+                        title={
+                        <Input
+                            value={this.state.commentLimit}
+                            onChange={(e)=>{
+                                this.setState({
+                                    commentLimit:e.target.value
+                                })
+                            }}
+                            onPressEnter={()=>{
+                                this.showCommentsModal(this.state.commentLimit);
+                            }}
+                        />
+                        }
                         onCancel={()=>{
                             this.setState({
                                 commentsModalVisible:false
