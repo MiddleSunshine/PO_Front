@@ -100,11 +100,7 @@ class Favourite extends React.Component{
     }
 
     showActionsModal(startTime=''){
-        let url="/index.php?action=Actions&method=List";
-        if (startTime.length>0){
-            url+="&StartTime="+startTime;
-        }
-        requestApi(url)
+        requestApi("/index.php?action=Actions&method=List&StartTime="+startTime)
             .then((res)=>{
                 res.json().then((json)=>{
                     this.setState({
@@ -134,7 +130,8 @@ class Favourite extends React.Component{
             mode:"cors",
             body:JSON.stringify({
                 Title:this.state.newActionTitle,
-                Note:this.state.newActionNote
+                Note:this.state.newActionNote,
+                QuickInput:"normal"
             })
         })
             .then((res)=>{

@@ -1,22 +1,211 @@
 import React from "react";
 import MenuList from "../component/MenuList";
+import {Input, Comment, Avatar, Button, Divider, message, Row, Col, Modal, Select} from "antd";
+import {requestApi} from "../config/functions";
+import {UserAddOutlined} from '@ant-design/icons';
+import Favourite from "../component/Favourite";
 
 class Actions extends React.Component{
     constructor(props) {
         super(props);
         this.state={
-            actions:[]
+            actions:[],
+            startTime:""
         }
+        this.getActions=this.getActions.bind(this);
+        this.updateActionData=this.updateActionData.bind(this);
+        this.updateAction=this.updateAction.bind(this);
+        this.deleteAction=this.deleteAction.bind(this);
     }
 
     getActions(startTime=''){
-
+        requestApi("/index.php?action=Actions&method=List&StartTime="+startTime)
+            .then((res)=>{
+                res.json().then((json)=>{
+                    this.setState({
+                        actions:json.Data.Actions
+                    })
+                })
+            })
+            .then(()=>{
+                document.title="History Actions";
+            })
     }
+
+    updateActionData(index,key,value){
+        let actions=this.state.actions;
+        actions[index][key]=value;
+        this.setState({
+            actions:actions
+        });
+    }
+
+    updateAction(index){
+        let action=this.state.actions[index];
+        requestApi("/index.php?action=Actions&method=CommonSave",{
+            method:"post",
+            mode:"cors",
+            body:JSON.stringify(action)
+        })
+            .then((res)=>{
+                res.json().then((json)=>{
+                    if (json.Status==1){
+                        message.success("Update Success");
+                        this.getActions(this.state.startTime);
+                    }else{
+                        message.warn(json.Message);
+                    }
+                })
+            })
+    }
+
+    deleteAction(index,force=false){
+        if (!force){
+            Modal.confirm({
+                title:"Delete Check",
+                content:"Are you sure to delete this action ?",
+                onOk:()=>{
+                    this.deleteAction(index,true)
+                }
+            })
+        }else{
+            let action=this.state.actions[index];
+            requestApi("/index.php?action=Actions&method=CommonDelete&ID="+action.ID)
+                .then((res)=>{
+                    res.json().then((json)=>{
+                        if (json.Status==1){
+                            message.success("Delete Success");
+                            this.getActions(this.state.startTime);
+                        }else{
+                            message.warn(json.Message);
+                        }
+                    })
+                })
+        }
+    }
+
+    componentDidMount() {
+        this.getActions();
+    }
+
 
     render() {
         return (
             <div className={"container"}>
                 <MenuList />
+                <br />
+                <Input
+                    placeholder={"Start Time"}
+                    value={this.state.startTime}
+                    onChange={(e)=>{
+                        this.setState({
+                            startTime:e.target.value
+                        })
+                    }}
+                    onPressEnter={()=>{
+                        this.getActions(this.state.startTime);
+                    }}
+                />
+                <Divider
+                    children={"History Action"}
+                    orientation={"left"}
+                />
+                {
+                    this.state.actions.map((action,index)=>{
+                        return(
+                            <Comment
+                                avatar={
+                                <Avatar
+                                    icon={
+                                    <Button
+                                        shape={"circle"}
+                                        type={"primary"}
+                                        icon={ <UserAddOutlined />}
+                                        onClick={()=>{
+                                            this.deleteAction(index);
+                                        }}
+                                    >
+                                    </Button>
+                                }
+                                >
+                                </Avatar>
+                                }
+                                datetime={
+                                    <Row>
+                                        <Col span={12}>
+                                            <Input
+                                                value={action.Title}
+                                                onChange={(e)=>{
+                                                    this.updateActionData(index,'Title',e.target.value);
+                                                }}
+                                                onPressEnter={()=>{
+                                                    this.updateAction(index);
+                                                }}
+                                            />
+                                        </Col>
+                                        <Col offset={1} span={5}>
+                                            <Select
+                                                value={action.QuickInput}
+                                                onChange={(newValue)=>{
+                                                    (async ()=>{})()
+                                                        .then(()=>{
+                                                            this.updateActionData(index,'QuickInput',newValue)
+                                                        })
+                                                        .then(()=>{
+                                                            this.updateAction(index);
+                                                        })
+                                                }}
+                                            >
+                                                <Select.Option
+                                                    value={"quick_input"}
+                                                >
+                                                    Quick Input
+                                                </Select.Option>
+                                                <Select.Option
+                                                    value={"normal"}
+                                                >
+                                                    Normal
+                                                </Select.Option>
+                                            </Select>
+                                        </Col>
+                                        <Col span={5} offset={1}>
+                                            <Input
+                                                prefix={"Result:"}
+                                                value={action.Result}
+                                                disabled={true}
+                                            />
+                                        </Col>
+                                    </Row>
+                                }
+                                author={
+                                    <Input
+                                        prefix={"AddTime:"}
+                                        value={action.AddTime}
+                                        onChange={(e)=>{
+                                            this.updateActionData(index,'AddTime',e.target.value);
+                                        }}
+                                        onPressEnter={()=>{
+                                            this.updateAction(index);
+                                        }}
+                                    />
+                                }
+                                content={
+                                    <Input
+                                        prefix={"Note:"}
+                                        value={action.Note}
+                                        onChange={(e)=>{
+                                            this.updateActionData(index,'Note',e.target.value);
+                                        }}
+                                        onPressEnter={()=>{
+                                            this.updateAction(index);
+                                        }}
+                                    />
+                                }
+                            />
+                        )
+                    })
+                }
+                <Favourite />
             </div>
         );
     }

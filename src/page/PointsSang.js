@@ -1,7 +1,7 @@
 import React from "react";
 import {requestApi} from "../config/functions";
 import ReactECharts from "echarts-for-react";
-import {Input, Row,Col} from "antd";
+import {Input, Row, Col, Divider} from "antd";
 import MenuList from "../component/MenuList";
 
 class PointsSang extends React.Component {
@@ -51,7 +51,7 @@ class PointsSang extends React.Component {
     render() {
         let option={
             title: {
-                text: this.state.point.keyword
+                text: "Point amount is "+this.state.nodes.length
             },
             tooltip: {
                 trigger: 'item',
@@ -78,22 +78,30 @@ class PointsSang extends React.Component {
                     <MenuList />
                 </Col>
             </Row>
-            <Row>
-                <Input
-                    value={this.state.pendingHeight}
-                    onChange={(e)=>{
-                        this.setState({
-                            pendingHeight:e.target.value
-                        })
-                    }}
-                    onPressEnter={()=>{
-                        this.setState({
-                            height:this.state.pendingHeight
-                        })
-                    }}
-                />
-            </Row>
             <br/>
+            <Row>
+                <Col span={5}>
+                    <Input
+                        prefix={"Height:"}
+                        suffix={"px"}
+                        value={this.state.pendingHeight}
+                        onChange={(e)=>{
+                            this.setState({
+                                pendingHeight:e.target.value
+                            })
+                        }}
+                        onPressEnter={()=>{
+                            this.setState({
+                                height:this.state.pendingHeight
+                            })
+                        }}
+                    />
+                </Col>
+            </Row>
+            <Divider
+                children={this.state.point.keyword}
+                orientation={"left"}
+            />
             <ReactECharts
                 option={option}
                 style={{width:"100%",height:this.state.height+"px"}}
