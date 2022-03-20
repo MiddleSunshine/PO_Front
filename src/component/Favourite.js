@@ -1,7 +1,22 @@
 import React from "react";
 import {requestApi} from "../config/functions";
-import {Affix, Avatar, Button, Col, Comment, Input, List, message, Modal, Popconfirm, Row} from "antd";
-import {FormOutlined, StarOutlined,DeleteOutlined,MessageOutlined} from '@ant-design/icons';
+import {
+    Affix,
+    Avatar,
+    Badge,
+    Button,
+    Col,
+    Comment, Divider,
+    Input,
+    List,
+    message,
+    Modal,
+    Popconfirm,
+    Row,
+    Tabs,
+    Timeline
+} from "antd";
+import {FormOutlined, StarOutlined,DeleteOutlined,MessageOutlined,FieldTimeOutlined,ClockCircleOutlined} from '@ant-design/icons';
 import config from "../config/setting";
 import MarkdownPreview from "@uiw/react-markdown-preview";
 
@@ -13,12 +28,19 @@ class Favourite extends React.Component{
             comments:[],
             commentsModalVisible:false,
             favouritePointsModalVisible:false,
-            commentLimit:20
+            commentLimit:20,
+            actionModalVisible:false,
+            actions:[],
+            actionStartTime:"",
+            distinctActions:[],
+            newActionTitle:"",
+            newActionNote:""
         }
         this.getFavourite=this.getFavourite.bind(this);
         this.showFavouriteModal=this.showFavouriteModal.bind(this);
         this.removeFavorite=this.removeFavorite.bind(this);
         this.showCommentsModal=this.showCommentsModal.bind(this);
+        this.showActionsModal=this.showActionsModal.bind(this);
     }
 
     getFavourite() {
@@ -77,11 +99,76 @@ class Favourite extends React.Component{
             })
     }
 
+    showActionsModal(startTime=''){
+        let url="/index.php?action=Actions&method=List";
+        if (startTime.length>0){
+            url+="&StartTime="+startTime;
+        }
+        requestApi(url)
+            .then((res)=>{
+                res.json().then((json)=>{
+                    this.setState({
+                        actions:json.Data.Actions,
+                        actionModalVisible:true
+                    })
+                })
+            }).then(()=>{
+                requestApi("/index.php?action=Actions&method=DistinctActions")
+                    .then((res)=>{
+                        res.json().then((json)=>{
+                            this.setState({
+                                distinctActions:json.Data.Actions
+                            })
+                        })
+                    })
+        })
+    }
+
+    newAction(){
+        if (this.state.newActionTitle.length<0){
+            message.warn("Please input the title !");
+            return false;
+        }
+        requestApi("/index.php?action=Actions&method=NewAction",{
+            method:"post",
+            mode:"cors",
+            body:JSON.stringify({
+                Title:this.state.newActionTitle,
+                Note:this.state.newActionNote
+            })
+        })
+            .then((res)=>{
+                res.json().then((json)=>{
+                    if (json.Status==1){
+                        message.success("New Action Success");
+                        return true;
+                    }else{
+                        message.warn(json.Message);
+                        return false;
+                    }
+                })
+                    .then((result)=>{
+                        if (result){
+                            this.setState({
+                                newActionTitle:"",
+                                newActionNote:""
+                            })
+                            return result;
+                        }
+                    })
+                    .then((result)=>{
+                        if (result){
+                            this.showActionsModal(this.state.actionStartTime);
+                        }
+                    })
+            })
+    }
+
     render() {
         return <Row>
             <Col span={24}>
                 <Row>
-                    <Col span={1} offset={22}>
+                    <Col span={1} offset={21}>
                         <Affix
                             offsetBottom={true}
                         >
@@ -110,6 +197,19 @@ class Favourite extends React.Component{
                                 }}
                             >
 
+                            </Button>
+                        </Affix>
+                    </Col>
+                    <Col span={1}>
+                        <Affix>
+                            <Button
+                                shape={"circle"}
+                                type={"primary"}
+                                icon={<FieldTimeOutlined />}
+                                onClick={()=>{
+                                    this.showActionsModal(this.state.actionStartTime);
+                                }}
+                            >
                             </Button>
                         </Affix>
                     </Col>
@@ -241,6 +341,129 @@ class Favourite extends React.Component{
                                 )
                             }}
                         />
+                    </Modal>
+                </Row>
+                <Row>
+                    <Modal
+                        visible={this.state.actionModalVisible}
+                        width={1000}
+                        title={"Actions"}
+                        onCancel={()=>{
+                            this.setState({
+                                actionModalVisible:false
+                            })
+                        }}
+                    >
+                        <Tabs>
+                            <Tabs.TabPane
+                                tab={"Change Action"}
+                                key={"New"}
+                            >
+                                <Row>
+                                    <Col span={8}>
+                                        <Input
+                                            placeholder={"Title"}
+                                            value={this.state.newActionTitle}
+                                            onChange={(e)=>{
+                                                this.setState({
+                                                    newActionTitle:e.target.value
+                                                })
+                                            }}
+                                            onPressEnter={()=>{
+                                                this.newAction();
+                                            }}
+                                        />
+                                    </Col>
+                                    <Col span={15} offset={1}>
+                                        <Input
+                                            placeholder={"Note"}
+                                            value={this.state.newActionNote}
+                                            onChange={(e)=>{
+                                                this.setState({
+                                                    newActionNote:e.target.value
+                                                })
+                                            }}
+                                            onPressEnter={()=>{
+                                                this.newAction();
+                                            }}
+                                        />
+                                    </Col>
+                                </Row>
+                                <Divider
+                                    children={
+                                    <Button
+                                        type={"link"}
+                                        href={"/Actions"}
+                                        target={"_blank"}
+                                    >
+                                        History Actions
+                                    </Button>
+                                    }
+                                    orientation={"left"}
+                                />
+                                {
+                                    this.state.distinctActions.map((action)=>{
+                                        return <Row
+                                            key={action.Title}
+                                        >
+                                            <Button
+                                                icon={<ClockCircleOutlined />}
+                                                type={"link"}
+                                                onClick={()=>{
+                                                    this.setState({
+                                                        newActionTitle:action.Title
+                                                    })
+                                                }}
+                                            >
+                                                {action.Title}
+                                            </Button>
+                                        </Row>
+                                    })
+                                }
+                            </Tabs.TabPane>
+                            <Tabs.TabPane
+                                tab={
+                                <Badge
+                                    count={this.state.actions.length}
+                                    offset={[10,0]}
+                                >
+                                    Action List
+                                </Badge>
+                                }
+                                key={"List"}
+                            >
+                                <Timeline
+                                    mode={"left"}
+                                >
+                                    {
+                                        this.state.actions.map((action,actionIndex)=>{
+                                            return(
+                                                <Timeline.Item
+                                                    dot={<ClockCircleOutlined />}
+                                                    label={action.AddTime}
+                                                >
+                                                    <p>Runtime: {action.Result}</p>
+                                                    <p>Title: {action.Title}</p>
+                                                    <p>Note: {action.Note}</p>
+                                                </Timeline.Item>
+                                            )
+                                        })
+                                    }
+                                </Timeline>
+                                <Input
+                                    placeholder={"Start Time"}
+                                    value={this.state.actionStartTime}
+                                    onChange={(e)=>{
+                                        this.setState({
+                                            actionStartTime:e.target.value
+                                        })
+                                    }}
+                                    onPressEnter={()=>{
+                                        this.showActionsModal(this.state.actionStartTime);
+                                    }}
+                                />
+                            </Tabs.TabPane>
+                        </Tabs>
                     </Modal>
                 </Row>
             </Col>

@@ -22,6 +22,7 @@ import CheckListHistory from "../page/CheckListHistory";
 import PointHistory from "../page/PointHistory";
 import PointTree from "../page/PointTree";
 import PointsSang from "../page/PointsSang";
+import Actions from "../page/Actions";
 
 interface router {
     path: string,
@@ -30,6 +31,10 @@ interface router {
 }
 
 const routers: Array<router> = [
+    {
+        path:"/Actions",
+        component:Actions
+    },
     {
         path: "/Psychotherapy/CheckListHistory",
         component: CheckListHistory
