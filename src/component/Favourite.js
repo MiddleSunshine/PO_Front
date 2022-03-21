@@ -32,6 +32,7 @@ class Favourite extends React.Component{
             actionModalVisible:false,
             actions:[],
             actionStartTime:"",
+            actionEndTime:"",
             distinctActions:[],
             newActionTitle:"",
             newActionNote:""
@@ -99,8 +100,8 @@ class Favourite extends React.Component{
             })
     }
 
-    showActionsModal(startTime=''){
-        requestApi("/index.php?action=Actions&method=List&StartTime="+startTime)
+    showActionsModal(startTime='',endTime=''){
+        requestApi("/index.php?action=Actions&method=List&StartTime="+startTime+"&EndTime="+endTime)
             .then((res)=>{
                 res.json().then((json)=>{
                     this.setState({
@@ -198,7 +199,9 @@ class Favourite extends React.Component{
                         </Affix>
                     </Col>
                     <Col span={1}>
-                        <Affix>
+                        <Affix
+                            offsetBottom={true}
+                        >
                             <Button
                                 shape={"circle"}
                                 type={"primary"}
@@ -281,17 +284,21 @@ class Favourite extends React.Component{
                         width={1000}
                         visible={this.state.commentsModalVisible}
                         title={
-                        <Input
-                            value={this.state.commentLimit}
-                            onChange={(e)=>{
-                                this.setState({
-                                    commentLimit:e.target.value
-                                })
-                            }}
-                            onPressEnter={()=>{
-                                this.showCommentsModal(this.state.commentLimit);
-                            }}
-                        />
+                        <Row>
+                            <Col span={20}>
+                                <Input
+                                    value={this.state.commentLimit}
+                                    onChange={(e)=>{
+                                        this.setState({
+                                            commentLimit:e.target.value
+                                        })
+                                    }}
+                                    onPressEnter={()=>{
+                                        this.showCommentsModal(this.state.commentLimit);
+                                    }}
+                                />
+                            </Col>
+                        </Row>
                         }
                         onCancel={()=>{
                             this.setState({
@@ -422,7 +429,7 @@ class Favourite extends React.Component{
                                 tab={
                                 <Badge
                                     count={this.state.actions.length}
-                                    offset={[10,0]}
+                                    offset={[20,0]}
                                 >
                                     Action List
                                 </Badge>
@@ -447,18 +454,36 @@ class Favourite extends React.Component{
                                         })
                                     }
                                 </Timeline>
-                                <Input
-                                    placeholder={"Start Time"}
-                                    value={this.state.actionStartTime}
-                                    onChange={(e)=>{
-                                        this.setState({
-                                            actionStartTime:e.target.value
-                                        })
-                                    }}
-                                    onPressEnter={()=>{
-                                        this.showActionsModal(this.state.actionStartTime);
-                                    }}
-                                />
+                                <Row>
+                                    <Col span={11}>
+                                        <Input
+                                            placeholder={"Start Time"}
+                                            value={this.state.actionStartTime}
+                                            onChange={(e)=>{
+                                                this.setState({
+                                                    actionStartTime:e.target.value
+                                                })
+                                            }}
+                                            onPressEnter={()=>{
+                                                this.showActionsModal(this.state.actionStartTime,this.state.actionEndTime);
+                                            }}
+                                        />
+                                    </Col>
+                                    <Col span={11} offset={1}>
+                                        <Input
+                                            placeholder={"End Time"}
+                                            value={this.state.actionEndTime}
+                                            onChange={(e)=>{
+                                                this.setState({
+                                                    actionEndTime:e.target.value
+                                                })
+                                            }}
+                                            onPressEnter={()=>{
+                                                this.showActionsModal(this.state.actionStartTime,this.state.actionEndTime);
+                                            }}
+                                        />
+                                    </Col>
+                                </Row>
                             </Tabs.TabPane>
                         </Tabs>
                     </Modal>

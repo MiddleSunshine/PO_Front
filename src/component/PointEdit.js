@@ -1,12 +1,12 @@
 import React from "react";
-import {Form, Input, Select, Button, message, Switch, Row, Col, Drawer, InputNumber} from "antd";
+import {Form, Input, Select, Button, message, Switch, Row, Col, Drawer, InputNumber, Badge} from "antd";
 import SimpleMDE from "react-simplemde-editor";
 import "easymde/dist/easymde.min.css";
 import config, {SEARCHABLE_POINT, SEARCHABLE_TITLE} from "../config/setting";
 import {openLocalMarkdownFile, requestApi} from "../config/functions";
 import MarkdownPreview from '@uiw/react-markdown-preview';
 import PointsComments from "./PointsComments";
-
+import {CopyOutlined} from '@ant-design/icons';
 const {Option}=Select;
 
 // markdown 插件仓库位置
@@ -36,12 +36,14 @@ class PointEdit extends React.Component{
             fileChanged:false,
             disableEdieFile:false,
             editComment:false,
-            commentDrawerWidth:1000
+            commentDrawerWidth:1000,
+            commentAmount:0
         }
         this.getPointDetail=this.getPointDetail.bind(this);
         this.handleChange=this.handleChange.bind(this);
         this.savePoint=this.savePoint.bind(this);
         this.openFileByTypora=this.openFileByTypora.bind(this);
+        this.getCommentNumber=this.getCommentNumber.bind(this);
     }
     componentDidMount() {
         if (this.state.ID>0){
@@ -76,6 +78,9 @@ class PointEdit extends React.Component{
                         localFilePath:json.Data.LocalFilePath
                     })
                 })
+            })
+            .then(()=>{
+                this.getCommentNumber(ID);
             })
     }
 
@@ -139,6 +144,17 @@ class PointEdit extends React.Component{
         });
     }
 
+    getCommentNumber(PID){
+        requestApi("/index.php?action=PointsComments&method=Comments&PID="+PID)
+            .then((res)=>{
+                res.json().then((json)=>{
+                    this.setState({
+                        commentAmount:json.Data.Comments.length
+                    })
+                })
+            })
+    }
+
     render() {
         let info='New Point';
         if (this.state.point.ID){
@@ -151,7 +167,15 @@ class PointEdit extends React.Component{
                     wrapperCol={{ span: 16 }}
                 >
                     <Form.Item
-                        label={"Option"}
+                        label={
+                            <Button
+                                type={"link"}
+                                icon={<CopyOutlined />}
+                                href={"/pointTable/"+this.state.point.ID}
+                                target={"_blank"}
+                            >
+                            </Button>
+                        }
                     >
                         <Button
                             type={"primary"}
@@ -168,7 +192,12 @@ class PointEdit extends React.Component{
                                 })
                             }}
                         >
-                            Comments
+                            <Badge
+                                count={this.state.commentAmount}
+                                offset={[20,0]}
+                            >
+                                Comments
+                            </Badge>
                         </Button>
                     </Form.Item>
                     <Form.Item
