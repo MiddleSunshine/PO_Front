@@ -158,15 +158,6 @@ class MenuList extends React.Component {
                                         Actions
                                     </a>
                                 </Menu.Item>
-                                <Menu.Item>
-                                    <a
-                                        href={"/ActionSummary"}
-                                        target={"_blank"}
-                                        rel={"noreferrer"}
-                                    >
-                                        Actions Summary
-                                    </a>
-                                </Menu.Item>
                             </Menu.ItemGroup>
                             <Menu.ItemGroup
                                 title={"Plan"}

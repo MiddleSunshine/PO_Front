@@ -100,13 +100,13 @@ class Favourite extends React.Component{
             })
     }
 
-    showActionsModal(startTime='',endTime=''){
+    showActionsModal(startTime='',endTime='',modalVisible=true){
         requestApi("/index.php?action=Actions&method=List&StartTime="+startTime+"&EndTime="+endTime)
             .then((res)=>{
                 res.json().then((json)=>{
                     this.setState({
                         actions:json.Data.Actions,
-                        actionModalVisible:true
+                        actionModalVisible:modalVisible
                     })
                 })
             }).then(()=>{
@@ -162,15 +162,20 @@ class Favourite extends React.Component{
             })
     }
 
+    componentDidMount() {
+        this.showActionsModal('','',false);
+    }
+
     render() {
         return <Row>
             <Col span={24}>
                 <Row>
-                    <Col span={1} offset={21}>
+                    <Col span={1} offset={17}>
                         <Affix
                             offsetBottom={true}
                         >
                             <Button
+                                ghost={true}
                                 shape={"circle"}
                                 onClick={()=>{
                                     this.showFavouriteModal();
@@ -187,6 +192,7 @@ class Favourite extends React.Component{
                             offsetBottom={true}
                         >
                             <Button
+                                ghost={true}
                                 shape={"circle"}
                                 type={"primary"}
                                 icon={<MessageOutlined />}
@@ -198,18 +204,21 @@ class Favourite extends React.Component{
                             </Button>
                         </Affix>
                     </Col>
-                    <Col span={1}>
+                    <Col span={5}>
                         <Affix
                             offsetBottom={true}
                         >
                             <Button
-                                shape={"circle"}
+                                ghost={true}
                                 type={"primary"}
                                 icon={<FieldTimeOutlined />}
                                 onClick={()=>{
                                     this.showActionsModal(this.state.actionStartTime);
                                 }}
                             >
+                                {
+                                    this.state.actions.length>0?this.state.actions[0].Title:''
+                                }
                             </Button>
                         </Affix>
                     </Col>
