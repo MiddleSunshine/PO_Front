@@ -156,19 +156,15 @@ class Actions extends React.Component{
                                             </Avatar>
                                         }
                                         datetime={
-                                            <Row>
-                                                <Col span={12}>
-                                                    <Input
-                                                        value={action.Title}
-                                                        onChange={(e)=>{
-                                                            this.updateActionData(index,'Title',e.target.value);
-                                                        }}
-                                                        onPressEnter={()=>{
-                                                            this.updateAction(index);
-                                                        }}
-                                                    />
-                                                </Col>
-                                                <Col offset={1} span={5}>
+                                            <Input
+                                                value={action.Title}
+                                                onChange={(e)=>{
+                                                    this.updateActionData(index,'Title',e.target.value);
+                                                }}
+                                                onPressEnter={()=>{
+                                                    this.updateAction(index);
+                                                }}
+                                                addonAfter={
                                                     <Select
                                                         value={action.QuickInput}
                                                         onChange={(newValue)=>{
@@ -192,20 +188,14 @@ class Actions extends React.Component{
                                                             Normal
                                                         </Select.Option>
                                                     </Select>
-                                                </Col>
-                                                <Col span={5} offset={1}>
-                                                    <Input
-                                                        prefix={"Result:"}
-                                                        value={action.Result}
-                                                        disabled={true}
-                                                    />
-                                                </Col>
-                                            </Row>
+                                                }
+                                            />
                                         }
                                         author={
                                             <Input
                                                 prefix={"AddTime:"}
                                                 value={action.AddTime}
+                                                addonAfter={action.Result.toFixed(2)+" mins"}
                                                 onChange={(e)=>{
                                                     this.updateActionData(index,'AddTime',e.target.value);
                                                 }}
