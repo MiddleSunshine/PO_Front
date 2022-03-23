@@ -19,6 +19,7 @@ import {
 import {FormOutlined, StarOutlined,DeleteOutlined,MessageOutlined,FieldTimeOutlined,ClockCircleOutlined} from '@ant-design/icons';
 import config from "../config/setting";
 import MarkdownPreview from "@uiw/react-markdown-preview";
+import ActionSummary from "./ActionSummary";
 
 class Favourite extends React.Component{
     constructor(props) {
@@ -181,7 +182,7 @@ class Favourite extends React.Component{
                                     this.showFavouriteModal();
                                 }}
                                 icon={<StarOutlined />}
-                                type={"primary"}
+                                type={"link"}
                             >
 
                             </Button>
@@ -194,7 +195,7 @@ class Favourite extends React.Component{
                             <Button
                                 ghost={true}
                                 shape={"circle"}
-                                type={"primary"}
+                                type={"link"}
                                 icon={<MessageOutlined />}
                                 onClick={()=>{
                                     this.showCommentsModal()
@@ -210,14 +211,14 @@ class Favourite extends React.Component{
                         >
                             <Button
                                 ghost={true}
-                                type={"primary"}
+                                type={"link"}
                                 icon={<FieldTimeOutlined />}
                                 onClick={()=>{
                                     this.showActionsModal(this.state.actionStartTime);
                                 }}
                             >
                                 {
-                                    this.state.actions.length>0?this.state.actions[0].Title:''
+                                    this.state.actions.length>0?(this.state.actions[0].Title+" ( "+this.state.actions[0].AddTime.substring(11,20)+" )"):''
                                 }
                             </Button>
                         </Affix>
@@ -493,6 +494,12 @@ class Favourite extends React.Component{
                                         />
                                     </Col>
                                 </Row>
+                            </Tabs.TabPane>
+                            <Tabs.TabPane
+                                tab={"Action Summary"}
+                                key={"action_summary"}
+                            >
+                                <ActionSummary />
                             </Tabs.TabPane>
                         </Tabs>
                     </Modal>
