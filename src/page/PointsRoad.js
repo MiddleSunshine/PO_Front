@@ -1,12 +1,13 @@
 import React from "react";
 import MenuList from "../component/MenuList";
 import {requestApi} from "../config/functions";
-import {Button, Card, Col, Comment, Divider, Drawer, Row} from "antd";
+import {Badge, Button, Card, Col, Comment, Divider, Drawer, InputNumber, Row, Tooltip} from "antd";
 import Xarrow from "react-xarrows";
 import MarkdownPreview from "@uiw/react-markdown-preview";
 import PointEdit from "../component/PointEdit";
-import {UnorderedListOutlined} from '@ant-design/icons';
+// import {DownCircleOutlined,UpCircleOutlined} from '@ant-design/icons';
 import config from "../config/setting";
+import "../css/PointRoad.css";
 
 const TOP_Key="top";
 const BOTTOM_Key="bottom";
@@ -18,7 +19,8 @@ class PointsRoad extends React.Component{
             PID:props.match.params.pid,
             Points:[],
             Connection:[],
-            editPoint:0
+            editPoint:0,
+            minSpan:4
         }
         this.getData=this.getData.bind(this);
     }
@@ -32,27 +34,31 @@ class PointsRoad extends React.Component{
         requestApi("/index.php?action=PointMindMap&method=Index&id="+PID)
             .then((res)=>{
                 res.json().then((json)=>{
-                    let connection=[];
-                    json.Data.Connection.map((Item)=>{
-                        if ((Item.Parent-0) && (Item.SubParent-0)){
-                            connection.push({
-                                Parent:BOTTOM_Key+Item.Parent,
-                                SubParent:TOP_Key+Item.SubParent
-                            });
-                        }
-                    })
                     this.setState({
                         Points:json.Data.Points,
-                        Connection:connection
+                        Connection:json.Data.Connection
                     })
                 })
             })
     }
 
     render() {
-        return <div className="container">
+        return <div className="container PointRoad">
             <MenuList />
             <br/>
+            <Divider
+                orientation={"left"}
+            >
+                Min Span:&nbsp;&nbsp;
+                <InputNumber
+                    value={this.state.minSpan}
+                    onChange={(newValue)=>{
+                        this.setState({
+                            minSpan:newValue
+                        })
+                    }}
+                />
+            </Divider>
             {
                 this.state.Points.map((points)=>{
                     let span=24-points.length;
@@ -60,8 +66,8 @@ class PointsRoad extends React.Component{
                         span=span/points.length;
                         span=span.toFixed(0);
                     }
-                    if (span>3){
-                        span=3;
+                    if (span>this.state.minSpan){
+                        span=this.state.minSpan;
                     }
                     return(
                         <Row
@@ -75,52 +81,85 @@ class PointsRoad extends React.Component{
                                         <Col offset={1} span={span}>
                                             <Row>
                                                 <Col span={1} offset={11}>
-                                                    <div id={TOP_Key+point.Point.ID} style={{width:"100%",minHeight:"10px"}}>
-
-                                                    </div>
+                                                    <Button
+                                                        type={"primary"}
+                                                        shape={"circle"}
+                                                        size={"small"}
+                                                        ghost={true}
+                                                        id={TOP_Key+point.Point.ID}
+                                                        // style={iconStyle}
+                                                        style={{backgroundColor:config.statusBackGroupColor[point.Point.status],border:"none"}}
+                                                    >
+                                                        <div></div>
+                                                    </Button>
                                                 </Col>
                                             </Row>
                                             <Row>
                                                 <Col span={24}>
-                                                    <Card
-                                                        extra={"ID: "+point.Point.ID}
-                                                        title={
-                                                            <Button
-                                                                type={"link"}
-                                                                onClick={()=>{
-                                                                    this.setState({
-                                                                        editPoint:point.Point.ID
-                                                                    })
-                                                                }}
-                                                                style={{color:config.statusBackGroupColor[point.Point.status]}}
-                                                            >
-                                                                {point.Point.keyword}
-                                                            </Button>
+                                                    <Badge.Ribbon
+                                                        text={
+                                                        <a
+                                                            style={{color:"white"}}
+                                                            href={"/pointTable/"+point.Point.ID}
+                                                            target={"_blank"}
+                                                        >
+                                                            {point.Point.status}
+                                                        </a>
                                                         }
+                                                        color={config.statusBackGroupColor[point.Point.status]}
                                                     >
-                                                        {
-                                                            point.Comments.map((comment)=>{
-                                                                return(
-                                                                    <Comment
-                                                                        datetime={comment.AddTime}
-                                                                        author={comment.Comment}
-                                                                        content={
-                                                                            <MarkdownPreview
-                                                                                source={comment.Md}
-                                                                            />
-                                                                        }
-                                                                    />
-                                                                )
-                                                            })
-                                                        }
-                                                    </Card>
+                                                        <Card
+                                                            bodyStyle={{display:point.Comments.length==0?"none":""}}
+                                                            hoverable={true}
+                                                            title={
+                                                                <Button
+                                                                    type={"link"}
+                                                                    onClick={()=>{
+                                                                        this.setState({
+                                                                            editPoint:point.Point.ID
+                                                                        })
+                                                                    }}
+                                                                    style={{color:"black",fontSize:"15px"}}
+                                                                >
+                                                                    <Tooltip
+                                                                        title={point.Point.keyword}
+                                                                    >
+                                                                        {point.Point.keyword}
+                                                                    </Tooltip>
+                                                                </Button>
+                                                            }
+                                                        >
+                                                            {
+                                                                point.Comments.map((comment)=>{
+                                                                    return(
+                                                                        <Comment
+                                                                            datetime={comment.AddTime}
+                                                                            author={comment.Comment}
+                                                                            content={
+                                                                                <MarkdownPreview
+                                                                                    source={comment.Md}
+                                                                                />
+                                                                            }
+                                                                        />
+                                                                    )
+                                                                })
+                                                            }
+                                                        </Card>
+                                                    </Badge.Ribbon>
                                                 </Col>
                                             </Row>
                                             <Row>
                                                 <Col span={1} offset={11}>
-                                                    <div id={BOTTOM_Key+point.Point.ID} style={{width:"100%",minHeight:"10px"}}>
-
-                                                    </div>
+                                                    <Button
+                                                        type={"primary"}
+                                                        shape={"circle"}
+                                                        size={"small"}
+                                                        ghost={true}
+                                                        id={BOTTOM_Key+point.Point.ID}
+                                                        style={{backgroundColor:config.statusBackGroupColor[point.Point.status],border:"none"}}
+                                                    >
+                                                        <div></div>
+                                                    </Button>
                                                 </Col>
                                             </Row>
                                         </Col>
@@ -133,15 +172,18 @@ class PointsRoad extends React.Component{
             }
             {
                 this.state.Connection.map((connection)=>{
-                    return(
-                        <Xarrow
-                            color={"gray"}
-                            start={connection.Parent}
-                            end={connection.SubParent}
-                            startAnchor={"middle"}
-                            endAnchor={"middle"}
-                        />
-                    )
+                    if ((connection.Parent-0) && (connection.SubParent-0)){
+                        return(
+                            <Xarrow
+                                color={config.statusBackGroupColor[connection.color]}
+                                start={BOTTOM_Key+connection.Parent}
+                                end={TOP_Key+connection.SubParent}
+                                startAnchor={"middle"}
+                                endAnchor={"middle"}
+                                showHead={false}
+                            />
+                        )
+                    }
                 })
             }
             <div>
