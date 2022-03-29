@@ -24,6 +24,7 @@ import config, { SEARCHABLE_POINT, SEARCHABLE_TITLE } from "../config/setting";
 import SubPointList from "../component/SubPointList";
 import MenuList from "../component/MenuList";
 import Favourite from "../component/Favourite";
+import BookMarks, {NewBookMark} from "../component/BookMarks";
 
 var hotkeys_maps = [
     { hotkey: "shift+e", label: "Edit" },
@@ -32,7 +33,9 @@ var hotkeys_maps = [
     { hotkey: "shift+left", label: "Move Left" },
     { hotkey: "shift+right", label: "Move Right" },
     { hotkey: "shift+i", label: "Edit" },
-    { hotkey: "shift+n", label: "New Point" }
+    { hotkey: "shift+n", label: "New Point" },
+    { hotkey: "shift+s", label: "New BookMark" },
+    { hotkey: "shift+b", label: "BookMark List" }
 ];
 
 const ACTIVE_TYPE_SUB_POINT = 'SubPoint';
@@ -80,7 +83,10 @@ class PointTable extends React.Component {
             newPointType: "",
             newPointID: "",
             newPointPID: "",
-            newPointList: []
+            newPointList: [],
+            //
+            bookmarkVisible:false,
+            bookmarkListVisible:false
         }
         this.getPointsByPID = this.getPointsByPID.bind(this);
         this.openDrawer = this.openDrawer.bind(this);
@@ -272,6 +278,16 @@ class PointTable extends React.Component {
                         this.openNewPointModal(this.state.id);
                         break;
                 }
+                break;
+            case "shift+s":
+                this.setState({
+                    bookmarkVisible:true
+                });
+                break;
+            case "shift+b":
+                this.setState({
+                    bookmarkListVisible:true
+                });
                 break;
         }
     }
@@ -947,6 +963,16 @@ class PointTable extends React.Component {
                     </Modal>
                 </Row>
             </div >
+            <div>
+                <NewBookMark
+                    Visible={this.state.bookmarkVisible}
+                />
+            </div>
+            <div>
+                <BookMarks
+                    Visible={this.state.bookmarkListVisible}
+                />
+            </div>
         </Hotkeys >
     }
 }
