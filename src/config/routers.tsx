@@ -23,6 +23,7 @@ import PointHistory from "../page/PointHistory";
 import PointTree from "../page/PointTree";
 import PointsSang from "../page/PointsSang";
 import Actions from "../page/Actions";
+import PointMindMap from "../page/PointMindMap";
 
 interface router {
     path: string,
@@ -102,6 +103,10 @@ const routers: Array<router> = [
     {
         path: "/point/edit/:pid",
         component: PointEditor
+    },
+    {
+        path:"/pointMindMap/:pid/:subLevel/:parentLevel/:mode",
+        component: PointMindMap
     },
     {
         path:"/pointTree/:pid",
