@@ -1,6 +1,6 @@
 import React from "react";
 import Hotkeys from "react-hot-keys";
-import {Badge, Button, Card, Col, Comment, Divider, Drawer, Form, Input, Row} from "antd";
+import {Badge, Button, Card, Col, Comment, Descriptions, Divider, Drawer, Form, Input, Row} from "antd";
 import {requestApi} from "../config/functions";
 import Xarrow from "react-xarrows";
 import config from "../config/setting";
@@ -67,14 +67,18 @@ class PointItem extends React.Component{
                 className={"PointItem"}
             >
                 <Button
-                    icon={<Button
-                        icon={<FormOutlined/>}
-                        type={"text"}
-                        onClick={(e)=>{
-                            e.preventDefault();
-                            this.props.editPoint(this.state.Point);
-                        }}
-                    ></Button>}
+                    icon={
+                        <Button
+                            icon={<AimOutlined />}
+                            onClick={(e)=>{
+                                e.preventDefault();
+                                this.props.activePoint(this.state.Point);
+                            }}
+                            type={"link"}
+                            size={"small"}
+                            shape={"circle"}
+                        ></Button>
+                }
                     type={"link"}
                     href={"/pointMindMap/"+this.state.Point.ID+"/1/1/column"}
                 >
@@ -85,15 +89,6 @@ class PointItem extends React.Component{
                         <span style={style}>{this.state.Point.keyword}</span>
                     </Badge>
                 </Button>
-                <Button
-                    icon={<AimOutlined />}
-                    onClick={(e)=>{
-                        this.props.activePoint(this.state.Point);
-                    }}
-                    type={"link"}
-                    size={"small"}
-                    shape={"circle"}
-                ></Button>
             </div>
         );
     }
@@ -219,12 +214,7 @@ class PointMindMap extends React.Component{
                                                     >
                                                         <Col span={24}>
                                                             <PointItem
-                                                                IsActive={this.state.activePoint==point.ID}
-                                                                editPoint={(point)=>{
-                                                                    this.setState({
-                                                                        editPoint:point
-                                                                    })
-                                                                }}
+                                                                IsActive={this.state.activePoint.ID==point.ID}
                                                                 activePoint={(point)=>{
                                                                     this.setState({
                                                                         activePoint:point
@@ -263,7 +253,6 @@ class PointMindMap extends React.Component{
                                 start={ROW_BOTTOM+Item.start}
                                 end={ROW_TOP+Item.stop}
                                 showHead={false}
-                                path={"straight"}
                             />
                         )
                     })
@@ -304,11 +293,6 @@ class PointMindMap extends React.Component{
                                                         <PointItem
                                                             IsActive={this.state.activePoint.ID==point.ID}
                                                             Point={point}
-                                                            editPoint={(point)=>{
-                                                                this.setState({
-                                                                    editPoint:point
-                                                                })
-                                                            }}
                                                             activePoint={(point)=>{
                                                                 this.setState({
                                                                     activePoint:point
@@ -350,8 +334,27 @@ class PointMindMap extends React.Component{
                 }
             </div>
         }
-
-        return <Hotkeys>
+        let hotkeysOption={};
+        hotkeysOption['shift+n']=(()=>{
+            this.setState({
+                startNewPoint:true
+            })
+        });
+        hotkeysOption['shift+e']=(()=>{
+            this.setState({
+                editPoint:this.state.activePoint
+            })
+        })
+        let hotkeys=[];
+        for (let hotkey in hotkeysOption){
+            hotkeys.push(hotkey);
+        }
+        return <Hotkeys
+            keyName={hotkeys.join(",")}
+            onKeyDown={(keyName,e,handler)=>{
+                hotkeysOption[keyName]();
+            }}
+        >
             <div className="container PointMindMap">
                 <MenuList />
                 <Divider>
@@ -412,7 +415,7 @@ class PointMindMap extends React.Component{
                 <div>
                     <Drawer
                         placement={"bottom"}
-                        height={document.body.clientHeight-300}
+                        height={800}
                         visible={this.state.editPoint.ID}
                         onClose={()=>{
                             this.setState({
