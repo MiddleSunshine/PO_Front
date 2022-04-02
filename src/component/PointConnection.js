@@ -13,7 +13,8 @@ class PointConnection extends React.Component{
             parentPoints:[],
             subPoints:[]
         }
-        this.finishDeleteConnection=this.finishDeleteConnection.bind(this);
+        this.closeModal=this.closeModal.bind(this);
+        this.getPoints=this.getPoints.bind(this);
     }
 
     componentDidMount() {
@@ -46,7 +47,7 @@ class PointConnection extends React.Component{
                         if (json.Data.Points.hasOwnProperty(0)){
                             parentPoints=json.Data.Points[0];
                         }
-                        if (json.Data.Points.length.hasOwnProperty(2)){
+                        if (json.Data.Points.hasOwnProperty(2)){
                             subPoints=json.Data.Points[2];
                         }
                         this.setState({
@@ -60,7 +61,7 @@ class PointConnection extends React.Component{
             })
     }
 
-    finishDeleteConnection(){
+    closeModal(){
         (async ()=>{})()
             .then(()=>{
                 this.setState({
@@ -70,7 +71,7 @@ class PointConnection extends React.Component{
                 })
             })
             .then(()=>{
-                this.props.afterDeleteConnection();
+                this.props.afterUpdateConnection();
             })
     }
 
@@ -79,6 +80,9 @@ class PointConnection extends React.Component{
             title={this.state.Point.keyword}
             visible={this.state.Point.ID}
             width={1000}
+            onCancel={()=>{
+                this.closeModal();
+            }}
         >
             <Row>
                 <Col span={11}>
@@ -98,7 +102,7 @@ class PointConnection extends React.Component{
                                                 title={"Remove Connection"}
                                                 onConfirm={()=>{
                                                     deleteConnection(point.ID,this.state.Point.ID).then(()=>{
-                                                        this.finishDeleteConnection();
+                                                        this.getPoints(this.props.Point.ID);
                                                     })
                                                 }}
                                             >
@@ -135,7 +139,9 @@ class PointConnection extends React.Component{
                                             <Popconfirm
                                                 title={"Remove Connection"}
                                                 onConfirm={()=>{
-                                                    deleteConnection(this.state.Point.ID,point.ID);
+                                                    deleteConnection(this.state.Point.ID,point.ID).then(()=>{
+                                                        this.getPoints(this.props.Point.ID);
+                                                    })
                                                 }}
                                             >
                                                 <CloseOutlined />

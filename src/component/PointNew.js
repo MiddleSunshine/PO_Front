@@ -30,14 +30,20 @@ class PointNew extends React.Component{
     }
 
     closeModal(){
-        this.setState({
-            selectedPID:0,
-            newPointID:0,
-            newPointType:SEARCHABLE_POINT,
-            searchKeyword:"",
-            SearchPointList:[],
-            PrePID:-1
-        })
+        (async ()=>{})()
+            .then(()=>{
+                this.setState({
+                    selectedPID:0,
+                    newPointID:0,
+                    newPointType:SEARCHABLE_POINT,
+                    searchKeyword:"",
+                    SearchPointList:[],
+                    PrePID:-1
+                })
+            })
+            .then(()=>{
+                this.props.closeModal();
+            })
     }
 
     newPoint(){
@@ -76,7 +82,7 @@ class PointNew extends React.Component{
                             }
                         })
                 })
-        }
+       }
     }
 
     searchPoint(keyword){
@@ -102,6 +108,7 @@ class PointNew extends React.Component{
                 res.json().then((json)=>{
                     if (json.Status==1){
                         message.success("New Connection");
+                        this.closeModal();
                     }else{
                         message.warn(json.Message);
                     }
@@ -114,13 +121,10 @@ class PointNew extends React.Component{
             visible={(this.state.PrePID-0)>-1}
             width={1000}
             onCancel={()=>{
-                (async ()=>{})()
-                    .then(()=>{
-                        this.props.closeModal();
-                    })
-                    .then(()=>{
-                        this.closeModal();
-                    })
+                this.closeModal();
+            }}
+            onOk={()=>{
+                this.newPoint();
             }}
         >
             <Form>

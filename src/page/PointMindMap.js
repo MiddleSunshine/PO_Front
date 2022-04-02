@@ -425,14 +425,21 @@ class PointMindMap extends React.Component{
             <PointNew
                 PID={this.state.startNewPoint?this.state.activePoint.ID:-1}
                 closeModal={()=>{
-                    this.setState({
-                        startNewPoint:false
-                    })
+                    (async ()=>{})()
+                        .then(()=>{
+                            this.setState({
+                                startNewPoint:false
+                            })
+                        })
+                        .then(()=>{
+                            this.getPoints(this.state.PID,this.state.SubLevel,this.state.ParentLevel)
+                        })
+
                 }}
             />
             <PointConnection
                 Point={this.state.editConnectionPoint}
-                afterDeleteConnection={()=>{
+                afterUpdateConnection={()=>{
                     (async ()=>{})()
                         .then(()=>{
                             this.setState({
