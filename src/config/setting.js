@@ -38,3 +38,6 @@ export const SEARCHABLE_TITLE = 'Title';
 
 export const TYPE_TITLE = 'Title';
 export const TYPE_SUB_TITLE = 'SubTitle';
+
+export const POINT_MIND_MAP_COLUMN='column';
+export const POINT_MIND_MAP_ROW='row';

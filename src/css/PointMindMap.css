@@ -1,7 +1,15 @@
 .PointMindMap{
-
+    background-color: black;
 }
 
 .PointMindMap .PointItem{
 
+}
+
+.PointMindMap .ant-card-head{
+    /*background-color: black;*/
+    background-color: #F1F1F1;
+}
+
+.PointMindMap .ant-card-body{
 }
