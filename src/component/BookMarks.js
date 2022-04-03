@@ -17,6 +17,7 @@ class BookMarks extends React.Component{
             bookMarks:[],
             visible:props.Visible
         }
+        this.closeDrawer=this.closeDrawer.bind(this);
     }
 
     componentDidMount() {
@@ -129,6 +130,18 @@ class BookMarks extends React.Component{
             })
     }
 
+    closeDrawer(){
+        (async ()=>{})()
+            .then(()=>{
+                this.setState({
+                    visible:false
+                })
+            })
+            .then(()=>{
+                this.props.afterCloseDrawer();
+            })
+    }
+
     render() {
         return <div className="container">
             <Drawer
@@ -137,9 +150,7 @@ class BookMarks extends React.Component{
                 width={1000}
                 placement={"left"}
                 onClose={()=>{
-                    this.setState({
-                        visible:false
-                    })
+                    this.closeDrawer();
                 }}
             >
                 {
@@ -231,7 +242,8 @@ export class NewBookMark extends React.Component{
             Href:"",
             modalVisible:props.Visible
         }
-        this.initData();
+        this.initData=this.initData.bind(this);
+        this.closeModal=this.closeModal.bind(this);
     }
 
     componentWillReceiveProps(nextProps, nextContext) {
@@ -283,6 +295,20 @@ export class NewBookMark extends React.Component{
 
     }
 
+    closeModal(){
+        (async ()=>{})()
+            .then(()=>{
+                this.setState({
+                    Name:"",
+                    Note:"",
+                    modalVisible:false
+                });
+            })
+            .then(()=>{
+                this.props.afterCloseModal();
+            })
+    }
+
     render() {
         return <div className="container">
             <Modal
@@ -316,11 +342,7 @@ export class NewBookMark extends React.Component{
                 visible={this.state.modalVisible}
                 width={1000}
                 onCancel={()=>{
-                    this.setState({
-                        Name:"",
-                        Note:"",
-                        modalVisible:false
-                    });
+                    this.closeModal();
                 }}
             >
                 <Form>

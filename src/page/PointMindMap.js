@@ -11,6 +11,7 @@ import "../css/PointMindMap.css";
 import PointEdit from "../component/PointEdit";
 import PointNew from "../component/PointNew";
 import PointConnection from "../component/PointConnection";
+import BookMarks, {NewBookMark} from "../component/BookMarks";
 
 const ROW_TOP='top_';
 const ROW_BOTTOM='bottom_';
@@ -78,7 +79,7 @@ class PointItem extends React.Component{
                     }}
                     title={
                         <a
-                            href={"/pointMindMap/"+this.state.Point.ID+"/1/1/"+POINT_MIND_MAP_COLUMN}
+                            href={PointMindMapRouter(this.state.Point.ID)}
                             target={"_blank"}
                             title={this.state.Point.keyword}
                         >
@@ -103,17 +104,22 @@ class PointMindMap extends React.Component{
             PID:props.match.params.pid,
             mode:props.match.params.mode,
             connections:[],
-            prepareDeletePoints:[],
             ParentLevel:props.match.params.parentLevel,
             SubLevel:props.match.params.subLevel,
+            //
             editPoint:{},
+            //
             editConnectionPoint:{},
+            //
             activePoint:{},
-            startNewPoint:false
+            //
+            startNewPoint:false,
+            //
+            bookmarkVisible:false,
+            newBookmarkVisible:false
         }
         this.getPoints=this.getPoints.bind(this);
         this.updateLevel=this.updateLevel.bind(this);
-        this.deleteConnection=this.deleteConnection.bind(this);
     }
 
     componentDidMount() {
@@ -121,17 +127,12 @@ class PointMindMap extends React.Component{
     }
 
     updateLevel(SubLevel,ParentLevel,mode,newWindow=false){
-        let url=window.origin+"/pointMindMap/"+this.state.PID+"/"+SubLevel+"/"+ParentLevel+"/"+mode;
+        let url=window.origin+PointMindMapRouter(this.state.PID,SubLevel,ParentLevel,mode);
         if (newWindow){
             window.open(url,"__blank");
         }else{
             window.location=url;
         }
-    }
-
-
-    deleteConnection(PID){
-
     }
 
     hidePoint(PID){
@@ -338,6 +339,16 @@ class PointMindMap extends React.Component{
                 editConnectionPoint:this.state.activePoint
             })
         })
+        hotkeysOption['shift+s']=(()=>{
+            this.setState({
+                newBookmarkVisible:true
+            })
+        })
+        hotkeysOption['shift+b']=(()=>{
+            this.setState({
+                bookmarkVisible:true
+            })
+        })
         let hotkeys=[];
         for (let hotkey in hotkeysOption){
             hotkeys.push(hotkey);
@@ -451,8 +462,31 @@ class PointMindMap extends React.Component{
                         })
                 }}
             />
+            <BookMarks
+                Visible={this.state.bookmarkVisible}
+                afterCloseDrawer={()=>{
+                    this.setState({
+                        bookmarkVisible:false
+                    })
+                }}
+            />
+            <NewBookMark
+                Visible={this.state.newBookmarkVisible}
+                afterCloseModal={()=>{
+                    this.setState({
+                        newBookmarkVisible:false
+                    })
+                }}
+            />
         </Hotkeys>
     }
 }
 
 export default PointMindMap
+
+export function PointMindMapRouter(PID,SubLevel=0,ParentLevel=0,Mode=''){
+    if (Mode==''){
+        Mode=POINT_MIND_MAP_COLUMN
+    }
+    return "/pointMindMap/"+PID+"/"+SubLevel+"/"+ParentLevel+"/"+Mode
+}

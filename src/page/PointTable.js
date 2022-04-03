@@ -966,11 +966,21 @@ class PointTable extends React.Component {
             <div>
                 <NewBookMark
                     Visible={this.state.bookmarkVisible}
+                    afterCloseModal={()=>{
+                        this.setState({
+                            bookmarkVisible:false
+                        })
+                    }}
                 />
             </div>
             <div>
                 <BookMarks
                     Visible={this.state.bookmarkListVisible}
+                    afterCloseDrawer={()=>{
+                        this.setState({
+                            bookmarkListVisible:false
+                        })
+                    }}
                 />
             </div>
         </Hotkeys >

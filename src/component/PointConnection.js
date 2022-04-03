@@ -5,6 +5,8 @@ import {Button, Col, Divider, Form, message, Modal, Popconfirm, Row} from "antd"
 import {CloseOutlined} from '@ant-design/icons';
 import {POINT_MIND_MAP_COLUMN} from "../config/setting";
 
+import {PointMindMapRouter} from "../page/PointMindMap";
+
 class PointConnection extends React.Component{
     constructor(props) {
         super(props);
@@ -94,7 +96,7 @@ class PointConnection extends React.Component{
                                         key={outsideIndex}
                                     >
                                         <Button
-                                            href={"/pointMindMap/"+point.ID+"/0/0/"+POINT_MIND_MAP_COLUMN}
+                                            href={PointMindMapRouter(point.ID)}
                                             target={"_blank"}
                                             type={"link"}
                                             icon={
@@ -132,7 +134,7 @@ class PointConnection extends React.Component{
                                         key={outsideIndex}
                                     >
                                         <Button
-                                            href={"/pointMindMap/"+point.ID+"/0/0/"+POINT_MIND_MAP_COLUMN}
+                                            href={PointMindMapRouter(point.ID)}
                                             target={"_blank"}
                                             type={"link"}
                                             icon={
