@@ -66,7 +66,9 @@ class PointItem extends React.Component{
         if (this.state.IsIndex){
             style.textDecoration="underline";
         }
-
+        if ((this.state.Point.Deleted-1)==1){
+            style.textDecoration="line-through";
+        }
         return (
             <div
                 className={"PointItem"}
