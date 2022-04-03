@@ -6,7 +6,8 @@ import config, {SEARCHABLE_POINT, SEARCHABLE_TITLE} from "../config/setting";
 import {openLocalMarkdownFile, requestApi} from "../config/functions";
 import MarkdownPreview from '@uiw/react-markdown-preview';
 import PointsComments from "./PointsComments";
-import {CopyOutlined} from '@ant-design/icons';
+import {ClusterOutlined} from '@ant-design/icons';
+import TextArea from "antd/es/input/TextArea";
 const {Option}=Select;
 
 // markdown 插件仓库位置
@@ -123,6 +124,9 @@ class PointEdit extends React.Component{
     handleChange(value,key){
         let point=this.state.point;
         point[key]=value;
+        if (key=='note' && value.length>0){
+            point['status']=config.statusMap[2].value;
+        }
         this.setState({
             point:point
         });
@@ -156,12 +160,8 @@ class PointEdit extends React.Component{
     }
 
     render() {
-        let info='New Point';
-        if (this.state.point.ID){
-            info="ID:"+this.state.point.ID+" / AddTime:"+this.state.point.AddTime+" / LastUpdateTime:"+this.state.point.LastUpdateTime;
-        }
        return(
-            <div className="container">
+            <div>
                 <Form
                     labelCol={{ span: 4 }}
                     wrapperCol={{ span: 16 }}
@@ -170,7 +170,7 @@ class PointEdit extends React.Component{
                         label={
                             <Button
                                 type={"link"}
-                                icon={<CopyOutlined />}
+                                icon={<ClusterOutlined />}
                                 href={"/pointTable/"+this.state.point.ID}
                                 target={"_blank"}
                             >
@@ -196,56 +196,81 @@ class PointEdit extends React.Component{
                                 count={this.state.commentAmount}
                                 offset={[20,0]}
                             >
-                                Comments
+                                <span style={{color:"white"}}>Comments</span>
                             </Badge>
                         </Button>
                     </Form.Item>
-                    <Form.Item
-                        label={"Info"}
-                    >
-                        <Input disabled={true} value={info} />
-                    </Form.Item>
+                    {/*<Form.Item*/}
+                    {/*    label={"Info"}*/}
+                    {/*>*/}
+                    {/*    <Input disabled={true} value={info} />*/}
+                    {/*</Form.Item>*/}
                     <Form.Item
                         label={"Favourite"}
                     >
-                        <Select
-                            value={this.state.point.Favourite=='Favourite'?'Favourite':'NotFavourite'}
-                            onChange={(newValue)=>{
-                                let point=this.state.point;
-                                point.Favourite=newValue?'Favourite':'';
-                                this.setState({
-                                    point:point
-                                });
-                            }}
-                        >
-                            <Option
-                                value={'Favourite'}
-                            >
-                                Yes
-                            </Option>
-                            <Option
-                                value={'NotFavourite'}
-                            >
-                                No
-                            </Option>
-                        </Select>
-                    </Form.Item>
-                    <Form.Item
-                        label={"Type"}
-                    >
-                        <Select
-                            value={this.state.point.SearchAble}
-                            onChange={(newValue)=>{
-                                this.handleChange(newValue,'SearchAble');
-                            }}
-                        >
-                            <Select.Option value={SEARCHABLE_POINT}>
-                                Point
-                            </Select.Option>
-                            <Select.Option value={SEARCHABLE_TITLE}>
-                                Title
-                            </Select.Option>
-                        </Select>
+                        <Row>
+                            <Col span={3}>
+                                <Select
+                                    value={this.state.point.Favourite=='Favourite'?'Favourite':'NotFavourite'}
+                                    onChange={(newValue)=>{
+                                        let point=this.state.point;
+                                        point.Favourite=newValue?'Favourite':'';
+                                        this.setState({
+                                            point:point
+                                        });
+                                    }}
+                                >
+                                    <Option
+                                        value={'Favourite'}
+                                    >
+                                        Yes
+                                    </Option>
+                                    <Option
+                                        value={'NotFavourite'}
+                                    >
+                                        No
+                                    </Option>
+                                </Select>
+                            </Col>
+                            <Col offset={1} span={3}>
+                                <Select
+                                    value={this.state.point.SearchAble}
+                                    onChange={(newValue)=>{
+                                        this.handleChange(newValue,'SearchAble');
+                                    }}
+                                >
+                                    <Select.Option value={SEARCHABLE_POINT}>
+                                        Point
+                                    </Select.Option>
+                                    <Select.Option value={SEARCHABLE_TITLE}>
+                                        Title
+                                    </Select.Option>
+                                </Select>
+                            </Col>
+                            <Col span={3} offset={1}>
+                                <Input
+                                    prefix={"Point"}
+                                    value={this.state.point.Point}
+                                    onChange={(e)=>this.handleChange(e.target.value,"Point")}
+                                />
+                            </Col>
+                            <Col span={3} offset={1}>
+                                <Select
+                                    value={this.state.point.Deleted}
+                                    onChange={(value)=>this.handleChange(value,"Deleted")}
+                                >
+                                    <Option value={'0'}>Active</Option>
+                                    <Option value={'1'}>Deleted</Option>
+                                </Select>
+                            </Col>
+                            <Col span={8} offset={1}>
+                                <Input
+                                    prefix={"File: "}
+                                    value={this.state.point.file}
+                                    onChange={(e)=>this.handleChange(e.target.value,"file")}
+                                />
+                            </Col>
+                        </Row>
                     </Form.Item>
                     <Form.Item
                         label={"Keyword"}
@@ -255,77 +280,6 @@ class PointEdit extends React.Component{
                             value={this.state.point.keyword}
                             onChange={(e)=>this.handleChange(e.target.value,"keyword")}
                         />
-                    </Form.Item>
-                    <Form.Item
-                        label={"Note"}
-                    >
-                        <Input
-                            value={this.state.point.note}
-                            onChange={(e)=>this.handleChange(e.target.value,"note")}
-                        />
-                    </Form.Item>
-                    <Form.Item
-                        label={"Point"}
-                    >
-                        <Input
-                            value={this.state.point.Point}
-                            onChange={(e)=>this.handleChange(e.target.value,"Point")}
-                        />
-                    </Form.Item>
-                    <Form.Item
-                        label={"File"}
-                    >
-                        <Row>
-                            <Col span={19}>
-                                <Input
-                                    value={this.state.point.file}
-                                    onChange={(e)=>this.handleChange(e.target.value,"file")}
-                                />
-                            </Col>
-                            <Col offset={1} span={4}>
-                                <Button
-                                    type={"primary"}
-                                    onClick={()=>{
-                                        this.openFileByTypora();
-                                    }}
-                                >
-                                    Open In Typora
-                                </Button>
-                            </Col>
-                        </Row>
-                    </Form.Item>
-                    <Form.Item
-                        label={"Url"}
-                    >
-                        <Input
-                            value={this.state.point.url}
-                            onChange={(e)=>this.handleChange(e.target.value,"url")}
-                        />
-                    </Form.Item>
-                    <Form.Item
-                        label={"Status"}
-                    >
-                        <Select
-                            value={this.state.point.status}
-                            onChange={(value)=>this.handleChange(value,"status")}
-                        >
-                            {config.statusMap.map((Item)=>{
-                                return(
-                                    <Option key={Item.value} value={Item.value}>{Item.label}</Option>
-                                )
-                            })}
-                        </Select>
-                    </Form.Item>
-                    <Form.Item
-                        label={"Deleted"}
-                    >
-                        <Select
-                            value={this.state.point.Deleted}
-                            onChange={(value)=>this.handleChange(value,"Deleted")}
-                        >
-                            <Option value={'0'}>Active</Option>
-                            <Option value={'1'}>Deleted</Option>
-                        </Select>
                     </Form.Item>
                     {
                         !this.state.disableEdieFile && <Form.Item
@@ -365,6 +319,30 @@ class PointEdit extends React.Component{
                             }
                         </Form.Item>
                     }
+                    <Form.Item
+                        label={"Summary"}
+                    >
+                        <TextArea
+                            rows={4}
+                            allowClear={true}
+                            value={this.state.point.note}
+                            onChange={(e)=>this.handleChange(e.target.value,"note")}
+                        />
+                    </Form.Item>
+                    <Form.Item
+                        label={"Status"}
+                    >
+                        <Select
+                            value={this.state.point.status}
+                            onChange={(value)=>this.handleChange(value,"status")}
+                        >
+                            {config.statusMap.map((Item)=>{
+                                return(
+                                    <Option key={Item.value} value={Item.value}>{Item.label}</Option>
+                                )
+                            })}
+                        </Select>
+                    </Form.Item>
                 </Form>
                 <Drawer
                     title={

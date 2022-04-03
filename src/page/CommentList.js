@@ -1,10 +1,11 @@
 import React from "react";
-import {Button, Comment, Divider, Input, Row, Col, Affix, InputNumber, message, Popconfirm} from "antd";
+import {Button, Comment, Divider, Input, Row, Col, Affix, InputNumber, message, Popconfirm, Drawer} from "antd";
 import SimpleMDE from "react-simplemde-editor";
 import MarkdownPreview from "@uiw/react-markdown-preview";
 import {requestApi} from "../config/functions";
 import {FormOutlined, SaveOutlined,DeleteOutlined} from '@ant-design/icons';
 import "../css/CommentList.css"
+import PointEdit from "../component/PointEdit";
 
 class CommentList extends React.Component{
     constructor(props) {
@@ -12,10 +13,12 @@ class CommentList extends React.Component{
         this.state={
             Comments:[],
             page:1,
-            page_size:50
+            page_size:50,
+            editPoint:{}
         }
         this.getPointComments=this.getPointComments.bind(this);
         this.deleteConnection=this.deleteConnection.bind(this);
+        this.closeDrawer=this.closeDrawer.bind(this);
     }
 
     componentDidMount() {
@@ -54,6 +57,12 @@ class CommentList extends React.Component{
             })
     }
 
+    closeDrawer(){
+        this.setState({
+            editPoint:{}
+        })
+    }
+
     render() {
         return <div className="container CommentList">
             {
@@ -78,7 +87,18 @@ class CommentList extends React.Component{
                             }
                                 key={index}
                                 author={
-                                    <a className={"Point"} target={"_blank"} href={"/pointTable/"+comment.Point.ID}>{comment.Point.keyword}</a>
+                                    <Button
+                                        className={"Point"}
+                                        type={"link"}
+                                        ghost={true}
+                                        onClick={()=>{
+                                            this.setState({
+                                                editPoint:comment.Point
+                                            })
+                                        }}
+                                    >
+                                        {comment.Point.keyword}
+                                    </Button>
                                 }
                                 content={
                                     <div className={"ConentPart"}>
@@ -110,6 +130,18 @@ class CommentList extends React.Component{
                     )
                 })
             }
+            <Drawer
+                title={"Edit Point"}
+                width={1200}
+                visible={this.state.editPoint.hasOwnProperty('ID')}
+                onClose={()=>{
+                    this.closeDrawer();
+                }}
+            >
+                <PointEdit
+                    ID={this.state.editPoint.ID}
+                />
+            </Drawer>
             <Affix
                 offsetBottom={10}
             >
