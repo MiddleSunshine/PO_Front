@@ -12,6 +12,7 @@ import PointEdit from "../component/PointEdit";
 import PointNew from "../component/PointNew";
 import PointConnection from "../component/PointConnection";
 import BookMarks, {NewBookMark} from "../component/BookMarks";
+import {pick} from "echarts-for-react/lib/helper/pick";
 
 const ROW_TOP='top_';
 const ROW_BOTTOM='bottom_';
@@ -42,13 +43,15 @@ class PointItem extends React.Component{
         super(props);
         this.state={
             Point:props.Point,
-            IsActive:props.IsActive
+            IsActive:props.IsActive,
+            IsIndex:props.IsIndex
         }
     }
 
     componentWillReceiveProps(nextProps, nextContext) {
         this.setState({
-            IsActive:nextProps.IsActive
+            IsActive:nextProps.IsActive,
+            IsIndex:nextProps.IsIndex
         });
     }
 
@@ -60,7 +63,9 @@ class PointItem extends React.Component{
             style.color="gray";
             style.fontWeight="bolder";
         }
-
+        if (this.state.IsIndex){
+            style.textDecoration="underline";
+        }
 
         return (
             <div
@@ -100,6 +105,7 @@ class PointMindMap extends React.Component{
     constructor(props) {
         super(props);
         this.state={
+            IndexPoint:{},
             Points:[],
             PID:props.match.params.pid,
             mode:props.match.params.mode,
@@ -120,6 +126,7 @@ class PointMindMap extends React.Component{
         }
         this.getPoints=this.getPoints.bind(this);
         this.updateLevel=this.updateLevel.bind(this);
+        this.getAPoint=this.getAPoint.bind(this);
     }
 
     componentDidMount() {
@@ -137,6 +144,19 @@ class PointMindMap extends React.Component{
 
     hidePoint(PID){
         
+    }
+
+    getAPoint(PID){
+        requestApi("/index.php?action=Points&method=GetAPoint&id="+PID)
+            .then((res)=>{
+                res.json().then((json)=>{
+                    this.setState({
+                        IndexPoint:json.Data
+                    })
+                }).then(()=>{
+                    document.title=this.state.IndexPoint.keyword
+                })
+            })
     }
 
     getPoints(PID,SubLevel=1,ParentLevel=1){
@@ -165,6 +185,9 @@ class PointMindMap extends React.Component{
                         connections:webConnections
                     })
                 })
+            })
+            .then(()=>{
+                this.getAPoint(PID);
             })
     }
 
@@ -213,6 +236,7 @@ class PointMindMap extends React.Component{
                                                         justify={"center"}
                                                     >
                                                         <PointItem
+                                                            IsIndex={this.state.IndexPoint.ID==point.ID}
                                                             IsActive={this.state.activePoint.ID==point.ID}
                                                             activePoint={(point)=>{
                                                                 this.setState({
@@ -284,6 +308,7 @@ class PointMindMap extends React.Component{
                                                     </Col>
                                                     <Col span={12}>
                                                         <PointItem
+                                                            IsIndex={this.state.IndexPoint.ID==point.ID}
                                                             IsActive={this.state.activePoint.ID==point.ID}
                                                             Point={point}
                                                             activePoint={(point)=>{
@@ -361,61 +386,63 @@ class PointMindMap extends React.Component{
         >
             <div className="container PointMindMap">
                 <MenuList />
-                <Divider>
-                    <Button
-                        icon={<PlusOutlined />}
-                        type={"primary"}
-                        onClick={()=>{
-                            this.updateLevel(this.state.SubLevel,this.state.ParentLevel-0+1,this.state.mode);
-                        }}
-                    >
-                    </Button>
-                    <Button
-                        icon={<MinusOutlined />}
-                        type={"primary"}
-                        onClick={()=>{
-                            this.updateLevel(this.state.SubLevel,this.state.ParentLevel-1,this.state.mode);
-                        }}
-                    >
-                    </Button>
-                    <Divider
-                        type={"vertical"}
-                    />
-                    <Button
-                        icon={<PlusOutlined />}
-                        type={"primary"}
-                        onClick={()=>{
-                            this.updateLevel(this.state.SubLevel-0+1,this.state.ParentLevel,this.state.mode);
-                        }}
-                    >
-                    </Button>
-                    <Button
-                        icon={<MinusOutlined />}
-                        type={"primary"}
-                        onClick={()=>{
-                            this.updateLevel(this.state.SubLevel-1,this.state.ParentLevel,this.state.mode);
-                        }}
-                    >
-                    </Button>
-                    <Divider
-                        type={"vertical"}
-                    />
-                    <Button
-                        type={"primary"}
-                        icon={
-                        this.state.mode==POINT_MIND_MAP_COLUMN
-                            ?<RedoOutlined />
-                            :<UndoOutlined />
-                        }
-                        onClick={()=>{
-                            this.updateLevel(this.state.SubLevel,this.state.ParentLevel,
-                                this.state.mode==POINT_MIND_MAP_ROW?POINT_MIND_MAP_COLUMN:POINT_MIND_MAP_ROW
+                <div className="ContentPart">
+                    <Divider>
+                        <Button
+                            icon={<PlusOutlined />}
+                            type={"primary"}
+                            onClick={()=>{
+                                this.updateLevel(this.state.SubLevel,this.state.ParentLevel-0+1,this.state.mode);
+                            }}
+                        >
+                        </Button>
+                        <Button
+                            icon={<MinusOutlined />}
+                            type={"primary"}
+                            onClick={()=>{
+                                this.updateLevel(this.state.SubLevel,this.state.ParentLevel-1,this.state.mode);
+                            }}
+                        >
+                        </Button>
+                        <Divider
+                            type={"vertical"}
+                        />
+                        <Button
+                            icon={<PlusOutlined />}
+                            type={"primary"}
+                            onClick={()=>{
+                                this.updateLevel(this.state.SubLevel-0+1,this.state.ParentLevel,this.state.mode);
+                            }}
+                        >
+                        </Button>
+                        <Button
+                            icon={<MinusOutlined />}
+                            type={"primary"}
+                            onClick={()=>{
+                                this.updateLevel(this.state.SubLevel-1,this.state.ParentLevel,this.state.mode);
+                            }}
+                        >
+                        </Button>
+                        <Divider
+                            type={"vertical"}
+                        />
+                        <Button
+                            type={"primary"}
+                            icon={
+                                this.state.mode==POINT_MIND_MAP_COLUMN
+                                    ?<RedoOutlined />
+                                    :<UndoOutlined />
+                            }
+                            onClick={()=>{
+                                this.updateLevel(this.state.SubLevel,this.state.ParentLevel,
+                                    this.state.mode==POINT_MIND_MAP_ROW?POINT_MIND_MAP_COLUMN:POINT_MIND_MAP_ROW
                                 );
-                        }}
-                    >
-                    </Button>
-                </Divider>
-                {contentPart}
+                            }}
+                        >
+                        </Button>
+                    </Divider>
+                    {contentPart}
+                </div>
                 <div>
                     <Drawer
                         placement={"bottom"}

@@ -26,6 +26,8 @@ import MenuList from "../component/MenuList";
 import Favourite from "../component/Favourite";
 import BookMarks, {NewBookMark} from "../component/BookMarks";
 
+import {PointMindMapRouter} from "./PointMindMap";
+
 var hotkeys_maps = [
     { hotkey: "shift+e", label: "Edit" },
     { hotkey: "shift+up", label: "Move Up" },
@@ -527,7 +529,7 @@ class PointTable extends React.Component {
                             href={"/pointRoad/" + this.state.parentPoint.ID}
                             target={"_blank"}
                         >
-                            Mind Map
+                            Check Pre Data
                         </Button>
                     </Col>
                     <Col span={3}>
@@ -546,6 +548,15 @@ class PointTable extends React.Component {
                             target={"_blank"}
                         >
                             sankey
+                        </Button>
+                    </Col>
+                    <Col span={3}>
+                        <Button
+                            type={"link"}
+                            href={PointMindMapRouter(this.state.parentPoint.ID)}
+                            target={"_blank"}
+                        >
+                            Mind Map
                         </Button>
                     </Col>
                     {/*<Col span={6}>*/}
