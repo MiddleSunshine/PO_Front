@@ -78,7 +78,7 @@ class WithoutConnectionPoints extends React.Component{
                             target={"_blank"}
                             style={{color:config.statusBackGroupColor[point.status]}}
                         >
-                            {point.keyword}
+                            {point.keyword}&nbsp;&nbsp;&nbsp;<span style={{color:"black"}}>{(point.Deleted-0)==1?"(Deleted)":""}</span>
                         </Button>
                     </List.Item>
                 )
