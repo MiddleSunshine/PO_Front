@@ -1,0 +1,29 @@
+.CommentList{
+
+}
+
+.CommentList .EachComment{
+
+}
+
+.CommentList .ConentPart{
+    border: 1px solid #d5d5d5;
+    padding: 5px;
+}
+
+.CommentList .CommentPart{
+    padding-bottom: 5px;
+}
+
+.CommentList .MdPart{
+    padding-top: 10px;
+    border-top: 1px solid #d5d5d5;
+}
+
+.CommentList .Point{
+    font-size: 15px;
+}
+
+.CommentList .ant-comment-content > ul > li{
+    padding-right: 10px;
+}

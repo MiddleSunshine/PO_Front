@@ -24,6 +24,7 @@ import PointTree from "../page/PointTree";
 import PointsSang from "../page/PointsSang";
 import Actions from "../page/Actions";
 import PointMindMap from "../page/PointMindMap";
+import CommentList from "../page/CommentList";
 
 interface router {
     path: string,
@@ -87,6 +88,10 @@ const routers: Array<router> = [
     {
         path: "/image",
         component: Image
+    },
+    {
+        path:"/comments",
+        component:CommentList
     },
     {
         path: "/willing",

@@ -16,7 +16,7 @@ import {
     Tabs,
     Timeline
 } from "antd";
-import {FormOutlined, StarOutlined,DeleteOutlined,MessageOutlined,FieldTimeOutlined,ClockCircleOutlined} from '@ant-design/icons';
+import {UnorderedListOutlined,FormOutlined, StarOutlined,DeleteOutlined,MessageOutlined,FieldTimeOutlined,ClockCircleOutlined} from '@ant-design/icons';
 import config from "../config/setting";
 import MarkdownPreview from "@uiw/react-markdown-preview";
 import ActionSummary from "./ActionSummary";
@@ -90,7 +90,7 @@ class Favourite extends React.Component{
         if (parseInt(limit)<0){
             limit=20;
         }
-        requestApi("/index.php?action=PointsComments&method=GetLastComment&limit="+limit)
+        requestApi("/index.php?action=PointsComments&method=GetLastComment&page_size="+limit)
             .then((res)=>{
                 res.json().then((json)=>{
                     this.setState({
@@ -297,6 +297,12 @@ class Favourite extends React.Component{
                         <Row>
                             <Col span={20}>
                                 <Input
+                                    prefix={<Button
+                                        type={"link"}
+                                        href={"/comments"}
+                                        target={"_blank"}
+                                        icon={<UnorderedListOutlined />}></Button>
+                                }
                                     value={this.state.commentLimit}
                                     onChange={(e)=>{
                                         this.setState({
