@@ -153,29 +153,32 @@ class Report extends React.Component {
             series: this.state.pointData
         };
         let percentOption = {
+            title:{
+                text:"Point Status Summary"
+            },
             tooltip: {
                 trigger: 'item'
-            },
-            legend: {
-                top: '5%',
-                left: 'center'
             },
             series: [
                 {
                     name: 'Status Percent',
                     type: 'pie',
-                    radius: ['40%', '70%'],
-                    avoidLabelOverlap: false,
-                    itemStyle: {
-                        borderRadius: 10,
-                        borderColor: '#fff',
-                        borderWidth: 2
-                    },
-                    label: {
-                        show: false,
-                        position: 'center'
-                    },
+                    radius: "50%",
+                    // itemStyle: {
+                    //     borderRadius: 10,
+                    //     borderColor: '#fff',
+                    //     borderWidth: 2
+                    // },
+                    // label: {
+                    //     show: true,
+                    //     position: 'center'
+                    // },
                     emphasis: {
+                        itemStyle:{
+                            shadowBlur:10,
+                            shadowOffsetX:0,
+                            shadowColor:"#d9d9d9"
+                        },
                         label: {
                             show: true,
                             fontSize: '40',
@@ -183,7 +186,7 @@ class Report extends React.Component {
                         }
                     },
                     labelLine: {
-                        show: false
+                        show: true
                     },
                     data: this.state.percentData
                 }
