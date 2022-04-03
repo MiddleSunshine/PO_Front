@@ -13,6 +13,7 @@ import PointNew from "../component/PointNew";
 import PointConnection from "../component/PointConnection";
 import BookMarks, {NewBookMark} from "../component/BookMarks";
 import {pick} from "echarts-for-react/lib/helper/pick";
+import Favourite from "../component/Favourite";
 
 const ROW_TOP='top_';
 const ROW_BOTTOM='bottom_';
@@ -507,6 +508,7 @@ class PointMindMap extends React.Component{
                     })
                 }}
             />
+            <Favourite />
         </Hotkeys>
     }
 }

@@ -16,10 +16,11 @@ import {
     Tabs,
     Timeline
 } from "antd";
-import {UnorderedListOutlined,FormOutlined, StarOutlined,DeleteOutlined,MessageOutlined,FieldTimeOutlined,ClockCircleOutlined} from '@ant-design/icons';
+import {WarningOutlined,UnorderedListOutlined,FormOutlined, StarOutlined,DeleteOutlined,MessageOutlined,FieldTimeOutlined,ClockCircleOutlined} from '@ant-design/icons';
 import config from "../config/setting";
 import MarkdownPreview from "@uiw/react-markdown-preview";
 import ActionSummary from "./ActionSummary";
+import WithoutConnectionPoints from "./WithoutConnectionPoints";
 
 class Favourite extends React.Component{
     constructor(props) {
@@ -36,7 +37,9 @@ class Favourite extends React.Component{
             actionEndTime:"",
             distinctActions:[],
             newActionTitle:"",
-            newActionNote:""
+            newActionNote:"",
+            //
+            withoutConnectionPointsModalVisible:false
         }
         this.getFavourite=this.getFavourite.bind(this);
         this.showFavouriteModal=this.showFavouriteModal.bind(this);
@@ -170,8 +173,27 @@ class Favourite extends React.Component{
     render() {
         return <Row>
             <Col span={24}>
-                <Row>
-                    <Col span={1} offset={17}>
+                <Row
+                    justify={"end"}
+                >
+                    <Col span={1}>
+                        <Affix
+                            offsetBottom={true}
+                        >
+                            <Button
+                                type={"link"}
+                                ghost={true}
+                                shape={"circle"}
+                                icon={<WarningOutlined />}
+                                onClick={()=>{
+                                    this.setState({
+                                        withoutConnectionPointsModalVisible:true
+                                    })
+                                }}
+                            ></Button>
+                        </Affix>
+                    </Col>
+                    <Col span={1}>
                         <Affix
                             offsetBottom={true}
                         >
@@ -223,6 +245,21 @@ class Favourite extends React.Component{
                             </Button>
                         </Affix>
                     </Col>
+                </Row>
+                <Row>
+                    <Modal
+                        title={"Without Connection Points"}
+                        width={1000}
+                        visible={this.state.withoutConnectionPointsModalVisible}
+                        onCancel={()=>{
+                            this.setState({
+                                withoutConnectionPointsModalVisible:false
+                            })
+                        }}
+
+                    >
+                        <WithoutConnectionPoints />
+                    </Modal>
                 </Row>
                 <Row>
                     <Modal
