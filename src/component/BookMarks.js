@@ -1,5 +1,5 @@
 import React from "react";
-import {Button, Col, Comment, Divider, Drawer, Form, Input, message, Modal, Popconfirm, Row} from "antd";
+import {Button, Col, Comment, Divider, Drawer, Form, Input, List, message, Modal, Popconfirm, Row} from "antd";
 import SimpleMDE from "react-simplemde-editor";
 import {requestApi} from "../config/functions";
 import MarkdownPreview from "@uiw/react-markdown-preview";
@@ -153,34 +153,56 @@ class BookMarks extends React.Component{
                     this.closeDrawer();
                 }}
             >
-                {
-                    this.state.bookMarks.map((Item,index)=>{
+                <List
+                    size={"small"}
+                    dataSource={this.state.bookMarks}
+                    renderItem={(Item,index)=>{
                         return(
-                            <div
-                                key={index}
-                                style={{borderTop:"1px solid #d9d9d9"}}
+                            <List.Item
+                                key={Item.Name}
                             >
-                                <Comment
-                                    actions={[
-                                        Item.editMode?
-                                            <Button type={"link"} icon={<SaveOutlined />} onClick={()=>{this.updateBookmark(index,'editMode',false)}}></Button>
-                                            :<Button type={"link"} icon={<FormOutlined />} onClick={()=>{this.updateBookmark(index,'editMode',true)}}></Button>,
+                                <Form
+                                    style={{width:"100%"}}
+                                    layout={"horizontal"}
+                                >
+                                    <Form.Item
+                                        label={"Info"}
+                                    >
                                         <Input
-                                            prefix={"Name"}
-                                            style={{width:"400px"}}
+                                            // disabled={true}
+                                            prefix={
+                                                <Popconfirm
+                                                    title={"Delete Check ?"}
+                                                    onConfirm={()=>{this.deleteBookMark(index)}}
+                                                >
+                                                    <Button
+                                                        danger={true}
+                                                        type={"link"}
+                                                        icon={<CloseCircleOutlined />}
+                                                    >
+                                                    </Button>
+                                                </Popconfirm>
+                                            }
                                             value={Item.Name}
-                                            onChange={(e)=>{
-                                                this.updateBookmark(index,'Name',e.target.value);
-                                            }}
-                                            onPressEnter={()=>{
-                                                this.updateBookMarkName(index);
-                                            }}
-                                        />,
-                                        <div style={{width:"10px"}}></div>
-                                        ,
+                                            // onChange={(e)=>{
+                                            //     this.updateBookmark(index,'Name',e.target.value);
+                                            // }}
+                                            // onPressEnter={()=>{
+                                            //     this.updateBookMarkName(index);
+                                            // }}
+                                            suffix={
+                                                Item.editMode?
+                                                    <Button type={"link"} icon={<SaveOutlined />} onClick={()=>{this.updateBookmark(index,'editMode',false)}}></Button>
+                                                    :<Button type={"link"} icon={<FormOutlined />} onClick={()=>{this.updateBookmark(index,'editMode',true)}}></Button>
+                                            }
+                                        />
+                                    </Form.Item>
+                                    <Form.Item
+                                        label={
+                                        "Href"
+                                        }
+                                    >
                                         <Input
-                                            prefix={"Href: "}
-                                            style={{width:"400px"}}
                                             value={Item.Href}
                                             onChange={(e)=>{
                                                 this.updateBookmark(index,'Href',e.target.value)
@@ -188,44 +210,42 @@ class BookMarks extends React.Component{
                                             onPressEnter={()=>{
                                                 this.saveBookmark(index);
                                             }}
-                                        />,
-                                        <div style={{width:"10px"}}></div>,
-                                        <Button
-                                            href={Item.Href}
-                                            target={"_blank"}
-                                            type={"link"}
-                                            icon={<ChromeOutlined />}
-                                        >
-                                        </Button>,
-                                        <Popconfirm
-                                            title={"Delete Check ?"}
-                                            onConfirm={()=>{this.deleteBookMark(index)}}
-                                        >
-                                            <Button
-                                                danger={true}
-                                                type={"link"}
-                                                icon={<CloseCircleOutlined />}
-                                            >
-                                            </Button>
-                                        </Popconfirm>
-                                    ]}
-                                    content={
-                                        Item.editMode
-                                            ?<SimpleMDE
-                                                value={Item.Note}
-                                                onChange={(newValue)=>{
-                                                    this.updateBookmark(index,'Note',newValue)
-                                                }}
-                                            />
-                                            : <MarkdownPreview
-                                            source={Item.Note}
+                                            suffix={
+                                                <Button
+                                                    href={Item.Href}
+                                                    target={"_blank"}
+                                                    type={"link"}
+                                                    icon={<ChromeOutlined />}
+                                                >
+                                                </Button>
+                                            }
                                         />
+                                    </Form.Item>
+                                    {
+                                        Item.Note
+                                            ?<Form.Item
+                                                label={"Note"}
+                                            >
+                                                {
+                                                    Item.editMode
+                                                        ?<SimpleMDE
+                                                            value={Item.Note}
+                                                            onChange={(newValue)=>{
+                                                                this.updateBookmark(index,'Note',newValue)
+                                                            }}
+                                                        />
+                                                        : <MarkdownPreview
+                                                            source={Item.Note}
+                                                        />
+                                                }
+                                            </Form.Item>
+                                            :""
                                     }
-                                />
-                            </div>
+                                </Form>
+                            </List.Item>
                         )
-                    })
-                }
+                    }}
+                />
             </Drawer>
         </div>
     }
