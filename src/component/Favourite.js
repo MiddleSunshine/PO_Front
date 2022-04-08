@@ -6,7 +6,7 @@ import {
     Badge,
     Button,
     Col,
-    Comment, Divider,
+    Comment, Divider, Drawer,
     Input,
     List,
     message,
@@ -16,11 +16,12 @@ import {
     Tabs,
     Timeline
 } from "antd";
-import {WarningOutlined,UnorderedListOutlined,FormOutlined, StarOutlined,DeleteOutlined,MessageOutlined,FieldTimeOutlined,ClockCircleOutlined} from '@ant-design/icons';
+import {BookOutlined,WarningOutlined,UnorderedListOutlined,FormOutlined, StarOutlined,DeleteOutlined,MessageOutlined,FieldTimeOutlined,ClockCircleOutlined} from '@ant-design/icons';
 import config from "../config/setting";
 import MarkdownPreview from "@uiw/react-markdown-preview";
 import ActionSummary from "./ActionSummary";
 import WithoutConnectionPoints from "./WithoutConnectionPoints";
+import BookMarks from "./BookMarks";
 
 class Favourite extends React.Component{
     constructor(props) {
@@ -39,7 +40,9 @@ class Favourite extends React.Component{
             newActionTitle:"",
             newActionNote:"",
             //
-            withoutConnectionPointsModalVisible:false
+            withoutConnectionPointsModalVisible:false,
+            //
+            bookmarkDrawerVisible:false
         }
         this.getFavourite=this.getFavourite.bind(this);
         this.showFavouriteModal=this.showFavouriteModal.bind(this);
@@ -176,6 +179,23 @@ class Favourite extends React.Component{
                 <Row
                     justify={"end"}
                 >
+                    <Col span={1}>
+                        <Affix
+                            offsetBottom={true}
+                        >
+                            <Button
+                                type={"link"}
+                                ghost={true}
+                                shape={"circle"}
+                                icon={<BookOutlined />}
+                                onClick={()=>{
+                                    this.setState({
+                                        bookmarkDrawerVisible:true
+                                    })
+                                }}
+                            ></Button>
+                        </Affix>
+                    </Col>
                     <Col span={1}>
                         <Affix
                             offsetBottom={true}
@@ -547,6 +567,14 @@ class Favourite extends React.Component{
                         </Tabs>
                     </Modal>
                 </Row>
+                <BookMarks
+                    Visible={this.state.bookmarkDrawerVisible}
+                    afterCloseDrawer={()=>{
+                        this.setState({
+                            bookmarkDrawerVisible:false
+                        })
+                    }}
+                />
             </Col>
         </Row>
     }
