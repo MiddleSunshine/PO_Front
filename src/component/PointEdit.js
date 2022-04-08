@@ -8,6 +8,7 @@ import MarkdownPreview from '@uiw/react-markdown-preview';
 import PointsComments from "./PointsComments";
 import {ClusterOutlined} from '@ant-design/icons';
 import TextArea from "antd/es/input/TextArea";
+import point from "./point";
 const {Option}=Select;
 
 // markdown 插件仓库位置
@@ -33,7 +34,7 @@ class PointEdit extends React.Component{
             },
             fileContent:"",
             localFilePath:'',
-            editFile:false,
+            editFile:true,
             fileChanged:false,
             disableEdieFile:false,
             editComment:false,
@@ -209,7 +210,7 @@ class PointEdit extends React.Component{
                         label={"Favourite"}
                     >
                         <Row>
-                            <Col span={3}>
+                            <Col span={4}>
                                 <Select
                                     value={this.state.point.Favourite=='Favourite'?'Favourite':'NotFavourite'}
                                     onChange={(newValue)=>{
@@ -232,7 +233,7 @@ class PointEdit extends React.Component{
                                     </Option>
                                 </Select>
                             </Col>
-                            <Col offset={1} span={3}>
+                            <Col offset={1} span={4}>
                                 <Select
                                     value={this.state.point.SearchAble}
                                     onChange={(newValue)=>{
@@ -247,14 +248,14 @@ class PointEdit extends React.Component{
                                     </Select.Option>
                                 </Select>
                             </Col>
-                            <Col span={3} offset={1}>
+                            <Col span={5} offset={1}>
                                 <Input
-                                    prefix={"Point"}
+                                    prefix={"Point： "}
                                     value={this.state.point.Point}
                                     onChange={(e)=>this.handleChange(e.target.value,"Point")}
                                 />
                             </Col>
-                            <Col span={3} offset={1}>
+                            <Col span={5} offset={1}>
                                 <Select
                                     value={this.state.point.Deleted}
                                     onChange={(value)=>this.handleChange(value,"Deleted")}
@@ -263,13 +264,13 @@ class PointEdit extends React.Component{
                                     <Option value={'1'}>Deleted</Option>
                                 </Select>
                             </Col>
-                            <Col span={8} offset={1}>
-                                <Input
-                                    prefix={"File: "}
-                                    value={this.state.point.file}
-                                    onChange={(e)=>this.handleChange(e.target.value,"file")}
-                                />
-                            </Col>
+                            {/*<Col span={8} offset={1}>*/}
+                            {/*    <Input*/}
+                            {/*        prefix={"File: "}*/}
+                            {/*        value={this.state.point.file}*/}
+                            {/*        onChange={(e)=>this.handleChange(e.target.value,"file")}*/}
+                            {/*    />*/}
+                            {/*</Col>*/}
                         </Row>
                     </Form.Item>
                     <Form.Item
@@ -303,11 +304,15 @@ class PointEdit extends React.Component{
                                     ?<SimpleMDE
                                         value={this.state.fileContent}
                                         onChange={(value)=>{
+                                            let point={
+                                                ...this.state.point,
+                                                file:this.state.point.file?this.state.point.file:"笔记"
+                                            };
+                                            if (value && point.status==config.statusMap[0].value){
+                                                point.status=config.statusMap[1].value;
+                                            }
                                             this.setState({
-                                                point:{
-                                                    ...this.state.point,
-                                                    file:this.state.point.file?this.state.point.file:"笔记"
-                                                },
+                                                point:point,
                                                 fileChanged:true,
                                                 fileContent:value
                                             })
