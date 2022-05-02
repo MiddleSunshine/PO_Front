@@ -37,7 +37,8 @@ var hotkeys_maps = [
     { hotkey: "shift+i", label: "Edit" },
     { hotkey: "shift+n", label: "New Point" },
     { hotkey: "shift+s", label: "New BookMark" },
-    { hotkey: "shift+b", label: "BookMark List" }
+    { hotkey: "shift+b", label: "BookMark List" },
+    { hotkey: "shift+p",label: "View Point" }
 ];
 
 const ACTIVE_TYPE_SUB_POINT = 'SubPoint';
@@ -69,6 +70,7 @@ class PointTable extends React.Component {
             statusFilter: [],
             //
             editPoint: {},
+            editPointView:false,
             editPartVisible: false,
             //
             activePoint: {},
@@ -127,10 +129,11 @@ class PointTable extends React.Component {
         })
     }
 
-    openDrawer(Point, openDrawer = true) {
+    openDrawer(Point, openDrawer = true,editFile=true) {
         this.setState({
             editPoint: Point,
-            editPartVisible: openDrawer
+            editPartVisible: openDrawer,
+            editPointView:editFile
         });
     }
 
@@ -257,10 +260,20 @@ class PointTable extends React.Component {
             case "shift+e":
                 switch (this.state.activeType) {
                     case ACTIVE_TYPE_PARENT_POINT:
-                        this.openDrawer(this.state.activeOutsidePoint);
+                        this.openDrawer(this.state.activeOutsidePoint,true,true);
                         break;
                     case ACTIVE_TYPE_SUB_POINT:
-                        this.openDrawer(this.state.activePoint);
+                        this.openDrawer(this.state.activePoint,true,true);
+                        break;
+                }
+                break;
+            case "shift+p":
+                switch (this.state.activeType) {
+                    case ACTIVE_TYPE_PARENT_POINT:
+                        this.openDrawer(this.state.activeOutsidePoint,true,false);
+                        break;
+                    case ACTIVE_TYPE_SUB_POINT:
+                        this.openDrawer(this.state.activePoint,true,false);
                         break;
                 }
                 break;
@@ -459,7 +472,7 @@ class PointTable extends React.Component {
                                 <span
                                     style={{ cursor: "pointer" }}
                                     onClick={() => {
-                                        this.openDrawer(this.state.parentPoint);
+                                        this.openDrawer(this.state.parentPoint,true,true);
                                     }}
                                 >
                                     {this.state.parentPoint.keyword}
@@ -494,10 +507,10 @@ class PointTable extends React.Component {
                             onClick={() => {
                                 switch (this.state.activeType) {
                                     case ACTIVE_TYPE_PARENT_POINT:
-                                        this.openDrawer(this.state.activeOutsidePoint);
+                                        this.openDrawer(this.state.activeOutsidePoint,true,true);
                                         break;
                                     case ACTIVE_TYPE_SUB_POINT:
-                                        this.openDrawer(this.state.activePoint);
+                                        this.openDrawer(this.state.activePoint,true,true);
                                         break;
                                 }
                             }}
@@ -855,6 +868,7 @@ class PointTable extends React.Component {
                     >
                         <PointEdit
                             ID={this.state.editPoint.ID}
+                            EditFile={this.state.editPointView}
                         />
                     </Drawer>
                 </Row>

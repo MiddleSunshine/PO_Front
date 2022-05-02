@@ -34,7 +34,7 @@ class PointEdit extends React.Component{
             },
             fileContent:"",
             localFilePath:'',
-            editFile:true,
+            editFile:props.hasOwnProperty('EditFile')?props.EditFile:true,
             fileChanged:false,
             disableEdieFile:false,
             editComment:false,
@@ -59,7 +59,8 @@ class PointEdit extends React.Component{
                 .then(()=>{
                     this.setState({
                         preID:nextProps.ID,
-                        ID:nextProps.ID
+                        ID:nextProps.ID,
+                        editFile:nextProps.hasOwnProperty('EditFile')?nextProps.EditFile:true
                     })
                 })
                 .then(()=>{
