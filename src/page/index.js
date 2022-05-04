@@ -1,5 +1,5 @@
 import React from 'react'
-import {Layout, Row, Col, Button, message, Input, Tag, List, Avatar} from "antd";
+import {Layout, Row, Col, Button, message, Input, List, Avatar} from "antd";
 import "../css/index.css"
 import {DingdingOutlined, FormOutlined} from '@ant-design/icons';
 import {requestApi} from "../config/functions";

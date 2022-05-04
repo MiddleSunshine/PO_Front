@@ -69,10 +69,10 @@ const routers: Array<router> = [
         path: "/GTD",
         component: GTD
     },
-    {
-        path: "/debug",
-        component: Debug
-    },
+    // {
+    //     path: "/debug",
+    //     component: Debug
+    // },
     {
         path: "/clock_in",
         component: CheckIn
@@ -129,10 +129,10 @@ const routers: Array<router> = [
         path:"/pointsSang/:pid",
         component:PointsSang
     },
-    {
-        path: "/points/:pid",
-        component: Collector
-    },
+    // {
+    //     path: "/points/:pid",
+    //     component: Collector
+    // },
     {
         path: "/summary/points/:pid",
         component: Summary
