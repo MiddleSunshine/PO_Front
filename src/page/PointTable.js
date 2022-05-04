@@ -20,7 +20,8 @@ import {
     MinusCircleOutlined,
     WindowsOutlined,
     RightOutlined,
-    LeftOutlined
+    LeftOutlined,
+    CloseOutlined
 } from '@ant-design/icons';
 import "../css/PointTable.css"
 import config, {SEARCHABLE_POINT, SEARCHABLE_TITLE} from "../config/setting";
@@ -115,6 +116,10 @@ class PointTable extends React.Component {
         this.closePointCollector = this.closePointCollector.bind(this);
         this.getPointCollertor = this.getPointCollertor.bind(this);
         this.newPointCollector = this.newPointCollector.bind(this);
+        this.deleteCollector = this.deleteCollector.bind(this);
+        this.deleteCollectorPoint = this.deleteCollectorPoint.bind(this);
+        this.newPointCollector = this.newPointCollector.bind(this);
+        this.gotoCollectorPointList = this.gotoCollectorPointList.bind(this);
     }
 
     componentDidMount() {
@@ -466,7 +471,7 @@ class PointTable extends React.Component {
             })
     }
 
-    getPointCollertor(PID) {
+    getPointCollertor(PID, updateCollectorMode = true) {
         requestApi("/index.php?action=PointCollect&method=CollectList&PID=" + PID)
             .then((res) => {
                 res.json().then((json) => {
@@ -475,9 +480,11 @@ class PointTable extends React.Component {
                         collectorPoints: json.Data.Points
                     })
                 }).then(() => {
-                    this.setState({
-                        collectorMode: this.state.collectorPoints.length > 0 ? POINT_COLLECTOR_MODE_POINT : POINT_COLLECTOR_MODE_LIST
-                    })
+                    if (updateCollectorMode) {
+                        this.setState({
+                            collectorMode: this.state.collectorPoints.length > 0 ? POINT_COLLECTOR_MODE_POINT : POINT_COLLECTOR_MODE_LIST
+                        })
+                    }
                 })
             })
     }
@@ -486,6 +493,14 @@ class PointTable extends React.Component {
         this.setState({
             pointCollectorWidth: 0
         })
+    }
+
+    gotoCollectorPointList(PID,points=[]){
+        this.setState({
+            collectorPoints:points.length>0?points:this.state.collectorPoints,
+            collectorMode:POINT_COLLECTOR_MODE_POINT,
+            changePointCollectorId:PID
+        });
     }
 
     newPointCollector(PID, point) {
@@ -505,6 +520,30 @@ class PointTable extends React.Component {
                 res.json().then((json) => {
                     if (json.Status == 1) {
                         message.success("New Point !");
+                        this.getPointCollertor(this.state.changePointCollectorId,false);
+                        return true;
+                    } else {
+                        message.warn(json.Message);
+                        return false;
+                    }
+                })
+                    .then((result)=>{
+                        if(result){
+                            this.setState({
+                                newPointCollector:""
+                            })
+                        }
+                    })
+            })
+    }
+
+    deleteCollector(collectorName) {
+        requestApi("/index.php?action=PointCollect&method=DeleteCollector&PID=" + collectorName)
+            .then((res) => {
+                res.json().then((json) => {
+                    if (json.Status == 1) {
+                        message.success("Delete Collector !");
+                        this.getPointCollertor(this.state.id, false);
                     } else {
                         message.warn(json.Message);
                     }
@@ -512,25 +551,61 @@ class PointTable extends React.Component {
             })
     }
 
-    onDragStart(e,point){
+    newCollector(collectorName) {
+        requestApi("/index.php?action=PointCollect&method=NewCollector&PID=" + collectorName)
+            .then((res) => {
+                res.json().then((json) => {
+                    if (json.Status == 1) {
+                        message.success("New Collect!");
+                        this.getPointCollertor(this.state.id, false);
+                    } else {
+                        message.warn(json.Message);
+                    }
+                })
+            })
+    }
+
+    deleteCollectorPoint(collector, createtime) {
+        requestApi("/index.php?action=PointCollect&method=DeletePoint", {
+            method: "post",
+            mode: "cors",
+            body: JSON.stringify({
+                PID: collector,
+                create_time: createtime
+            })
+        })
+            .then((res) => {
+                res.json().then((json) => {
+                    if (json.Status == 1) {
+                        message.success("Delete Point !")
+                        this.getPointCollertor(this.state.id, false);
+                    } else {
+                        message.warn(json.Message);
+                    }
+                })
+            })
+    }
+
+    onDragStart(e, point) {
         e.dataTransfer.setData("point", point);
     }
 
-    onDrop(e,PID){
+    onDrop(e, PID) {
         e.preventDefault();
         let point = e.dataTransfer.getData("point");
-        (async ()=>{})()
-            .then(()=>{
+        (async () => {
+        })()
+            .then(() => {
                 this.setState({
-                    newPointID:-1,
-                    newPointType:SEARCHABLE_POINT,
-                    newPointKeyword:point
+                    newPointID: -1,
+                    newPointType: SEARCHABLE_POINT,
+                    newPointKeyword: point
                 })
             })
-            .then(()=>{
+            .then(() => {
                 this.newPoint();
             })
-            .then(()=>{
+            .then(() => {
 
             })
     }
@@ -562,27 +637,25 @@ class PointTable extends React.Component {
                                 ? <Row>
                                     <Col span={24}>
                                         <Row>
-                                            <Col span={24}>
-                                                <Input
-                                                    suffix={
-                                                        <RightOutlined
-                                                            onClick={() => {
-                                                                this.setState({
-                                                                    collectorMode: POINT_COLLECTOR_MODE_POINT
-                                                                });
-                                                            }}
-                                                        />
-                                                    }
-                                                    value={this.state.newPointCollector}
-                                                    onChange={(e) => {
-                                                        this.setState({
-                                                            newPointCollector: e.target.value
-                                                        })
+                                            <Col span={20}>
+                                                <Button
+                                                    onClick={() => {
+                                                        this.newCollector(this.state.id);
                                                     }}
-                                                    onPressEnter={() => {
-                                                        this.newPointCollector(this.state.id, this.state.newPointCollector)
+                                                    type={"primary"}
+                                                >
+                                                    New Collector
+                                                </Button>
+                                            </Col>
+                                            <Col span={4}>
+                                                <Button
+                                                    type={"primary"}
+                                                    shape={"circle"}
+                                                    icon={<RightOutlined/>}
+                                                    onClick={() => {
+                                                        this.gotoCollectorPointList(this.state.id);
                                                     }}
-                                                />
+                                                ></Button>
                                             </Col>
                                         </Row>
                                         {
@@ -591,6 +664,14 @@ class PointTable extends React.Component {
                                                     <Button
                                                         key={collectorIndex}
                                                         type={"link"}
+                                                        icon={<CloseOutlined
+                                                            onClick={() => {
+                                                                this.deleteCollector(collector.ID)
+                                                            }}
+                                                        />}
+                                                        onClick={()=>{
+                                                            this.gotoCollectorPointList(collector.points)
+                                                        }}
                                                     >
                                                         {
                                                             collector.label
@@ -605,14 +686,17 @@ class PointTable extends React.Component {
                                     <Col span={24}>
                                         <Row>
                                             <Input
-                                                value={this.state.changePointCollectorId}
-                                                onChange={(e) => {
+                                                value={this.state.newPointCollector}
+                                                onChange={(e)=>{
                                                     this.setState({
-                                                        changePointCollectorId: e.target.value
+                                                        newPointCollector:e.target.value
                                                     })
                                                 }}
-                                                onPressEnter={() => {
-                                                    this.getPointCollertor(this.state.changePointCollectorId)
+                                                onPressEnter={()=>{
+                                                    this.newPointCollector(
+                                                        this.state.changePointCollectorId,
+                                                        this.state.newPointCollector
+                                                    );
                                                 }}
                                                 prefix={<LeftOutlined
                                                     onClick={() => {
@@ -629,8 +713,8 @@ class PointTable extends React.Component {
                                                     <div
                                                         draggable={true}
                                                         style={{paddingTop: "5px"}}
-                                                        onDragStart={(e)=>{
-                                                            this.onDragStart(e,point.point)
+                                                        onDragStart={(e) => {
+                                                            this.onDragStart(e, point.point)
                                                         }}
                                                     >
                                                         <Input
@@ -943,13 +1027,13 @@ class PointTable extends React.Component {
                                                                                         />
                                                                                         :
                                                                                         <div
-                                                                                            onDrop={(e)=>{
+                                                                                            onDrop={(e) => {
 
                                                                                             }}
-                                                                                            onDragOver={(e)=>{
+                                                                                            onDragOver={(e) => {
                                                                                                 this.onDragOver(e);
                                                                                             }}
-                                                                                            onDragLeave={(e)=>{
+                                                                                            onDragLeave={(e) => {
                                                                                                 this.onDrageLevel(e);
                                                                                             }}
                                                                                         >
