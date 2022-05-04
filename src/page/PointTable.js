@@ -618,6 +618,7 @@ class PointTable extends React.Component {
         })()
             .then(() => {
                 this.setState({
+                    newPointPID:PID,
                     newPointID: -1,
                     newPointType: SEARCHABLE_POINT,
                     newPointKeyword: point
@@ -627,15 +628,24 @@ class PointTable extends React.Component {
                 this.newPoint();
             })
             .then(() => {
-
+                let createTime=null;
+                this.state.pointCollectors.map((Item)=>{
+                    if (Item.point==point){
+                        createTime=Item.createtime;
+                    }
+                    return Item;
+                });
+                this.deleteCollectorPoint(this.state.changePointCollectorId,createTime);
             })
     }
 
     onDragOver(e) {
+        e.preventDefault();
         e.currentTarget.style.backgroundColor = "#60A0A3";
     }
 
     onDrageLevel(e) {
+        e.preventDefault();
         e.currentTarget.style.backgroundColor = "";
     }
 
@@ -931,6 +941,10 @@ class PointTable extends React.Component {
                                                 <Card
                                                     title={
                                                         <div
+                                                            onDrop={(e)=>{
+                                                                debugger
+                                                                this.onDrop(e,point.ID);
+                                                            }}
                                                             onDragOver={(e) => {
                                                                 this.onDragOver(e);
                                                             }}
@@ -1063,7 +1077,7 @@ class PointTable extends React.Component {
                                                                                         :
                                                                                         <div
                                                                                             onDrop={(e) => {
-
+                                                                                                this.onDrop(e,subPoint.ID);
                                                                                             }}
                                                                                             onDragOver={(e) => {
                                                                                                 this.onDragOver(e);
