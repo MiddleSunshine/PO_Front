@@ -9,7 +9,6 @@ import Plan from '../page/Plan.js';
 import PlanTable from "../page/PlanTable";
 import PointTable from "../page/PointTable";
 import CheckIn from "../page/CheckIn";
-import Debug from "../page/debug";
 import GTD from "../page/GTD";
 import GTDHistory from "../page/GTDHistory";
 import PointsRoad from "../page/PointsRoad";

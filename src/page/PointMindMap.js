@@ -22,9 +22,6 @@ const COLUMN_LEFT='left_';
 const COLUMN_RIGHT='right_';
 
 class ConnectionItem extends React.Component{
-    constructor(props) {
-        super(props);
-    }
     render() {
         return(
             <Button

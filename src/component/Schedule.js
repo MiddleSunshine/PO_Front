@@ -64,6 +64,7 @@ class Schedule extends React.Component {
             let plans = [];
             this.state.plans[date].map((Item) => {
                 plans.push(Item);
+                return Item;
             })
             if (this.state.plans[date].length > 2) {
                 plans.splice(2, 100, { ID: 0, Name: "..." })

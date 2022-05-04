@@ -183,6 +183,8 @@ class PointsRoad extends React.Component{
                                 showHead={false}
                             />
                         )
+                    }else{
+                        return '';
                     }
                 })
             }

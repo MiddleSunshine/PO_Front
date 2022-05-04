@@ -1,5 +1,5 @@
 import React from "react";
-import {Button, Card, Col, Drawer, Input, InputNumber, Row, Select, Tree} from "antd";
+import {Button, Card, Col, Drawer, InputNumber, Row, Select, Tree} from "antd";
 import {requestApi} from "../config/functions";
 import MarkdownPreview from "@uiw/react-markdown-preview";
 import PointEdit from "../component/PointEdit";

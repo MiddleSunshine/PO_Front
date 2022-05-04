@@ -43,6 +43,7 @@ class Summary extends React.Component{
                             name:Item.label,
                             value:Item.value
                         });
+                        return Item;
                     })
                     this.setState({
                         data:data,
