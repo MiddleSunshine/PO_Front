@@ -90,7 +90,7 @@ class PointTable extends React.Component {
             bookmarkVisible: false,
             bookmarkListVisible: false,
             //
-            pointCollectorWidth: 4,
+            pointCollectorWidth: 0,
             changePointCollectorId: 0,
             pointCollectors: [],
             collectorPoints: [],
@@ -124,6 +124,7 @@ class PointTable extends React.Component {
     componentDidMount() {
         this.getPointsByPID(this.state.id);
         this.getAPoint(this.state.id);
+        this.getPointCollertor(this.state.id);
     }
 
     recordActivePoint(Point, outsideIndex, insideIndex) {
@@ -485,6 +486,12 @@ class PointTable extends React.Component {
                             collectorMode: this.state.collectorPoints.length > 0 ? POINT_COLLECTOR_MODE_POINT : POINT_COLLECTOR_MODE_LIST
                         })
                     }
+                }).then(()=>{
+                    if (this.state.collectorPoints.length>0){
+                        this.setState({
+                            pointCollectorWidth:4
+                        })
+                    }
                 })
             })
     }
@@ -543,7 +550,7 @@ class PointTable extends React.Component {
                 res.json().then((json) => {
                     if (json.Status == 1) {
                         message.success("Delete Collector !");
-                        this.getPointCollertor(this.state.id, false);
+                        this.getPointCollertor(this.state.changePointCollectorId, false);
                     } else {
                         message.warn(json.Message);
                     }
@@ -578,7 +585,7 @@ class PointTable extends React.Component {
                 res.json().then((json) => {
                     if (json.Status == 1) {
                         message.success("Delete Point !")
-                        this.getPointCollertor(this.state.id, false);
+                        this.getPointCollertor(this.state.changePointCollectorId, false);
                     } else {
                         message.warn(json.Message);
                     }
@@ -629,7 +636,7 @@ class PointTable extends React.Component {
             })
             .then(() => {
                 let createTime=null;
-                this.state.pointCollectors.map((Item)=>{
+                this.state.collectorPoints.map((Item)=>{
                     if (Item.point==point){
                         createTime=Item.createtime;
                     }
@@ -942,7 +949,6 @@ class PointTable extends React.Component {
                                                     title={
                                                         <div
                                                             onDrop={(e)=>{
-                                                                debugger
                                                                 this.onDrop(e,point.ID);
                                                             }}
                                                             onDragOver={(e) => {
