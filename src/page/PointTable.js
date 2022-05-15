@@ -32,6 +32,7 @@ import BookMarks, {NewBookMark} from "../component/BookMarks";
 
 import {PointMindMapRouter} from "./PointMindMap";
 import Search from "../component/Search";
+import PointNew, {NewPoint} from "../component/PointNew";
 
 var hotkeys_maps = [
     {hotkey: "shift+e", label: "Edit"},
@@ -85,7 +86,7 @@ class PointTable extends React.Component {
             newPointKeyword: "",
             newPointType: "",
             newPointID: "",
-            newPointPID: "",
+            newPointPID: -1,
             newPointList: [],
             //
             bookmarkVisible: false,
@@ -160,7 +161,8 @@ class PointTable extends React.Component {
                     editPartVisible: false,
                     pointListVisible: false,
                     newPointModalVisible: false,
-                    editPoint: {}
+                    editPoint: {},
+                    newPointPID:-1
                 })
             })
             .then(() => {
@@ -625,15 +627,7 @@ class PointTable extends React.Component {
         (async () => {
         })()
             .then(() => {
-                this.setState({
-                    newPointPID:PID,
-                    newPointID: -1,
-                    newPointType: SEARCHABLE_POINT,
-                    newPointKeyword: point
-                })
-            })
-            .then(() => {
-                this.newPoint();
+                NewPoint(PID,point,SEARCHABLE_POINT);
             })
             .then(() => {
                 let createTime=null;
@@ -865,6 +859,7 @@ class PointTable extends React.Component {
                             {/*    >*/}
                             {/*        Edit Point*/}
                             {/*    </Button>*/}
+
                             {/*</Col>*/}
                             {/*<Col span={2}>*/}
                             {/*    <Button*/}
@@ -1208,104 +1203,12 @@ class PointTable extends React.Component {
                             </Drawer>
                         </Row>
                         <Row>
-                            <Modal
-                                title={"New Point"}
-                                visible={this.state.newPointModalVisible}
-                                onCancel={() => {
-                                    this.closeDrawer();
+                            <PointNew
+                                PID={this.state.newPointPID}
+                                closeModal={()=>{
+                                    this.closeDrawer(true)
                                 }}
-                                onOk={() => {
-                                    this.newPoint()
-                                }}
-                            >
-                                <Row style={{paddingBottom: "5px"}}>
-                                    <Col span={24}>
-                                        <Select
-                                            value={this.state.newPointType}
-                                            onChange={(newValue) => {
-                                                this.setState({
-                                                    newPointType: newValue
-                                                });
-                                            }}
-                                        >
-                                            <Select.Option value={SEARCHABLE_POINT}>
-                                                Point
-                                            </Select.Option>
-                                            <Select.Option value={SEARCHABLE_TITLE}>
-                                                Title
-                                            </Select.Option>
-                                        </Select>
-                                    </Col>
-                                </Row>
-                                <Row>
-                                    <Input
-                                        value={this.state.newPointKeyword}
-                                        onChange={(e) => {
-                                            this.setState({
-                                                newPointKeyword: e.target.value
-                                            })
-                                        }}
-                                        onPressEnter={() => {
-                                            this.SearchKeyword(this.state.newPointKeyword)
-                                        }}
-                                        placeholder={"Please Input The Keyword"}
-                                    />
-                                </Row>
-                                <hr/>
-                                <Row>
-                                    <Col span={24}>
-                                        <Form
-                                            layout={"vertical"}
-                                        >
-                                            {
-                                                this.state.newPointList.map((point, index) => {
-                                                    return (
-                                                        <Form.Item
-                                                            key={index}
-                                                            label={point.status}
-                                                        >
-                                                            <Row>
-                                                                <Col span={1}>
-                                                                    <Checkbox
-                                                                        checked={point.ID == this.state.newPointID}
-                                                                        onChange={(e) => {
-                                                                            if (e.target.checked) {
-                                                                                this.setState({
-                                                                                    newPointID: point.ID
-                                                                                })
-                                                                            } else {
-                                                                                this.setState({
-                                                                                    newPointID: 0
-                                                                                })
-                                                                            }
-                                                                        }}
-                                                                    />
-                                                                </Col>
-                                                                <Col span={1} offset={1}>
-                                                                    <a
-                                                                        href={"/point/edit/" + point.ID}
-                                                                        target={"_blank"}
-                                                                    >
-                                                                        <FormOutlined/>
-                                                                    </a>
-                                                                </Col>
-                                                                <Col span={20}>
-                                                                    <a
-                                                                        href={"/pointTable/" + point.ID}
-                                                                        target={"_blank"}
-                                                                    >
-                                                                        {point.keyword}
-                                                                    </a>
-                                                                </Col>
-                                                            </Row>
-                                                        </Form.Item>
-                                                    )
-                                                })
-                                            }
-                                        </Form>
-                                    </Col>
-                                </Row>
-                            </Modal>
+                            />
                         </Row>
                     </Col>
                 </Row>

@@ -1,8 +1,51 @@
 import React from "react";
 import {requestApi} from "../config/functions";
 import {Button, Checkbox, Divider, Form, Input, message, Modal, Select} from "antd";
-
 import config, { SEARCHABLE_POINT, SEARCHABLE_TITLE } from "../config/setting";
+
+
+export function NewPoint(PID,searchKeyword,newPointType,isTitle=false){
+    let newPoint = {
+        keyword: searchKeyword,
+        SearchAble: newPointType
+    };
+    if (isTitle) {
+        newPoint.status = config.statusMap[2].value;
+        newPoint.Point = 0;
+    }
+    return requestApi("/index.php?action=Points&method=Save", {
+        method: "post",
+        mode: "cors",
+        body: JSON.stringify({
+            point: newPoint,
+            PID: PID
+        })
+    })
+        .then((res)=>{
+            res.json().then((json)=>{
+                if (json.Status==1){
+                    message.success("New Point Success");
+                    return true;
+                }else{
+                    message.warn(json.Message)
+                    return false;
+                }
+            })
+        })
+}
+
+export function NewPointConnection(PID,SubPID){
+    return requestApi("/index.php?action=PointsConnection&method=Update&PID="+PID+"&SubPID="+SubPID)
+        .then((res)=>{
+            res.json().then((json)=>{
+                if (json.Status==1){
+                    message.success("New Connection");
+                }else{
+                    message.warn(json.Message);
+                }
+            })
+        })
+}
 
 class PointNew extends React.Component{
     constructor(props) {
@@ -16,7 +59,6 @@ class PointNew extends React.Component{
             SearchPointList:[]
         }
         this.searchPoint=this.searchPoint.bind(this);
-        this.newPointConnection=this.newPointConnection.bind(this);
         this.newPoint=this.newPoint.bind(this);
         this.closeModal=this.closeModal.bind(this);
     }
@@ -48,39 +90,13 @@ class PointNew extends React.Component{
 
     newPoint(){
         if ((this.state.selectedPID-0)>0){
-            this.newPointConnection(this.state.PrePID,this.state.selectedPID);
-        }else{
-            let newPoint = {
-                keyword: this.state.searchKeyword,
-                SearchAble: this.state.newPointType
-            };
-            if (this.state.newPointType == SEARCHABLE_TITLE) {
-                newPoint.status = config.statusMap[2].value;
-                newPoint.Point = 0;
-            }
-            requestApi("/index.php?action=Points&method=Save", {
-                method: "post",
-                mode: "cors",
-                body: JSON.stringify({
-                    point: newPoint,
-                    PID: this.state.PrePID
-                })
+            NewPointConnection(this.state.PrePID,this.state.selectedPID).then(()=>{
+                this.closeModal();
             })
-                .then((res)=>{
-                    res.json().then((json)=>{
-                        if (json.Status==1){
-                            message.success("New Point Success");
-                            return true;
-                        }else{
-                            message.warn(json.Message)
-                            return false;
-                        }
-                    })
-                        .then((result)=>{
-                            if (result){
-                                this.closeModal();
-                            }
-                        })
+        }else{
+            NewPoint(this.state.PrePID,this.state.searchKeyword,this.state.newPointType,this.state.newPointType == SEARCHABLE_TITLE)
+                .then(()=>{
+                    this.closeModal();
                 })
        }
     }
@@ -98,20 +114,6 @@ class PointNew extends React.Component{
                     this.setState({
                         SearchPointList: json.Data
                     })
-                })
-            })
-    }
-
-    newPointConnection(PID,SubPID){
-        requestApi("/index.php?action=PointsConnection&method=Update&PID="+PID+"&SubPID="+SubPID)
-            .then((res)=>{
-                res.json().then((json)=>{
-                    if (json.Status==1){
-                        message.success("New Connection");
-                        this.closeModal();
-                    }else{
-                        message.warn(json.Message);
-                    }
                 })
             })
     }
