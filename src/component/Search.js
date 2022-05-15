@@ -180,26 +180,27 @@ class Search extends React.Component {
                                                     target={"_blank"}
                                                 >
                                                     {
-                                                        Item.Highlight.keyword
-                                                            ?Item.Highlight.keyword
-                                                            :Item.keyword
+                                                        Item.keyword
                                                     }
                                                 </Button>
                                             }
                                             description={
                                                 <div>
-                                                    {
-                                                        Item.Highlight.note
-                                                            ? "Note : "+Item.Highlight.note
-                                                            :''
-                                                    }
-                                                    {
-                                                        Item.Highlight.markdown_content
-                                                            ?<MarkdownPreview
-                                                                source={Item.Highlight.markdown_content}
-                                                            />
-                                                            :""
-                                                    }
+                                                    <MarkdownPreview
+                                                        source={
+                                                            (
+                                                                Item.Highlight.note
+                                                                ?"Note: "+Item.Highlight.note
+                                                                :''
+                                                            )
+                                                            +"<br>"+
+                                                            (
+                                                                Item.Highlight.markdown_content
+                                                                    ?Item.Highlight.markdown_content
+                                                                    :""
+                                                            )
+                                                        }
+                                                    />
                                                 </div>
                                             }
                                         />
