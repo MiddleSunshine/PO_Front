@@ -83,11 +83,7 @@ class PointTable extends React.Component {
             pointListID: 0,
             //
             newPointModalVisible: false,
-            newPointKeyword: "",
-            newPointType: "",
-            newPointID: "",
             newPointPID: -1,
-            newPointList: [],
             //
             bookmarkVisible: false,
             bookmarkListVisible: false,
@@ -109,8 +105,6 @@ class PointTable extends React.Component {
         this.finishInput = this.finishInput.bind(this);
         this.showPointList = this.showPointList.bind(this);
         this.openNewPointModal = this.openNewPointModal.bind(this);
-        this.newPoint = this.newPoint.bind(this);
-        this.SearchKeyword = this.SearchKeyword.bind(this);
         this.removeCollection = this.removeCollection.bind(this);
         this.getAPoint = this.getAPoint.bind(this);
         this.openPointCollector = this.openPointCollector.bind(this);
@@ -366,75 +360,8 @@ class PointTable extends React.Component {
     openNewPointModal(PID) {
         this.setState({
             newPointPID: PID,
-            newPointKeyword: "",
-            newPointModalVisible: true,
-            newPointType: SEARCHABLE_POINT,
-            newPointID: 0,
-            newPointList: []
+            newPointModalVisible: true
         })
-    }
-
-    newPoint() {
-        if (this.state.newPointID > 0) {
-            requestApi("/index.php?action=PointsConnection&method=Update&PID=" + this.state.newPointPID + "&SubPID=" + this.state.newPointID)
-                .then((res) => {
-                    res.json().then((json) => {
-                        if (json.Status == 1) {
-                            this.closeDrawer(true);
-                        } else {
-                            message.warn("New Point Error")
-                        }
-                    })
-                }).catch(() => {
-                message.error("System Error");
-            })
-        } else {
-            let newPoint = {
-                keyword: this.state.newPointKeyword,
-                SearchAble: this.state.newPointType
-            };
-            if (this.state.newPointType == SEARCHABLE_TITLE) {
-                newPoint.status = config.statusMap[2].value;
-                newPoint.Point = 0;
-            }
-            requestApi("/index.php?action=Points&method=Save", {
-                method: "post",
-                mode: "cors",
-                body: JSON.stringify({
-                    point: newPoint,
-                    PID: this.state.newPointPID
-                })
-            })
-                .then((res) => {
-                    res.json().then((json) => {
-                        if (json.Status == 1) {
-                            this.closeDrawer(true)
-                        } else {
-                            message.warn(json.Message)
-                        }
-                    })
-                })
-                .catch((error) => {
-                    message.error("System Error");
-                })
-        }
-    }
-
-    SearchKeyword(keyword) {
-        requestApi("/index.php?action=Points&method=Search", {
-            method: "post",
-            mode: "cors",
-            body: JSON.stringify({
-                keyword: keyword
-            })
-        })
-            .then((res) => {
-                res.json().then((json) => {
-                    this.setState({
-                        newPointList: json.Data
-                    })
-                })
-            })
     }
 
     removeCollection(ID, PID) {
