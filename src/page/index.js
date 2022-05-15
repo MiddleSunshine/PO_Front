@@ -45,7 +45,14 @@ class Index extends React.Component {
                     <Row align={"middle"} justify={"space-around"}>
                         <h2>Point Organization</h2>
                     </Row>
-                    <Search />
+                    <Row
+                        justify={"center"}
+                        align={"middle"}
+                    >
+                        <Col span={10}>
+                            <Search />
+                        </Col>
+                    </Row>
                 </Content>
                 <Footer>
                     <Favourite />

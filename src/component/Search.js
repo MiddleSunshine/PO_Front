@@ -10,14 +10,15 @@ class Search extends React.Component {
         super(props);
         this.state = {
             search_keyword: "",
-            search_able:"",
-            search_status:"",
-            points: []
+            search_able: "",
+            search_status: "",
+            points: [],
+            displayFilter: props.hasOwnProperty('DisplayFilter') ? props.DisplayFilter : true
         };
         this.SearchKeyword = this.SearchKeyword.bind(this);
     }
 
-    SearchKeyword(search_keyword,searchAble='',status='') {
+    SearchKeyword(search_keyword, searchAble = '', status = '') {
         if (search_keyword.length <= 0) {
             message.warn("Please input the keyword!");
             return false;
@@ -27,8 +28,8 @@ class Search extends React.Component {
             mode: "cors",
             body: JSON.stringify({
                 keyword: search_keyword,
-                SearchAble:searchAble,
-                status:status
+                SearchAble: searchAble,
+                status: status
             })
         })
             .then((res) => {
@@ -53,8 +54,8 @@ class Search extends React.Component {
 
     render() {
         return <div>
-            <Row align={"middle"} justify={"space-between"}>
-                <Col offset={8} span={10}>
+            <Row align={"middle"} justify={"center"}>
+                <Col span={24}>
                     <Form
                         layout={"inline"}
                     >
@@ -69,80 +70,89 @@ class Search extends React.Component {
                                     })
                                 }}
                                 onPressEnter={(e) => {
-                                    this.SearchKeyword(this.state.search_keyword,this.state.search_able,this.state.search_status);
+                                    this.SearchKeyword(this.state.search_keyword, this.state.search_able, this.state.search_status);
                                 }}
                             />
                         </Form.Item>
-                        <Form.Item
-                            label={"Type"}
-                        >
-                            <Select
-                                value={this.state.search_able}
-                                onChange={(newValue)=>{
-                                    this.setState({
-                                        search_able:newValue
-                                    })
-                                }}
-                            >
-                                <Select.Option
-                                    value={''}
+                        {
+                            this.state.displayFilter
+                                ? <Form.Item
+                                    label={"Type"}
                                 >
-                                    All Type
-                                </Select.Option>
-                                <Select.Option
-                                    value={SEARCHABLE_POINT}
+                                    <Select
+                                        value={this.state.search_able}
+                                        onChange={(newValue) => {
+                                            this.setState({
+                                                search_able: newValue
+                                            })
+                                        }}
+                                    >
+                                        <Select.Option
+                                            value={''}
+                                        >
+                                            All Type
+                                        </Select.Option>
+                                        <Select.Option
+                                            value={SEARCHABLE_POINT}
+                                        >
+                                            Point
+                                        </Select.Option>
+                                        <Select.Option
+                                            value={SEARCHABLE_TITLE}
+                                        >
+                                            Title
+                                        </Select.Option>
+                                    </Select>
+                                </Form.Item>
+                                : ''
+                        }
+                        {
+                            this.state.displayFilter
+                                ? <Form.Item
+                                    label={"Status"}
                                 >
-                                    Point
-                                </Select.Option>
-                                <Select.Option
-                                    value={SEARCHABLE_TITLE}
-                                >
-                                    Title
-                                </Select.Option>
-                            </Select>
-                        </Form.Item>
-                        <Form.Item
-                            label={"Status"}
-                        >
-                            <Select
-                                value={this.state.search_status}
-                                onChange={(newValue)=>{
-                                    this.setState({
-                                        search_status:newValue
-                                    })
-                                }}
-                            >
-                                <Select.Option
-                                    value={''}
-                                >
-                                    All Status
-                                </Select.Option>
-                                {
-                                    config.statusMap.map((status)=>{
-                                        return(
-                                            <Select.Option
-                                                key={status.value}
-                                                value={status.value}
-                                            >
-                                                {
-                                                    status.label
-                                                }
-                                            </Select.Option>
-                                        )
-                                    })
-                                }
-                            </Select>
-                        </Form.Item>
+                                    <Select
+                                        value={this.state.search_status}
+                                        onChange={(newValue) => {
+                                            this.setState({
+                                                search_status: newValue
+                                            })
+                                        }}
+                                    >
+                                        <Select.Option
+                                            value={''}
+                                        >
+                                            All Status
+                                        </Select.Option>
+                                        {
+                                            config.statusMap.map((status) => {
+                                                return (
+                                                    <Select.Option
+                                                        key={status.value}
+                                                        value={status.value}
+                                                    >
+                                                        {
+                                                            status.label
+                                                        }
+                                                    </Select.Option>
+                                                )
+                                            })
+                                        }
+                                    </Select>
+                                </Form.Item>
+                                : ''
+                        }
+
                     </Form>
                 </Col>
             </Row>
             <Modal
                 width={1800}
-                visible={this.state.points.length>0}
+                visible={this.state.points.length > 0}
                 title={"Search Result"}
-                onCancel={()=>{
+                onCancel={() => {
                     this.setState({
-                        points:[]
+                        points: []
                     })
                 }}
             >
@@ -190,14 +200,14 @@ class Search extends React.Component {
                                                         source={
                                                             (
                                                                 Item.Highlight.note
-                                                                ?"Note: "+Item.Highlight.note
-                                                                :''
+                                                                    ? "Note: " + Item.Highlight.note
+                                                                    : ''
                                                             )
-                                                            +"<br>"+
+                                                            + "<br>" +
                                                             (
                                                                 Item.Highlight.markdown_content
-                                                                    ?Item.Highlight.markdown_content
-                                                                    :""
+                                                                    ? Item.Highlight.markdown_content
+                                                                    : ""
                                                             )
                                                         }
                                                     />

@@ -31,6 +31,7 @@ import Favourite from "../component/Favourite";
 import BookMarks, {NewBookMark} from "../component/BookMarks";
 
 import {PointMindMapRouter} from "./PointMindMap";
+import Search from "../component/Search";
 
 var hotkeys_maps = [
     {hotkey: "shift+e", label: "Edit"},
@@ -108,7 +109,7 @@ class PointTable extends React.Component {
         this.showPointList = this.showPointList.bind(this);
         this.openNewPointModal = this.openNewPointModal.bind(this);
         this.newPoint = this.newPoint.bind(this);
-        this.Search = this.Search.bind(this);
+        this.SearchKeyword = this.SearchKeyword.bind(this);
         this.removeCollection = this.removeCollection.bind(this);
         this.getAPoint = this.getAPoint.bind(this);
         this.openPointCollector = this.openPointCollector.bind(this);
@@ -417,7 +418,7 @@ class PointTable extends React.Component {
         }
     }
 
-    Search(keyword) {
+    SearchKeyword(keyword) {
         requestApi("/index.php?action=Points&method=Search", {
             method: "post",
             mode: "cors",
@@ -798,7 +799,7 @@ class PointTable extends React.Component {
                             <PageHeader
                                 title={
                                     <Tooltip
-                                        title={"Click To Update"}
+                                        title={this.state.parentPoint.note}
                                     >
                                 <span
                                     style={{cursor: "pointer"}}
@@ -810,8 +811,9 @@ class PointTable extends React.Component {
                                 </span>
                                     </Tooltip>
                                 }
-                                subTitle={"Status:" + this.state.parentPoint.status + " / Point:" + this.state.parentPoint.Point}
-                                footer={this.state.parentPoint.note}
+                                // subTitle={"Status:" + this.state.parentPoint.status + " / Point:" + this.state.parentPoint.Point}
+                                // footer={this.state.parentPoint.note}
+
                                 ghost={true}
                             />
                         </Row>
@@ -833,7 +835,7 @@ class PointTable extends React.Component {
                                     }}
                                 ></Button>
                             </Col>
-                            <Col span={3}>
+                            <Col span={2}>
                                 <Button
                                     type={"primary"}
                                     icon={<PlusCircleOutlined/>}
@@ -844,63 +846,63 @@ class PointTable extends React.Component {
                                     New Point
                                 </Button>
                             </Col>
-                            <Col span={3}>
-                                <Button
-                                    type={"primary"}
-                                    icon={<FormOutlined/>}
-                                    onClick={() => {
-                                        switch (this.state.activeType) {
-                                            case ACTIVE_TYPE_PARENT_POINT:
-                                                this.openDrawer(this.state.activeOutsidePoint, true, true);
-                                                break;
-                                            case ACTIVE_TYPE_SUB_POINT:
-                                                this.openDrawer(this.state.activePoint, true, true);
-                                                break;
-                                            default:
-                                                break;
-                                        }
-                                    }}
-                                >
-                                    Edit Point
-                                </Button>
-                            </Col>
-                            <Col span={3}>
-                                <Button
-                                    type={"primary"}
-                                    icon={<UnorderedListOutlined/>}
-                                    onClick={() => {
-                                        switch (this.state.activeType) {
-                                            case ACTIVE_TYPE_PARENT_POINT:
-                                                this.showPointList(this.state.activeOutsidePoint.ID);
-                                                break;
-                                            case ACTIVE_TYPE_SUB_POINT:
-                                                this.showPointList(this.state.activePoint.ID);
-                                                break;
-                                        }
-                                    }}
-                                >
-                                    Point List
-                                </Button>
-                            </Col>
-                            <Col span={3}>
+                            {/*<Col span={2}>*/}
+                            {/*    <Button*/}
+                            {/*        type={"primary"}*/}
+                            {/*        icon={<FormOutlined/>}*/}
+                            {/*        onClick={() => {*/}
+                            {/*            switch (this.state.activeType) {*/}
+                            {/*                case ACTIVE_TYPE_PARENT_POINT:*/}
+                            {/*                    this.openDrawer(this.state.activeOutsidePoint, true, true);*/}
+                            {/*                    break;*/}
+                            {/*                case ACTIVE_TYPE_SUB_POINT:*/}
+                            {/*                    this.openDrawer(this.state.activePoint, true, true);*/}
+                            {/*                    break;*/}
+                            {/*                default:*/}
+                            {/*                    break;*/}
+                            {/*            }*/}
+                            {/*        }}*/}
+                            {/*    >*/}
+                            {/*        Edit Point*/}
+                            {/*    </Button>*/}
+                            {/*</Col>*/}
+                            {/*<Col span={2}>*/}
+                            {/*    <Button*/}
+                            {/*        type={"primary"}*/}
+                            {/*        icon={<UnorderedListOutlined/>}*/}
+                            {/*        onClick={() => {*/}
+                            {/*            switch (this.state.activeType) {*/}
+                            {/*                case ACTIVE_TYPE_PARENT_POINT:*/}
+                            {/*                    this.showPointList(this.state.activeOutsidePoint.ID);*/}
+                            {/*                    break;*/}
+                            {/*                case ACTIVE_TYPE_SUB_POINT:*/}
+                            {/*                    this.showPointList(this.state.activePoint.ID);*/}
+                            {/*                    break;*/}
+                            {/*            }*/}
+                            {/*        }}*/}
+                            {/*    >*/}
+                            {/*        Point List*/}
+                            {/*    </Button>*/}
+                            {/*</Col>*/}
+                            <Col span={2}>
                                 <Button
                                     type={"link"}
                                     href={"/pointRoad/" + this.state.parentPoint.ID}
                                     target={"_blank"}
                                 >
-                                    Check Pre Data
+                                    Forward
                                 </Button>
                             </Col>
-                            <Col span={3}>
+                            <Col span={2}>
                                 <Button
                                     type={"link"}
                                     href={"/pointTree/" + this.state.parentPoint.ID}
                                     target={"_blank"}
                                 >
-                                    Tree Mode
+                                    Tree
                                 </Button>
                             </Col>
-                            <Col span={3}>
+                            <Col span={2}>
                                 <Button
                                     type={"link"}
                                     href={"/pointsSang/" + this.state.parentPoint.ID}
@@ -909,17 +911,21 @@ class PointTable extends React.Component {
                                     sankey
                                 </Button>
                             </Col>
-                            <Col span={3}>
+                            <Col span={2}>
                                 <Button
                                     type={"link"}
                                     href={PointMindMapRouter(this.state.parentPoint.ID)}
                                     target={"_blank"}
                                 >
-                                    Mind Map
+                                    MindMap
                                 </Button>
                             </Col>
+                            <Col span={2}>
+                                <Search
+                                    DisplayFilter={false}
+                                />
+                            </Col>
                         </Row>
-                        <hr/>
                         <Row>
                             {
                                 this.state.points.map((point, outsideIndex) => {
@@ -1240,7 +1246,7 @@ class PointTable extends React.Component {
                                             })
                                         }}
                                         onPressEnter={() => {
-                                            this.Search(this.state.newPointKeyword)
+                                            this.SearchKeyword(this.state.newPointKeyword)
                                         }}
                                         placeholder={"Please Input The Keyword"}
                                     />
