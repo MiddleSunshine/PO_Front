@@ -2,6 +2,7 @@ import React from "react";
 import {requestApi} from "../config/functions";
 import {Button, Checkbox, Divider, Form, Input, message, Modal, Select} from "antd";
 import config, { SEARCHABLE_POINT, SEARCHABLE_TITLE } from "../config/setting";
+import MarkdownPreview from "@uiw/react-markdown-preview";
 
 
 export function NewPoint(PID,searchKeyword,newPointType,isTitle=false){
@@ -102,7 +103,7 @@ class PointNew extends React.Component{
     }
 
     searchPoint(keyword){
-        requestApi("/index.php?action=Points&method=Search", {
+        requestApi("/index.php?action=Points&method=GlobalSearch", {
             method: "post",
             mode: "cors",
             body: JSON.stringify({
@@ -111,9 +112,13 @@ class PointNew extends React.Component{
         })
             .then((res) => {
                 res.json().then((json) => {
-                    this.setState({
-                        SearchPointList: json.Data
-                    })
+                    if (json.Status==1){
+                        this.setState({
+                            SearchPointList: json.Data.points
+                        })
+                    }else{
+                        message.warn(json.Message);
+                    }
                 })
             })
     }
@@ -178,20 +183,46 @@ class PointNew extends React.Component{
                 {
                     this.state.SearchPointList.map((Point,index)=>{
                         return(
-                            <Form.Item
+                            <div
                                 key={index}
                             >
-                                <Checkbox
-                                    checked={this.state.selectedPID==Point.ID}
-                                    onChange={()=>{
-                                        this.setState({
-                                            selectedPID:Point.ID
-                                        })
-                                    }}
-                                >
-                                    {Point.keyword}
-                                </Checkbox>
-                            </Form.Item>
+                                <Form.Item>
+                                    <Checkbox
+                                        checked={this.state.selectedPID==Point.ID}
+                                        onChange={()=>{
+                                            this.setState({
+                                                selectedPID:Point.ID
+                                            })
+                                        }}
+                                    >
+                                        {Point.keyword}
+                                    </Checkbox>
+                                </Form.Item>
+                                {
+                                    (Point.Highlight.note || Point.Highlight.markdown_content)
+                                        ?<Form.Item
+                                                key={index}
+                                            >
+                                                <MarkdownPreview
+                                                    source={
+                                                        (
+                                                            Point.Highlight.note
+                                                                ? "Note: " + Point.Highlight.note
+                                                                : ''
+                                                        )
+                                                        + "<br>" +
+                                                        (
+                                                            Point.Highlight.markdown_content
+                                                                ? Point.Highlight.markdown_content
+                                                                : ""
+                                                        )
+                                                    }
+                                                />
+                                            </Form.Item>
+                                            :''
+                                }
+                            </div>
+
                         )
                     })
                 }
