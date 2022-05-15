@@ -14,10 +14,18 @@
     height: 32px;
     border-radius: 23px;
 }
+
+.po_index .ant-select:not(.ant-select-customize-input) .ant-select-selector{
+    border-radius: 23px !important;
+}
 .po_index button{
     border-radius: 23px;
 }
 
 .po_index .ant-layout, .ant-layout *{
     height: 100%;
+}
+
+.po_index .ant-list-split .ant-list-item{
+    background-color: white;
 }

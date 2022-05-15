@@ -1,4 +1,4 @@
-import { Button, Card, Col, Divider, Drawer, message, PageHeader, Row, Tag } from "antd";
+import { Button, Col, Divider, Drawer, message, Row, Tag } from "antd";
 import React from "react";
 import PointSummaryEdit from "../component/PointSummaryEdit";
 import { requestApi } from "../config/functions";

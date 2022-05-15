@@ -1,14 +1,6 @@
 .PointRoad{
 
 }
-
-.PointRoad .Point{
-    /*border: 3px solid #1AA9FF;*/
-    border-radius: 25px;
-    cursor: pointer;
-    padding: 5px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    text-align: center;
+.PointRoad .ant-card-head{
+    background-color: #CCCCCC;
 }

@@ -9,7 +9,6 @@ import Plan from '../page/Plan.js';
 import PlanTable from "../page/PlanTable";
 import PointTable from "../page/PointTable";
 import CheckIn from "../page/CheckIn";
-import Debug from "../page/debug";
 import GTD from "../page/GTD";
 import GTDHistory from "../page/GTDHistory";
 import PointsRoad from "../page/PointsRoad";
@@ -21,6 +20,10 @@ import CheckList from '../page/CheckList';
 import CheckListHistory from "../page/CheckListHistory";
 import PointHistory from "../page/PointHistory";
 import PointTree from "../page/PointTree";
+import PointsSang from "../page/PointsSang";
+import Actions from "../page/Actions";
+import PointMindMap from "../page/PointMindMap";
+import CommentList from "../page/CommentList";
 
 interface router {
     path: string,
@@ -29,6 +32,10 @@ interface router {
 }
 
 const routers: Array<router> = [
+    {
+        path:"/Actions",
+        component:Actions
+    },
     {
         path: "/Psychotherapy/CheckListHistory",
         component: CheckListHistory
@@ -61,10 +68,10 @@ const routers: Array<router> = [
         path: "/GTD",
         component: GTD
     },
-    {
-        path: "/debug",
-        component: Debug
-    },
+    // {
+    //     path: "/debug",
+    //     component: Debug
+    // },
     {
         path: "/clock_in",
         component: CheckIn
@@ -80,6 +87,10 @@ const routers: Array<router> = [
     {
         path: "/image",
         component: Image
+    },
+    {
+        path:"/comments",
+        component:CommentList
     },
     {
         path: "/willing",
@@ -98,6 +109,10 @@ const routers: Array<router> = [
         component: PointEditor
     },
     {
+        path:"/pointMindMap/:pid/:subLevel/:parentLevel/:mode",
+        component: PointMindMap
+    },
+    {
         path:"/pointTree/:pid",
         component:PointTree
     },
@@ -110,9 +125,13 @@ const routers: Array<router> = [
         component: PointTable
     },
     {
-        path: "/points/:pid",
-        component: Collector
+        path:"/pointsSang/:pid",
+        component:PointsSang
     },
+    // {
+    //     path: "/points/:pid",
+    //     component: Collector
+    // },
     {
         path: "/summary/points/:pid",
         component: Summary

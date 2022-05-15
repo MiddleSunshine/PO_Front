@@ -1,0 +1,27 @@
+.PointMindMap{
+}
+
+.PointMindMap .PointItem{
+
+}
+
+.PointMindMap .ContentPart{
+    padding-top: 10px;
+    padding-bottom: 10px;
+    background-color: #746C69;
+}
+
+.PointMindMap .ant-card-head{
+    /*background-color: #D9D9D9;*/
+    background-color: #E6E3DB;
+}
+
+.PointMindMap .ant-card-body{
+    /*background-color: #faf2cc;*/
+    background-color: white;
+}
+
+.PointMindMap .ant-btn-icon-only > .anticon{
+    color: white;
+    font-weight: bolder;
+}
