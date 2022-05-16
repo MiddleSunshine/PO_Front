@@ -3,7 +3,13 @@ import {requestApi} from "../config/functions";
 import {Button, Checkbox, Divider, Form, Input, message, Modal, Select,Row,Col} from "antd";
 import config, { SEARCHABLE_POINT, SEARCHABLE_TITLE } from "../config/setting";
 import MarkdownPreview from "@uiw/react-markdown-preview";
-
+import "../css/PointNew.css";
+import {
+    CloseOutlined,
+    FormOutlined,
+    UnorderedListOutlined,
+    DeploymentUnitOutlined
+} from '@ant-design/icons';
 
 export function NewPoint(PID,searchKeyword,newPointType,isTitle=false){
     let newPoint = {
@@ -48,12 +54,14 @@ export function NewPointConnection(PID,SubPID){
         })
 }
 
+const SELECT_UNCHECK_VALUE=-1;
+
 class PointNew extends React.Component{
     constructor(props) {
         super(props);
         this.state={
             PrePID:props.PID,
-            selectedPID:0,
+            selectedPID:SELECT_UNCHECK_VALUE,
             newPointID:0,
             newPointType:SEARCHABLE_POINT,
             searchKeyword:"",
@@ -76,7 +84,7 @@ class PointNew extends React.Component{
         (async ()=>{})()
             .then(()=>{
                 this.setState({
-                    selectedPID:0,
+                    selectedPID:SELECT_UNCHECK_VALUE,
                     newPointID:0,
                     newPointType:SEARCHABLE_POINT,
                     searchKeyword:"",
@@ -90,7 +98,7 @@ class PointNew extends React.Component{
     }
 
     newPoint(){
-        if ((this.state.selectedPID-0)>0){
+        if ((this.state.selectedPID-0)!=SELECT_UNCHECK_VALUE){
             NewPointConnection(this.state.PrePID,this.state.selectedPID).then(()=>{
                 this.closeModal();
             })
@@ -129,6 +137,7 @@ class PointNew extends React.Component{
 
     render() {
         return <Modal
+            className={"PointNew"}
             visible={(this.state.PrePID-0)>-1}
             width={1000}
             onCancel={()=>{
@@ -137,36 +146,47 @@ class PointNew extends React.Component{
             onOk={()=>{
                 this.newPoint();
             }}
+            footer={null}
         >
             <Form>
                 <Form.Item>
                     <Divider
                         orientation={"left"}
                     >
-                        <Select
-                            value={this.state.newPointType}
-                            onChange={(newValue)=>{
-                                this.setState({
-                                    newPointType:newValue
-                                })
+                        <Button
+                            type={"primary"}
+                            onClick={()=>{
+                                this.newPoint();
                             }}
                         >
-                            <Select.Option
-                                value={SEARCHABLE_POINT}
-                            >
-                                Point
-                            </Select.Option>
-                            <Select.Option
-                                value={SEARCHABLE_TITLE}
-                            >
-                                Title
-                            </Select.Option>
-                        </Select>
+                            Save
+                        </Button>
                     </Divider>
                 </Form.Item>
                 <Form.Item>
                     <Row>
-                        <Col span={11}>
+                        <Col span={3}>
+                            <Select
+                                value={this.state.newPointType}
+                                onChange={(newValue)=>{
+                                    this.setState({
+                                        newPointType:newValue
+                                    })
+                                }}
+                            >
+                                <Select.Option
+                                    value={SEARCHABLE_POINT}
+                                >
+                                    Point
+                                </Select.Option>
+                                <Select.Option
+                                    value={SEARCHABLE_TITLE}
+                                >
+                                    Title
+                                </Select.Option>
+                            </Select>
+                        </Col>
+                        <Col span={9} offset={1}>
                             <Input
                                 placeholder={"Simple Search"}
                                 value={this.state.searchKeyword}
@@ -180,7 +200,7 @@ class PointNew extends React.Component{
                                 }}
                             />
                         </Col>
-                        <Col span={11} offset={1}>
+                        <Col span={9} offset={1}>
                             <Input
                                 placeholder={"Global Search"}
                                 value={this.state.searchKeyword}
@@ -216,16 +236,39 @@ class PointNew extends React.Component{
                                 key={index}
                             >
                                 <Form.Item>
-                                    <Checkbox
-                                        checked={this.state.selectedPID==Point.ID}
-                                        onChange={()=>{
-                                            this.setState({
-                                                selectedPID:Point.ID
-                                            })
-                                        }}
-                                    >
-                                        <span style={style}>{Point.keyword}</span>
-                                    </Checkbox>
+                                    <Row>
+                                        <Col span={20}>
+                                            <Checkbox
+                                                checked={this.state.selectedPID==Point.ID}
+                                                onChange={(e)=>{
+                                                    this.setState({
+                                                        selectedPID:e.target.checked?Point.ID:SELECT_UNCHECK_VALUE
+                                                    })
+                                                }}
+                                            >
+                                        <span style={style}>
+                                            {Point.keyword}
+                                        </span>
+                                            </Checkbox>
+                                        </Col>
+                                        <Col span={1}>
+                                            <Button
+                                                type={"link"}
+                                                href={"/pointTable/"+Point.ID}
+                                                target={"_blank"}
+                                                icon={<UnorderedListOutlined />}
+                                            ></Button>
+                                        </Col>
+                                        <Col span={1}>
+                                            <Button
+                                                type={"link"}
+                                                href={"/point/edit/"+Point.ID}
+                                                target={"_blank"}
+                                                icon={<FormOutlined />}
+                                            ></Button>
+                                        </Col>
+                                    </Row>
+
                                 </Form.Item>
                                 {
                                     Point.Highlight
