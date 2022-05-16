@@ -445,8 +445,8 @@ class PointMindMap extends React.Component{
                 </div>
                 <div>
                     <Drawer
-                        placement={"bottom"}
-                        height={800}
+                        placement={"right"}
+                        width={1000}
                         visible={this.state.editPoint.ID}
                         onClose={()=>{
                             this.setState({
