@@ -1,0 +1,66 @@
+import React from "react";
+import {Button, Dropdown, Menu} from "antd";
+
+class Links extends React.Component{
+    constructor(props) {
+        super(props);
+        this.state={
+            PID:props.PID,
+            Label:props.Label
+        }
+    }
+    render() {
+        return <div>
+            <Dropdown overlay={
+                <Menu>
+                    <Menu.Item>
+                        <Button
+                            target={"_blank"}
+                            href={"/pointRoad/"+this.state.PID}
+                            type={"link"}
+                        >
+                            Forward
+                        </Button>
+                    </Menu.Item>
+                    <Menu.Item>
+                        <Button
+                            target={"_blank"}
+                            href={"/pointTree/"+this.state.PID}
+                            type={"link"}
+                        >
+                            Tree
+                        </Button>
+                    </Menu.Item>
+                    <Menu.Item>
+                        <Button
+                            target={"_blank"}
+                            href={"/pointsSang/"+this.state.PID}
+                            type={"link"}
+                        >
+                            Sankey
+                        </Button>
+                    </Menu.Item>
+                    <Menu.Item>
+                        <Button
+                            target={"_blank"}
+                            href={"/pointMindMap/"+this.state.PID+"/0/0/column"}
+                            type={"link"}
+                        >
+                            MindMap
+                        </Button>
+                    </Menu.Item>
+                </Menu>
+            }>
+                <a
+                    style={{color:"white"}}
+                    href={"/pointTable/"+this.state.PID}
+                    target={"_blank"}
+                >
+                    {this.state.Label}
+                </a>
+            </Dropdown>
+        </div>;
+    }
+}
+
+export default Links
