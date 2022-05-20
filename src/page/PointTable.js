@@ -951,7 +951,7 @@ class PointTable extends React.Component {
                                                 >
                                                     <div>{point.note}</div>
                                                     {
-                                                        point.note?<br/>:""
+                                                        point.note?<hr/>:""
                                                     }
                                                     <Collapse
                                                         key={outsideIndex}
@@ -968,6 +968,9 @@ class PointTable extends React.Component {
                                                                 });
                                                             }
                                                         }}
+                                                        // defaultActiveKey={point.children.filter((item)=>{
+                                                        //     return item.note>0;
+                                                        // })}
                                                     >
                                                         {
                                                             point.children.map((subPoint, insideIndex) => {
@@ -976,7 +979,7 @@ class PointTable extends React.Component {
                                                                 return (
                                                                     <Collapse.Panel
                                                                         showArrow={false}
-                                                                        key={insideIndex}
+                                                                        key={subPoint.ID}
                                                                         header={
                                                                             (this.state.editPoint.ID == subPoint.ID && !this.state.editPartVisible)
                                                                                 ? <Input
@@ -1043,13 +1046,10 @@ class PointTable extends React.Component {
                                                                             <Badge.Ribbon
                                                                                 color={subPoint.note ? "gold" : "gray"}
                                                                                 text={
-                                                                                    <a
-                                                                                        href={"/pointTable/" + subPoint.ID}
-                                                                                        target={"_blank"}
-                                                                                        style={{color: "white"}}
-                                                                                    >
-                                                                                        {subPoint.SearchAble == SEARCHABLE_POINT ? config.statusLabelMap[subPoint.status] : "Title"}
-                                                                                    </a>
+                                                                                    <Links
+                                                                                        PID={subPoint.ID}
+                                                                                        Label={subPoint.SearchAble == SEARCHABLE_POINT ? config.statusLabelMap[subPoint.status] : "Title"}
+                                                                                    />
                                                                                 }
                                                                             >
                                                                             </Badge.Ribbon>
