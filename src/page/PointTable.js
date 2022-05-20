@@ -847,6 +847,13 @@ class PointTable extends React.Component {
                                 this.state.points.map((point, outsideIndex) => {
                                     let cardColor = config.statusBackGroupColor[point.status];
                                     let outsideIndexActive = (point.ID == this.state.activeOutsidePoint.ID && this.state.activeType == ACTIVE_TYPE_PARENT_POINT);
+                                    let activeSubPointPanel=[];
+                                    point.children.map((item)=>{
+                                        if (item.note){
+                                            activeSubPointPanel.push(item.ID)
+                                        }
+                                        return item;
+                                    })
                                     return (
                                         <Col
                                             span={8}
@@ -968,9 +975,7 @@ class PointTable extends React.Component {
                                                                 });
                                                             }
                                                         }}
-                                                        // defaultActiveKey={point.children.filter((item)=>{
-                                                        //     return item.note>0;
-                                                        // })}
+                                                        defaultActiveKey={activeSubPointPanel}
                                                     >
                                                         {
                                                             point.children.map((subPoint, insideIndex) => {

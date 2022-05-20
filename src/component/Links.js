@@ -15,6 +15,15 @@ class Links extends React.Component{
                 <Menu>
                     <Menu.Item>
                         <Button
+                            type={"link"}
+                            href={"/pointTable/"+this.state.PID}
+                            target={"_blank"}
+                        >
+                            New Page
+                        </Button>
+                    </Menu.Item>
+                    <Menu.Item>
+                        <Button
                             target={"_blank"}
                             href={"/pointRoad/"+this.state.PID}
                             type={"link"}
@@ -51,13 +60,9 @@ class Links extends React.Component{
                     </Menu.Item>
                 </Menu>
             }>
-                <a
+                <span
                     style={{color:"white"}}
-                    href={"/pointTable/"+this.state.PID}
-                    target={"_blank"}
-                >
-                    {this.state.Label}
-                </a>
+                >{this.state.Label}</span>
             </Dropdown>
         </div>;
     }
