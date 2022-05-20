@@ -35,6 +35,7 @@ import BookMarks, {NewBookMark} from "../component/BookMarks";
 import {PointMindMapRouter} from "./PointMindMap";
 import Search from "../component/Search";
 import PointNew, {NewPoint} from "../component/PointNew";
+import Links from "../component/Links";
 
 var hotkeys_maps = [
     {hotkey: "shift+e", label: "Edit"},
@@ -853,16 +854,10 @@ class PointTable extends React.Component {
                                         >
                                             <Badge.Ribbon
                                                 text={
-                                                    <Tooltip
-                                                        title={"Open New Sub Point Page"}
-                                                    >
-                                                        <a
-                                                            style={{color: "white"}}
-                                                            target={"_blank"}
-                                                            href={"/pointTable/" + point.ID}
-                                                        >{point.SearchAble == SEARCHABLE_POINT ? config.statusLabelMap[point.status] : "Title"}
-                                                        </a>
-                                                    </Tooltip>
+                                                    <Links
+                                                        PID={point.ID}
+                                                        Label={point.SearchAble}
+                                                    />
                                                 }
                                                 color={point.note ? "gold" : "gray"}
                                             >
@@ -954,129 +949,128 @@ class PointTable extends React.Component {
                                                         </div>
                                                     }
                                                 >
+                                                    <div>{point.note}</div>
                                                     {
-                                                        point.children.length <= 0
-                                                            ? <div>{point.note}</div>
-                                                            : <Collapse
-                                                                key={outsideIndex}
-                                                                onChange={(key) => {
-                                                                    console.warn(key);
-                                                                    if (key.length > 0) {
-                                                                        let insideIndexTemp = parseInt(key[key.length - 1]);
-                                                                        this.setState({
-                                                                            activeOutsideIndex: outsideIndex,
-                                                                            activeInsideIndex: insideIndexTemp,
-                                                                            activePoint: this.state.points[outsideIndex].children[insideIndexTemp],
-                                                                            activeOutsidePoint: this.state.points[outsideIndex],
-                                                                            activeType: ACTIVE_TYPE_SUB_POINT
-                                                                        });
-                                                                    }
-                                                                }}
-                                                            >
-                                                                {
-                                                                    point.children.map((subPoint, insideIndex) => {
-                                                                        let color = config.statusBackGroupColor[subPoint.status];
-                                                                        let insideActive = (this.state.activePoint && subPoint.ID == this.state.activePoint.ID && this.state.activeType == ACTIVE_TYPE_SUB_POINT);
-                                                                        return (
-                                                                            <Collapse.Panel
-                                                                                showArrow={false}
-                                                                                key={insideIndex}
-                                                                                header={
-                                                                                    (this.state.editPoint.ID == subPoint.ID && !this.state.editPartVisible)
-                                                                                        ? <Input
-                                                                                            autoFocus={true}
-                                                                                            value={this.state.editPoint.keyword}
-                                                                                            onChange={(e) => {
-                                                                                                this.setState({
-                                                                                                    editPoint: {
-                                                                                                        ...this.state.editPoint,
-                                                                                                        keyword: e.target.value
-                                                                                                    }
-                                                                                                });
-                                                                                            }}
-                                                                                            onBlur={() => {
-                                                                                                this.finishInput();
-                                                                                            }}
-                                                                                            onPressEnter={() => {
-                                                                                                this.finishInput();
-                                                                                            }}
-                                                                                        />
-                                                                                        :
-                                                                                        <div
-                                                                                            onDrop={(e) => {
-                                                                                                this.onDrop(e,subPoint.ID);
-                                                                                            }}
-                                                                                            onDragOver={(e) => {
-                                                                                                this.onDragOver(e);
-                                                                                            }}
-                                                                                            onDragLeave={(e) => {
-                                                                                                this.onDrageLevel(e);
-                                                                                            }}
-                                                                                        >
-                                                                                            <Row
-                                                                                                justify={"start"}
-                                                                                                align={"middle"}
-                                                                                            >
-                                                                                                <Button
-                                                                                                    type={"link"}
-                                                                                                    style={{color: color}}
-                                                                                                    icon={
-                                                                                                        <MinusCircleOutlined/>}
-                                                                                                    onClick={(e) => {
-                                                                                                        this.removeCollection(subPoint.ID, point.ID)
-                                                                                                        e.preventDefault();
-                                                                                                    }}
-                                                                                                    size={"small"}
-                                                                                                >
-                                                                                                </Button>
-                                                                                                <span
-                                                                                                    style={{
-                                                                                                        fontSize: insideActive ? "16px" : "14px",
-                                                                                                        color: insideActive ? "black" : color
-                                                                                                    }}
-                                                                                                    onClick={() => {
-                                                                                                        this.openDrawer(subPoint, false);
-                                                                                                    }}
-                                                                                                >
-                                                                                                {subPoint.keyword}
-                                                                                            </span>
-                                                                                            </Row>
-                                                                                        </div>
-                                                                                }
-                                                                                extra={
-                                                                                    <Badge.Ribbon
-                                                                                        color={subPoint.note ? "gold" : "gray"}
-                                                                                        text={
-                                                                                            <a
-                                                                                                href={"/pointTable/" + subPoint.ID}
-                                                                                                target={"_blank"}
-                                                                                                style={{color: "white"}}
-                                                                                            >
-                                                                                                {subPoint.SearchAble == SEARCHABLE_POINT ? config.statusLabelMap[subPoint.status] : "Title"}
-                                                                                            </a>
-                                                                                        }
-                                                                                    >
-                                                                                    </Badge.Ribbon>
-                                                                                }
-                                                                            >
+                                                        point.note?<br/>:""
+                                                    }
+                                                    <Collapse
+                                                        key={outsideIndex}
+                                                        onChange={(key) => {
+                                                            console.warn(key);
+                                                            if (key.length > 0) {
+                                                                let insideIndexTemp = parseInt(key[key.length - 1]);
+                                                                this.setState({
+                                                                    activeOutsideIndex: outsideIndex,
+                                                                    activeInsideIndex: insideIndexTemp,
+                                                                    activePoint: this.state.points[outsideIndex].children[insideIndexTemp],
+                                                                    activeOutsidePoint: this.state.points[outsideIndex],
+                                                                    activeType: ACTIVE_TYPE_SUB_POINT
+                                                                });
+                                                            }
+                                                        }}
+                                                    >
+                                                        {
+                                                            point.children.map((subPoint, insideIndex) => {
+                                                                let color = config.statusBackGroupColor[subPoint.status];
+                                                                let insideActive = (this.state.activePoint && subPoint.ID == this.state.activePoint.ID && this.state.activeType == ACTIVE_TYPE_SUB_POINT);
+                                                                return (
+                                                                    <Collapse.Panel
+                                                                        showArrow={false}
+                                                                        key={insideIndex}
+                                                                        header={
+                                                                            (this.state.editPoint.ID == subPoint.ID && !this.state.editPartVisible)
+                                                                                ? <Input
+                                                                                    autoFocus={true}
+                                                                                    value={this.state.editPoint.keyword}
+                                                                                    onChange={(e) => {
+                                                                                        this.setState({
+                                                                                            editPoint: {
+                                                                                                ...this.state.editPoint,
+                                                                                                keyword: e.target.value
+                                                                                            }
+                                                                                        });
+                                                                                    }}
+                                                                                    onBlur={() => {
+                                                                                        this.finishInput();
+                                                                                    }}
+                                                                                    onPressEnter={() => {
+                                                                                        this.finishInput();
+                                                                                    }}
+                                                                                />
+                                                                                :
                                                                                 <div
-                                                                                    onClick={() => {
-                                                                                        this.recordActivePoint(
-                                                                                            subPoint,
-                                                                                            outsideIndex,
-                                                                                            insideIndex
-                                                                                        )
+                                                                                    onDrop={(e) => {
+                                                                                        this.onDrop(e,subPoint.ID);
+                                                                                    }}
+                                                                                    onDragOver={(e) => {
+                                                                                        this.onDragOver(e);
+                                                                                    }}
+                                                                                    onDragLeave={(e) => {
+                                                                                        this.onDrageLevel(e);
                                                                                     }}
                                                                                 >
-                                                                                    File : {subPoint.file}<br/>Note
-                                                                                    : {subPoint.note}
+                                                                                    <Row
+                                                                                        justify={"start"}
+                                                                                        align={"middle"}
+                                                                                    >
+                                                                                        <Button
+                                                                                            type={"link"}
+                                                                                            style={{color: color}}
+                                                                                            icon={
+                                                                                                <MinusCircleOutlined/>}
+                                                                                            onClick={(e) => {
+                                                                                                this.removeCollection(subPoint.ID, point.ID)
+                                                                                                e.preventDefault();
+                                                                                            }}
+                                                                                            size={"small"}
+                                                                                        >
+                                                                                        </Button>
+                                                                                        <span
+                                                                                            style={{
+                                                                                                fontSize: insideActive ? "16px" : "14px",
+                                                                                                color: insideActive ? "black" : color
+                                                                                            }}
+                                                                                            onClick={() => {
+                                                                                                this.openDrawer(subPoint, false);
+                                                                                            }}
+                                                                                        >
+                                                                                                {subPoint.keyword}
+                                                                                            </span>
+                                                                                    </Row>
                                                                                 </div>
-                                                                            </Collapse.Panel>
-                                                                        )
-                                                                    })
-                                                                }
-                                                            </Collapse>
-                                                    }
+                                                                        }
+                                                                        extra={
+                                                                            <Badge.Ribbon
+                                                                                color={subPoint.note ? "gold" : "gray"}
+                                                                                text={
+                                                                                    <a
+                                                                                        href={"/pointTable/" + subPoint.ID}
+                                                                                        target={"_blank"}
+                                                                                        style={{color: "white"}}
+                                                                                    >
+                                                                                        {subPoint.SearchAble == SEARCHABLE_POINT ? config.statusLabelMap[subPoint.status] : "Title"}
+                                                                                    </a>
+                                                                                }
+                                                                            >
+                                                                            </Badge.Ribbon>
+                                                                        }
+                                                                    >
+                                                                        <div
+                                                                            onClick={() => {
+                                                                                this.recordActivePoint(
+                                                                                    subPoint,
+                                                                                    outsideIndex,
+                                                                                    insideIndex
+                                                                                )
+                                                                            }}
+                                                                        >
+                                                                            {subPoint.note}
+                                                                        </div>
+                                                                    </Collapse.Panel>
+                                                                )
+                                                            })
+                                                        }
+                                                    </Collapse>
                                                 </Card>
                                             </Badge.Ribbon>
                                         </Col>
@@ -1087,6 +1081,7 @@ class PointTable extends React.Component {
                         <Favourite/>
                         <Row>
                             <Drawer
+                                keyboard={true}
                                 maskClosable={false}
                                 mask={false}
                                 title={
