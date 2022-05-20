@@ -21,7 +21,9 @@ import {
     WindowsOutlined,
     RightOutlined,
     LeftOutlined,
-    CloseOutlined
+    CloseOutlined,
+    UnlockOutlined,
+    LockOutlined
 } from '@ant-design/icons';
 import "../css/PointTable.css"
 import config, {SEARCHABLE_POINT, SEARCHABLE_TITLE} from "../config/setting";
@@ -43,8 +45,7 @@ var hotkeys_maps = [
     {hotkey: "shift+i", label: "Edit"},
     {hotkey: "shift+n", label: "New Point"},
     {hotkey: "shift+s", label: "New BookMark"},
-    {hotkey: "shift+b", label: "BookMark List"},
-    {hotkey: "shift+p", label: "View Point"}
+    {hotkey: "shift+b", label: "BookMark List"}
 ];
 
 const ACTIVE_TYPE_SUB_POINT = 'SubPoint';
@@ -70,7 +71,6 @@ class PointTable extends React.Component {
             statusFilter: [],
             //
             editPoint: {},
-            editPointView: false,
             editPartVisible: false,
             //
             activePoint: {},
@@ -93,7 +93,9 @@ class PointTable extends React.Component {
             pointCollectors: [],
             collectorPoints: [],
             newPointCollector: "",
-            collectorMode: POINT_COLLECTOR_MODE_LIST
+            collectorMode: POINT_COLLECTOR_MODE_LIST,
+            //
+            pointEditPartWidth:0
         }
         this.getPointsByPID = this.getPointsByPID.bind(this);
         this.openDrawer = this.openDrawer.bind(this);
@@ -139,11 +141,11 @@ class PointTable extends React.Component {
         })
     }
 
-    openDrawer(Point, openDrawer = true, editFile = true) {
+    openDrawer(Point, openDrawer = true) {
         this.setState({
             editPoint: Point,
             editPartVisible: openDrawer,
-            editPointView: editFile
+            pointEditPartWidth:12
         });
     }
 
@@ -156,7 +158,8 @@ class PointTable extends React.Component {
                     pointListVisible: false,
                     newPointModalVisible: false,
                     editPoint: {},
-                    newPointPID:-1
+                    newPointPID:-1,
+                    pointEditPartWidth:0
                 })
             })
             .then(() => {
@@ -269,20 +272,10 @@ class PointTable extends React.Component {
             case "shift+e":
                 switch (this.state.activeType) {
                     case ACTIVE_TYPE_PARENT_POINT:
-                        this.openDrawer(this.state.activeOutsidePoint, true, true);
+                        this.openDrawer(this.state.activeOutsidePoint, true);
                         break;
                     case ACTIVE_TYPE_SUB_POINT:
-                        this.openDrawer(this.state.activePoint, true, true);
-                        break;
-                }
-                break;
-            case "shift+p":
-                switch (this.state.activeType) {
-                    case ACTIVE_TYPE_PARENT_POINT:
-                        this.openDrawer(this.state.activeOutsidePoint, true, false);
-                        break;
-                    case ACTIVE_TYPE_SUB_POINT:
-                        this.openDrawer(this.state.activePoint, true, false);
+                        this.openDrawer(this.state.activePoint, true);
                         break;
                 }
                 break;
@@ -710,7 +703,7 @@ class PointTable extends React.Component {
                                 </Row>
                         }
                     </Col>
-                    <Col span={24 - this.state.pointCollectorWidth}>
+                    <Col span={24 - this.state.pointEditPartWidth -this.state.pointCollectorWidth}>
                         <Row>
                             <Col span={24}>
                                 <MenuList/>
@@ -725,7 +718,7 @@ class PointTable extends React.Component {
                                 <span
                                     style={{cursor: "pointer"}}
                                     onClick={() => {
-                                        this.openDrawer(this.state.parentPoint, true, true);
+                                        this.openDrawer(this.state.parentPoint, true);
                                     }}
                                 >
                                     {this.state.parentPoint.keyword}
@@ -1094,15 +1087,18 @@ class PointTable extends React.Component {
                         <Favourite/>
                         <Row>
                             <Drawer
+                                maskClosable={false}
+                                mask={false}
                                 title={
-                                    <a
+                                    <Button
+                                        type={"link"}
                                         href={"/point/edit/" + this.state.editPoint.ID}
                                         target={"_blank"}
                                     >
                                         {this.state.editPoint.keyword}
-                                    </a>
+                                    </Button>
                                 }
-                                width={1000}
+                                width={900}
                                 visible={this.state.editPartVisible}
                                 onClose={() => {
                                     this.closeDrawer(true);
@@ -1110,7 +1106,6 @@ class PointTable extends React.Component {
                             >
                                 <PointEdit
                                     ID={this.state.editPoint.ID}
-                                    EditFile={this.state.editPointView}
                                 />
                             </Drawer>
                         </Row>

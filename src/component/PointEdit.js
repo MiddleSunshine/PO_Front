@@ -34,7 +34,7 @@ class PointEdit extends React.Component{
             },
             fileContent:"",
             localFilePath:'',
-            editFile:props.hasOwnProperty('EditFile')?props.EditFile:null,
+            editFile:false,
             fileChanged:false,
             disableEdieFile:false,
             editComment:false,
@@ -59,8 +59,7 @@ class PointEdit extends React.Component{
                 .then(()=>{
                     this.setState({
                         preID:nextProps.ID,
-                        ID:nextProps.ID,
-                        editFile:nextProps.hasOwnProperty('EditFile')?nextProps.EditFile:null
+                        ID:nextProps.ID
                     })
                 })
                 .then(()=>{
@@ -78,16 +77,10 @@ class PointEdit extends React.Component{
                     this.setState({
                         point:json.Data.Point?json.Data.Point:this.state.point,
                         fileContent:json.Data.FileContent,
-                        localFilePath:json.Data.LocalFilePath
+                        localFilePath:json.Data.LocalFilePath,
+                        editFile:json.Data.FileContent==0
                     })
                 })
-            })
-            .then(()=>{
-                if (this.state.editFile==null){
-                    this.setState({
-                        editFile:this.state.fileContent.length>0?false:true
-                    });
-                }
             })
             .then(()=>{
                 this.getCommentNumber(ID);
@@ -99,11 +92,15 @@ class PointEdit extends React.Component{
             message.error("Please set the file name !");
             return false;
         }
+        let point=this.state.point;
+        if (point.Favourite!=='Favourite'){
+            point.Favourite='';
+        }
         requestApi("/index.php?action=Points&method=SaveWithFile",{
             mode:"cors",
             method:"post",
             body:JSON.stringify({
-                point:this.state.point,
+                point:point,
                 FileContent:this.state.fileChanged?this.state.fileContent:''
             })
         }).then((res)=>{
@@ -223,7 +220,7 @@ class PointEdit extends React.Component{
                                     value={this.state.point.Favourite=='Favourite'?'Favourite':'NotFavourite'}
                                     onChange={(newValue)=>{
                                         let point=this.state.point;
-                                        point.Favourite=newValue?'Favourite':'';
+                                        point.Favourite=newValue;
                                         this.setState({
                                             point:point
                                         });
