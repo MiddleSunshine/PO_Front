@@ -8,8 +8,9 @@ import {
     Input,
     message,
     Modal,
-    Checkbox, Form, PageHeader, Tooltip, Badge, Select, Collapse
+    Checkbox, Form, PageHeader, Tooltip, Badge, Select, Collapse, Divider
 } from "antd";
+import TextArea from "antd/es/input/TextArea";
 import {requestApi} from "../config/functions";
 import PointEdit from "../component/PointEdit";
 import Hotkeys from 'react-hot-keys'
@@ -36,6 +37,8 @@ import {PointMindMapRouter} from "./PointMindMap";
 import Search from "../component/Search";
 import PointNew, {NewPoint} from "../component/PointNew";
 import Links from "../component/Links";
+import SimpleMDE from "react-simplemde-editor";
+import MarkdownPreview from "@uiw/react-markdown-preview";
 
 var hotkeys_maps = [
     {hotkey: "shift+e", label: "Edit"},
@@ -146,7 +149,7 @@ class PointTable extends React.Component {
         this.setState({
             editPoint: Point,
             editPartVisible: openDrawer,
-            pointEditPartWidth:12
+            pointEditPartWidth:openDrawer?10:0
         });
     }
 
@@ -588,7 +591,7 @@ class PointTable extends React.Component {
                     <Col span={this.state.pointCollectorWidth}>
                         {
                             this.state.collectorMode == POINT_COLLECTOR_MODE_LIST
-                                ? <Row>
+                                ? <Row className={"point_collector"}>
                                     <Col span={24}>
                                         <Row>
                                             <Col span={20}>
@@ -639,7 +642,9 @@ class PointTable extends React.Component {
                                         }
                                     </Col>
                                 </Row>
-                                : <Row>
+                                : <Row
+                                    className={"point_collector"}
+                                >
                                     <Col span={24}>
                                         <Row>
                                             <Input
@@ -664,36 +669,87 @@ class PointTable extends React.Component {
                                                 />}
                                             />
                                         </Row>
+                                        <br/>
                                         {
                                             this.state.collectorPoints.map((point, pointIndex) => {
                                                 return (
                                                     <div
                                                         draggable={true}
-                                                        style={{paddingTop: "5px"}}
                                                         onDragStart={(e) => {
                                                             this.onDragStart(e, point.point)
                                                         }}
                                                     >
-                                                        <Input
-                                                            prefix={
-                                                            <CloseOutlined
-                                                                onClick={()=>{
-                                                                    this.deleteCollectorPoint(this.state.changePointCollectorId,point.createtime)
-                                                                }}
-                                                            />
-                                                            }
-                                                            value={point.point}
-                                                            onChange={(e) => {
-                                                                let collectors=this.state.collectorPoints;
-                                                                collectors[pointIndex].point=e.target.value;
-                                                                this.setState({
-                                                                    collectorPoints:collectors
-                                                                });
-                                                            }}
-                                                            onPressEnter={() => {
-                                                                this.updateCollectorPoint(this.state.changePointCollectorId,point);
-                                                            }}
-                                                        />
+                                                        <Row
+                                                            justify={"start"}
+                                                            align={"middle"}
+                                                        >
+                                                            <Col span={7}>
+                                                                <Button
+                                                                    size={"small"}
+                                                                    type={"primary"}
+                                                                    onClick={()=>{
+                                                                        this.updateCollectorPoint(this.state.changePointCollectorId,point);
+                                                                    }}
+                                                                >
+                                                                    Upload
+                                                                </Button>
+                                                            </Col>
+                                                            <Col span={7}>
+                                                                <Button
+                                                                    size={"small"}
+                                                                    type={"primary"}
+                                                                    onClick={()=>{
+                                                                        let collectors=this.state.collectorPoints;
+                                                                        if(!collectors[pointIndex].hasOwnProperty('EditMode')){
+                                                                            collectors[pointIndex].EditMode=true;
+                                                                        }else{
+                                                                            collectors[pointIndex].EditMode=!collectors[pointIndex].EditMode;
+                                                                        }
+                                                                        this.setState({
+                                                                            collectorPoints:collectors
+                                                                        });
+                                                                    }}
+                                                                >
+                                                                    {point.EditMode?"Save":"Edit"}
+                                                                </Button>
+                                                            </Col>
+                                                            <Col span={7}>
+                                                                <Button
+                                                                    size={"small"}
+                                                                    type={"primary"}
+                                                                    danger={true}
+                                                                    icon={<CloseOutlined/>}
+                                                                    onClick={()=>{
+                                                                        this.deleteCollectorPoint(this.state.changePointCollectorId,point.createtime)
+                                                                    }}
+                                                                >
+                                                                </Button>
+                                                            </Col>
+                                                        </Row>
+                                                        <hr/>
+                                                        <Row>
+                                                            <Col span={24}>
+                                                                {
+                                                                    point.EditMode
+                                                                        ?<SimpleMDE
+                                                                            spellChecker={false}
+                                                                            value={point.point}
+                                                                            onChange={(newValue) => {
+                                                                                let collectors=this.state.collectorPoints;
+                                                                                collectors[pointIndex].point=newValue;
+                                                                                this.setState({
+                                                                                    collectorPoints:collectors
+                                                                                });
+                                                                            }}
+                                                                        />
+                                                                        :<MarkdownPreview
+                                                                            source={point.point}
+                                                                        />
+                                                                }
+
+                                                            </Col>
+                                                        </Row>
+                                                        <Divider/>
                                                     </div>
                                                 )
                                             })
@@ -888,6 +944,7 @@ class PointTable extends React.Component {
                                                                                 <Row
                                                                                     justify={"start"}
                                                                                     align={"middle"}
+                                                                                    wrap={false}
                                                                                 >
                                                                                     <Button
                                                                                         type={"primary"}
@@ -990,6 +1047,7 @@ class PointTable extends React.Component {
                                                                                     <Row
                                                                                         justify={"start"}
                                                                                         align={"middle"}
+                                                                                        wrap={false}
                                                                                     >
                                                                                         <Button
                                                                                             shape={"circle"}
@@ -1067,7 +1125,7 @@ class PointTable extends React.Component {
                                         {this.state.editPoint.keyword}
                                     </Button>
                                 }
-                                width={900}
+                                width={800}
                                 visible={this.state.editPartVisible}
                                 onClose={() => {
                                     this.closeDrawer(true);
