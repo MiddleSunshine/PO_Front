@@ -6,7 +6,8 @@ class Links extends React.Component{
         super(props);
         this.state={
             PID:props.PID,
-            Label:props.Label
+            Label:props.Label,
+            Color:props.hasOwnProperty('Color')?props.Color:"white"
         }
     }
     render() {
@@ -61,7 +62,7 @@ class Links extends React.Component{
                 </Menu>
             }>
                 <span
-                    style={{color:"white"}}
+                    style={{color:this.state.Color,cursor:"pointer"}}
                 >{this.state.Label}</span>
             </Dropdown>
         </div>;
