@@ -801,40 +801,11 @@ class PointTable extends React.Component {
                             {/*    </Button>*/}
                             {/*</Col>*/}
                             <Col span={2}>
-                                <Button
-                                    type={"link"}
-                                    href={"/pointRoad/" + this.state.parentPoint.ID}
-                                    target={"_blank"}
-                                >
-                                    Forward
-                                </Button>
-                            </Col>
-                            <Col span={2}>
-                                <Button
-                                    type={"link"}
-                                    href={"/pointTree/" + this.state.parentPoint.ID}
-                                    target={"_blank"}
-                                >
-                                    Tree
-                                </Button>
-                            </Col>
-                            <Col span={2}>
-                                <Button
-                                    type={"link"}
-                                    href={"/pointsSang/" + this.state.parentPoint.ID}
-                                    target={"_blank"}
-                                >
-                                    sankey
-                                </Button>
-                            </Col>
-                            <Col span={2}>
-                                <Button
-                                    type={"link"}
-                                    href={PointMindMapRouter(this.state.parentPoint.ID)}
-                                    target={"_blank"}
-                                >
-                                    MindMap
-                                </Button>
+                                <Links
+                                    PID={this.state.id}
+                                    Label={"Options"}
+                                    Color={"#1890ff"}
+                                />
                             </Col>
                             <Col span={2}>
                                 <Search
@@ -848,9 +819,9 @@ class PointTable extends React.Component {
                                     let cardColor = config.statusBackGroupColor[point.status];
                                     let outsideIndexActive = (point.ID == this.state.activeOutsidePoint.ID && this.state.activeType == ACTIVE_TYPE_PARENT_POINT);
                                     let activeSubPointPanel=[];
-                                    point.children.map((item)=>{
-                                        if (item.note){
-                                            activeSubPointPanel.push(item.ID)
+                                    point.children.map((item,index)=>{
+                                        if (item.note && item.note.length>0){
+                                            activeSubPointPanel.push(index)
                                         }
                                         return item;
                                     })
@@ -927,7 +898,7 @@ class PointTable extends React.Component {
                                                                                             this.removeCollection(point.ID, this.state.id);
                                                                                         }}
                                                                                     >
-                                                                                        {outsideIndex + 1}
+                                                                                        {point.file?'F':'C'}
                                                                                     </Button>
                                                                                     <Button
                                                                                         ghost={true}
@@ -963,7 +934,6 @@ class PointTable extends React.Component {
                                                     <Collapse
                                                         key={outsideIndex}
                                                         onChange={(key) => {
-                                                            console.warn(key);
                                                             if (key.length > 0) {
                                                                 let insideIndexTemp = parseInt(key[key.length - 1]);
                                                                 this.setState({
@@ -984,7 +954,7 @@ class PointTable extends React.Component {
                                                                 return (
                                                                     <Collapse.Panel
                                                                         showArrow={false}
-                                                                        key={subPoint.ID}
+                                                                        key={insideIndex}
                                                                         header={
                                                                             (this.state.editPoint.ID == subPoint.ID && !this.state.editPartVisible)
                                                                                 ? <Input
@@ -1022,17 +992,17 @@ class PointTable extends React.Component {
                                                                                         align={"middle"}
                                                                                     >
                                                                                         <Button
-                                                                                            type={"link"}
-                                                                                            style={{color: color}}
-                                                                                            icon={
-                                                                                                <MinusCircleOutlined/>}
+                                                                                            shape={"circle"}
+                                                                                            style={{backgroundColor: color,color:"white"}}
                                                                                             onClick={(e) => {
                                                                                                 this.removeCollection(subPoint.ID, point.ID)
                                                                                                 e.preventDefault();
                                                                                             }}
                                                                                             size={"small"}
                                                                                         >
+                                                                                            {subPoint.file?'F':'C'}
                                                                                         </Button>
+                                                                                        &nbsp;&nbsp;&nbsp;&nbsp;
                                                                                         <span
                                                                                             style={{
                                                                                                 fontSize: insideActive ? "16px" : "14px",
@@ -1086,7 +1056,6 @@ class PointTable extends React.Component {
                         <Favourite/>
                         <Row>
                             <Drawer
-                                keyboard={true}
                                 maskClosable={false}
                                 mask={false}
                                 title={
