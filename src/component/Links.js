@@ -6,7 +6,7 @@ class Links extends React.Component{
         super(props);
         this.state={
             PID:props.PID,
-            Label:props.Label,
+            Label:props.hasOwnProperty('Label')?props.Label:"Option",
             Color:props.hasOwnProperty('Color')?props.Color:"white"
         }
     }

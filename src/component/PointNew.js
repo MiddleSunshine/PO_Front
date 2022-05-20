@@ -10,6 +10,7 @@ import {
     UnorderedListOutlined,
     DeploymentUnitOutlined
 } from '@ant-design/icons';
+import Links from "./Links";
 
 export function NewPoint(PID,searchKeyword,newPointType,isTitle=false){
     let newPoint = {
@@ -139,7 +140,7 @@ class PointNew extends React.Component{
         return <Modal
             className={"PointNew"}
             visible={(this.state.PrePID-0)>-1}
-            width={1000}
+            width={1300}
             onCancel={()=>{
                 this.closeModal();
             }}
@@ -251,21 +252,11 @@ class PointNew extends React.Component{
                                         </span>
                                             </Checkbox>
                                         </Col>
-                                        <Col span={1}>
-                                            <Button
-                                                type={"link"}
-                                                href={"/pointTable/"+Point.ID}
-                                                target={"_blank"}
-                                                icon={<UnorderedListOutlined />}
-                                            ></Button>
-                                        </Col>
-                                        <Col span={1}>
-                                            <Button
-                                                type={"link"}
-                                                href={"/point/edit/"+Point.ID}
-                                                target={"_blank"}
-                                                icon={<FormOutlined />}
-                                            ></Button>
+                                        <Col span={2}>
+                                            <Links
+                                                PID={Point.ID}
+                                                Color={"#1890ff"}
+                                            />
                                         </Col>
                                     </Row>
 

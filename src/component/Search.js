@@ -4,6 +4,7 @@ import {requestApi} from "../config/functions";
 import {FormOutlined} from "@ant-design/icons";
 import MarkdownPreview from "@uiw/react-markdown-preview";
 import config, {SEARCHABLE_POINT, SEARCHABLE_TITLE} from "../config/setting";
+import Links from "./Links";
 
 class Search extends React.Component {
     constructor(props) {
@@ -155,6 +156,7 @@ class Search extends React.Component {
                         points: []
                     })
                 }}
+                footer={null}
             >
                 {
                     this.state.points.length > 0
@@ -165,21 +167,14 @@ class Search extends React.Component {
                                 return (
                                     <List.Item
                                         key={Item.ID}
-                                        actions={[
-                                            <Button
-                                                type={"link"}
-                                                href={"/point/edit/" + Item.ID}
-                                                target={"_blank"}
-                                                icon={<FormOutlined/>}
-                                            >
-
-                                            </Button>
-                                        ]}
                                     >
                                         <List.Item.Meta
                                             avatar={
                                                 <Avatar>
-                                                    {Item.SearchAble}
+                                                    <Links
+                                                        PID={Item.ID}
+                                                        Label={Item.SearchAble}
+                                                    />
                                                 </Avatar>
                                             }
                                             title={
@@ -189,9 +184,7 @@ class Search extends React.Component {
                                                     href={"/pointTable/" + Item.ID}
                                                     target={"_blank"}
                                                 >
-                                                    {
-                                                        Item.keyword
-                                                    }
+                                                    {Item.keyword}
                                                 </Button>
                                             }
                                             description={
