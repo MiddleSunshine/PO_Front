@@ -39,6 +39,7 @@ import PointNew, {NewPoint} from "../component/PointNew";
 import Links from "../component/Links";
 import SimpleMDE from "react-simplemde-editor";
 import MarkdownPreview from "@uiw/react-markdown-preview";
+import {deleteConnection, deleteConnectionCheck} from "../component/PointConnection";
 
 var hotkeys_maps = [
     {hotkey: "shift+e", label: "Edit"},
@@ -362,27 +363,7 @@ class PointTable extends React.Component {
     }
 
     removeCollection(ID, PID) {
-        Modal.confirm({
-            title: "Remove Connection",
-            content: "Are you sure to remove this connection ?",
-            okText: "Yes",
-            cancelText: "No",
-            onOk: () => {
-                requestApi("/index.php?action=PointsConnection&method=Deleted&SubPID=" + ID + "&PID=" + PID)
-                    .then((res) => {
-                        res.json().then((json) => {
-                            if (json.Status == 1) {
-                                this.getPointsByPID(this.state.id);
-                            } else {
-                                message.warn("Delete Error")
-                            }
-                        })
-                    })
-                    .catch((error) => {
-                        message.error("System Error")
-                    })
-            }
-        })
+        deleteConnectionCheck(ID,PID,()=>{ this.getPointsByPID(this.state.id) });
     }
 
     openPointCollector() {

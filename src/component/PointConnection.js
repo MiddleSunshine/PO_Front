@@ -180,3 +180,29 @@ export function deleteConnection(PID,subPID){
             })
         })
 }
+
+export function deleteConnectionCheck(SubPID,PID,afterConnection=null){
+    Modal.confirm({
+        title: "Remove Connection",
+        content: "Are you sure to remove this connection ?",
+        okText: "Yes",
+        cancelText: "No",
+        onOk: () => {
+            deleteConnection(PID,SubPID)
+                .then(()=>{
+                    afterConnection()
+                });
+        }
+    })
+}
+
+export function updateConnectionNote(ID,newNote){
+    return requestApi("/index.php?action=PointsConnection&method=CommonSave",{
+        method:"post",
+        mode:"cors",
+        body:JSON.stringify({
+            ID:ID,
+            note:newNote
+        })
+    })
+}

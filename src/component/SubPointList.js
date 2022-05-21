@@ -1,5 +1,5 @@
 import React from "react";
-import {Badge, Button, Card, Col, Divider, Drawer, Input, Row, Tag, Timeline} from "antd";
+import {Badge, Button, Card, Col, Divider, Drawer, Input, message, Row, Tag, Timeline} from "antd";
 import {requestApi} from "../config/functions";
 import config from "../config/setting";
 import Hotkeys from "react-hot-keys";
@@ -19,6 +19,7 @@ import {
 } from '@ant-design/icons';
 import PointNew from "./PointNew";
 import PointEdit from "./PointEdit";
+import {updateConnectionNote,deleteConnectionCheck} from "./PointConnection";
 const CONNECTION_NOTE_WIDTH=4;
 
 class SubPointList extends React.Component{
@@ -37,6 +38,7 @@ class SubPointList extends React.Component{
         this.getPoints=this.getPoints.bind(this);
         this.setActivePoint=this.setActivePoint.bind(this);
         this.afterOption=this.afterOption.bind(this);
+        this.updateConnectionNote=this.updateConnectionNote.bind(this);
     }
 
     componentDidMount() {
@@ -92,7 +94,38 @@ class SubPointList extends React.Component{
             .then(()=>{
                 this.getPoints(this.state.pid)
             })
+    }
 
+    updateConnectionNote(outsideIndex,insideIndex=-1,newNote=''){
+        let points=this.state.points;
+        if (insideIndex>-1){
+            points[outsideIndex].children[insideIndex].connection_note=newNote;
+        }else{
+            points[outsideIndex].connection_note=newNote;
+        }
+        this.setState({
+            points:points
+        })
+    }
+
+    saveConnectionNote(ID,newNote){
+        updateConnectionNote(ID,newNote)
+            .then((res)=>{
+                res.json().then((json)=>{
+                    if (json.Status==1){
+                        message.success("Save Note Success");
+                        return true;
+                    }else{
+                        message.warn(json.Message);
+                        return false;
+                    }
+                })
+                    .then((result)=>{
+                        if (result){
+                            this.getPoints(this.state.pid);
+                        }
+                    })
+            })
     }
 
     render() {
@@ -154,12 +187,23 @@ class SubPointList extends React.Component{
                                             align={"middle"}
                                         >
                                             <Col span={CONNECTION_NOTE_WIDTH}>
-                                                <Input/>
+                                                <Input
+                                                    value={point.connection_note}
+                                                    onChange={(e)=>{
+                                                        this.updateConnectionNote(outsideIndex,-1,e.target.value)
+                                                    }}
+                                                    onPressEnter={()=>{
+                                                        this.saveConnectionNote(point.connection_ID,point.connection_note)
+                                                    }}
+                                                />
                                             </Col>
                                             <Col span={1}>
                                                 <Button
                                                     icon={<MinusCircleOutlined />}
                                                     type={"link"}
+                                                    onClick={()=>{
+                                                        deleteConnectionCheck(point.ID,this.state.pid,()=>{ this.getPoints(this.state.pid) })
+                                                    }}
                                                 >
                                                 </Button>
                                             </Col>
@@ -201,12 +245,22 @@ class SubPointList extends React.Component{
                                                     >
                                                         <Col span={CONNECTION_NOTE_WIDTH+1}>
                                                             <Input
+                                                                value={subPoint.connection_note}
+                                                                onChange={(e)=>{
+                                                                    this.updateConnectionNote(outsideIndex,insideIndex,e.target.value)
+                                                                }}
+                                                                onPressEnter={()=>{
+                                                                    this.saveConnectionNote(subPoint.connection_ID,subPoint.connection_note)
+                                                                }}
                                                             />
                                                         </Col>
                                                         <Col span={1}>
                                                             <Button
                                                                 icon={<MinusCircleOutlined />}
                                                                 type={"link"}
+                                                                onClick={()=>{
+                                                                    deleteConnectionCheck(subPoint.ID,point.ID,()=>{ this.getPoints(this.state.pid) })
+                                                                }}
                                                             >
                                                             </Button>
                                                         </Col>

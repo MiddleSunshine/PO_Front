@@ -1,0 +1,9 @@
+.SubPointList{
+    max-height: 80vh;
+    overflow: scroll;
+    overflow-x: auto;
+}
+
+.SubPointList .SubRow{
+    padding-top: 10px;
+}
