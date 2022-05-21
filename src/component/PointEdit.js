@@ -8,6 +8,7 @@ import MarkdownPreview from '@uiw/react-markdown-preview';
 import PointsComments from "./PointsComments";
 import {ClusterOutlined} from '@ant-design/icons';
 import TextArea from "antd/es/input/TextArea";
+import Links from "./Links";
 const {Option}=Select;
 
 // markdown 插件仓库位置
@@ -173,13 +174,10 @@ class PointEdit extends React.Component{
                 >
                     <Form.Item
                         label={
-                            <Button
-                                type={"link"}
-                                icon={<ClusterOutlined />}
-                                href={"/pointTable/"+this.state.point.ID}
-                                target={"_blank"}
-                            >
-                            </Button>
+                            <Links
+                                PID={this.state.point.ID}
+                                Color={"#1890ff"}
+                            />
                         }
                     >
                         <Button

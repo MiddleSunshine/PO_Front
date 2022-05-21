@@ -14,6 +14,7 @@ import PointConnection from "../component/PointConnection";
 import BookMarks, {NewBookMark} from "../component/BookMarks";
 import {pick} from "echarts-for-react/lib/helper/pick";
 import Favourite from "../component/Favourite";
+import Links from "../component/Links";
 
 const ROW_TOP='top_';
 const ROW_BOTTOM='bottom_';
@@ -23,10 +24,16 @@ const COLUMN_RIGHT='right_';
 
 class ConnectionItem extends React.Component{
     render() {
+        let ids=this.props.id.split('_');
         return(
             <Button
                 id={this.props.id}
-                icon={this.props.icon}
+                icon={
+                    <Links
+                        PID={ids[1]}
+                        Label={this.props.icon}
+                    />
+                }
                 type={"primary"}
                 ghost={true}
                 shape={"circle"}
@@ -440,6 +447,12 @@ class PointMindMap extends React.Component{
                             }}
                         >
                         </Button>
+                        <Divider
+                            type={"vertical"}
+                        />
+                        <Links
+                            PID={this.state.PID}
+                        />
                     </Divider>
                     {contentPart}
                 </div>

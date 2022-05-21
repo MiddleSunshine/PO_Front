@@ -22,24 +22,26 @@ class PointEditor extends React.Component {
                 <div>
                     <MenuList />
                 </div>
-                <br />
+                <Divider>
+                    <InputNumber
+                        value={this.state.width}
+                        onChange={(newValue)=>{
+                            this.setState({
+                                width:newValue
+                            })
+                        }}
+                    />
+                </Divider>
                 <Row>
-                    <Col span={24-this.state.width}>
+                    <Col
+                        span={24-this.state.width}
+                        style={{maxHeight:"100vh",overflow:"scroll",overflowX:"auto"}}
+                    >
                         <PointEdit
                             ID={this.state.ID}
                         />
                     </Col>
                     <Col span={this.state.width}>
-                        <Row>
-                            <InputNumber
-                                value={this.state.width}
-                                onChange={(newValue)=>{
-                                    this.setState({
-                                        width:newValue
-                                    })
-                                }}
-                            />
-                        </Row>
                         <SubPointList
                             ID={this.state.ID}
                         />
