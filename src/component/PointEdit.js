@@ -8,7 +8,6 @@ import MarkdownPreview from '@uiw/react-markdown-preview';
 import PointsComments from "./PointsComments";
 import {ClusterOutlined} from '@ant-design/icons';
 import TextArea from "antd/es/input/TextArea";
-import point from "./point";
 const {Option}=Select;
 
 // markdown 插件仓库位置

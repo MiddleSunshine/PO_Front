@@ -12,7 +12,7 @@ import {
 } from '@ant-design/icons';
 import Links from "./Links";
 
-export function NewPoint(PID,searchKeyword,newPointType,isTitle=false){
+export function NewPoint(PID,searchKeyword,newPointType,isTitle=false,connection_note=''){
     let newPoint = {
         keyword: searchKeyword,
         SearchAble: newPointType
@@ -26,7 +26,8 @@ export function NewPoint(PID,searchKeyword,newPointType,isTitle=false){
         mode: "cors",
         body: JSON.stringify({
             point: newPoint,
-            PID: PID
+            PID: PID,
+            connection_note:connection_note
         })
     })
         .then((res)=>{
@@ -42,8 +43,14 @@ export function NewPoint(PID,searchKeyword,newPointType,isTitle=false){
         })
 }
 
-export function NewPointConnection(PID,SubPID){
-    return requestApi("/index.php?action=PointsConnection&method=Update&PID="+PID+"&SubPID="+SubPID)
+export function NewPointConnection(PID,SubPID,note=''){
+    return requestApi("/index.php?action=PointsConnection&method=Update&PID="+PID+"&SubPID="+SubPID,{
+        mode:"cors",
+        method:"post",
+        body:JSON.stringify({
+            note:note
+        })
+    })
         .then((res)=>{
             res.json().then((json)=>{
                 if (json.Status==1){
@@ -65,6 +72,7 @@ class PointNew extends React.Component{
             selectedPID:SELECT_UNCHECK_VALUE,
             newPointID:0,
             newPointType:SEARCHABLE_POINT,
+            note:"",
             searchKeyword:"",
             SearchPointList:[]
         }
@@ -100,11 +108,11 @@ class PointNew extends React.Component{
 
     newPoint(){
         if ((this.state.selectedPID-0)!=SELECT_UNCHECK_VALUE){
-            NewPointConnection(this.state.PrePID,this.state.selectedPID).then(()=>{
+            NewPointConnection(this.state.PrePID,this.state.selectedPID,this.state.note).then(()=>{
                 this.closeModal();
             })
         }else{
-            NewPoint(this.state.PrePID,this.state.searchKeyword,this.state.newPointType,this.state.newPointType == SEARCHABLE_TITLE)
+            NewPoint(this.state.PrePID,this.state.searchKeyword,this.state.newPointType,this.state.newPointType == SEARCHABLE_TITLE,this.state.note)
                 .then(()=>{
                     this.closeModal();
                 })
@@ -166,6 +174,20 @@ class PointNew extends React.Component{
                 </Form.Item>
                 <Form.Item>
                     <Row>
+                        <Col span={23}>
+                            <Input
+                                placeholder={"please input the note"}
+                                value={this.state.note}
+                                onChange={(e)=>{
+                                    this.setState({
+                                        note:e.target.value
+                                    })
+                                }}
+                            />
+                        </Col>
+                    </Row>
+                    <br/>
+                    <Row>
                         <Col span={3}>
                             <Select
                                 value={this.state.newPointType}
@@ -216,7 +238,6 @@ class PointNew extends React.Component{
                             />
                         </Col>
                     </Row>
-
                 </Form.Item>
                 <Form.Item>
                     <Divider

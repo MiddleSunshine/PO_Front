@@ -162,6 +162,7 @@ class SubPointList extends React.Component{
                                 newPointPID:this.state.pid
                             })
                         }}
+                        type={"primary"}
                     >
                         New Point
                     </Button>
