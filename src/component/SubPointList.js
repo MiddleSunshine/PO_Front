@@ -1,5 +1,5 @@
 import React from "react";
-import {Badge, Button, Card, Col, Divider, Input, Row, Tag, Timeline} from "antd";
+import {Badge, Button, Card, Col, Divider, Drawer, Input, Row, Tag, Timeline} from "antd";
 import {requestApi} from "../config/functions";
 import config from "../config/setting";
 import Hotkeys from "react-hot-keys";
@@ -17,6 +17,8 @@ import {
     UnlockOutlined,
     LockOutlined
 } from '@ant-design/icons';
+import PointNew from "./PointNew";
+import PointEdit from "./PointEdit";
 const CONNECTION_NOTE_WIDTH=4;
 
 class SubPointList extends React.Component{
@@ -25,9 +27,16 @@ class SubPointList extends React.Component{
         this.state={
             points:[],
             pid:props.ID,
-            preId:props.ID
+            preId:props.ID,
+            activePoint:{},
+            //
+            newPointPID:-1,
+            //
+            editPointPID:-1
         };
         this.getPoints=this.getPoints.bind(this);
+        this.setActivePoint=this.setActivePoint.bind(this);
+        this.afterOption=this.afterOption.bind(this);
     }
 
     componentDidMount() {
@@ -40,6 +49,19 @@ class SubPointList extends React.Component{
         }
     }
 
+    setActivePoint(point){
+        this.setState({
+            activePoint:point
+        })
+    }
+
+    setActiveStyle(){
+        return {
+            color:"black",
+            fontSize:"16px",
+            fontWeight:"bolder"
+        };
+    }
 
     getPoints(pid){
         let body={};
@@ -59,23 +81,73 @@ class SubPointList extends React.Component{
             })
     }
 
+    afterOption(){
+        (async ()=>{})()
+            .then(()=>{
+                this.setState({
+                    newPointPID:-1,
+                    editPointPID:-1
+                })
+            })
+            .then(()=>{
+                this.getPoints(this.state.pid)
+            })
+
+    }
+
     render() {
+        let hotkeyOption={};
+        hotkeyOption['shift+e']=(()=>{
+            if (this.state.activePoint.hasOwnProperty('ID')){
+                this.setState({
+                    editPointPID:this.state.activePoint.ID
+                })
+            }
+        });
+        hotkeyOption['shift+n']=(()=>{
+            if (this.state.activePoint.hasOwnProperty('ID')){
+                this.setState({
+                    newPointPID:this.state.activePoint.ID
+                })
+            }
+        });
+        let hotkeys=[];
+        for (let hotkey in hotkeyOption){
+            hotkeys.push(hotkey);
+        }
         return <div className="container SubPointList">
-            <Hotkeys>
+            <Hotkeys
+                keyName={hotkeys.join(",")}
+                onKeyDown={(keyName,e,handler)=>{
+                    hotkeyOption[keyName]();
+                }}
+            >
                 <Divider>
-                    <Button>
+                    <Button
+                        onClick={()=>{
+                            this.setState({
+                                newPointPID:this.state.pid
+                            })
+                        }}
+                    >
                         New Point
                     </Button>
                 </Divider>
                 {
                     this.state.points.map((point,outsideIndex)=>{
+                        let style={};
+                        style.color=config.statusBackGroupColor[point.status];
+                        if (point.ID==this.state.activePoint.ID){
+                            style={
+                                style,
+                                ...this.setActiveStyle()
+                            };
+                        }
                         return(
                             <div
                                 key={point.ID}
                             >
-                                <Row
-
-                                >
+                                <Row>
                                     <Col span={24}>
                                         <Row
                                             justify={"start"}
@@ -86,13 +158,19 @@ class SubPointList extends React.Component{
                                             </Col>
                                             <Col span={1}>
                                                 <Button
-                                                    icon={<RightOutlined />}
+                                                    icon={<MinusCircleOutlined />}
                                                     type={"link"}
                                                 >
                                                 </Button>
                                             </Col>
                                             <Col span={22-CONNECTION_NOTE_WIDTH}>
-                                                <Button>
+                                                <Button
+                                                    type={"link"}
+                                                    onClick={()=>{
+                                                        this.setActivePoint(point)
+                                                    }}
+                                                    style={style}
+                                                >
                                                     {point.keyword}
                                                 </Button>
                                             </Col>
@@ -106,6 +184,14 @@ class SubPointList extends React.Component{
                                         </Row>
                                         {
                                             point.children.map((subPoint,insideIndex)=>{
+                                                let subPointStyle={};
+                                                subPointStyle.color=config.statusBackGroupColor[subPoint.status];
+                                                if (subPoint.ID==this.state.activePoint.ID){
+                                                    subPointStyle={
+                                                        subPointStyle,
+                                                        ...this.setActiveStyle()
+                                                    }
+                                                }
                                                 return(
                                                     <Row
                                                         key={subPoint.ID}
@@ -119,13 +205,19 @@ class SubPointList extends React.Component{
                                                         </Col>
                                                         <Col span={1}>
                                                             <Button
-                                                                icon={<RightOutlined />}
+                                                                icon={<MinusCircleOutlined />}
                                                                 type={"link"}
                                                             >
                                                             </Button>
                                                         </Col>
                                                         <Col span={21-CONNECTION_NOTE_WIDTH}>
-                                                            <Button>
+                                                            <Button
+                                                                onClick={()=>{
+                                                                    this.setActivePoint(subPoint);
+                                                                }}
+                                                                type={"link"}
+                                                                style={subPointStyle}
+                                                            >
                                                                 {subPoint.keyword}
                                                             </Button>
                                                         </Col>
@@ -147,6 +239,27 @@ class SubPointList extends React.Component{
                         )
                     })
                 }
+                <div>
+                    <PointNew
+                        PID={this.state.newPointPID}
+                        closeModal={()=>{
+                            this.afterOption();
+                        }}
+                    />
+                </div>
+                <div>
+                    <Drawer
+                        width={800}
+                        visible={(this.state.editPointPID-0)>-1}
+                        onClose={()=>{
+                            this.afterOption();
+                        }}
+                    >
+                        <PointEdit
+                            ID={this.state.editPointPID}
+                        />
+                    </Drawer>
+                </div>
             </Hotkeys>
 
         </div>;
