@@ -80,8 +80,8 @@ class PointTable extends React.Component {
             editPartVisible: false,
             //
             activePoint: {},
-            activeOutsideIndex: 0,
-            activeInsideIndex: 0,
+            activeOutsideIndex: -1,
+            activeInsideIndex: -1,
             activeOutsidePoint: {},
             activeType: '',
             //
@@ -142,10 +142,12 @@ class PointTable extends React.Component {
         });
     }
 
-    recordActiveParentPoint(Point) {
+    recordActiveParentPoint(Point,outsideIndex) {
         this.setState({
             activeOutsidePoint: Point,
-            activeType: ACTIVE_TYPE_PARENT_POINT
+            activeType: ACTIVE_TYPE_PARENT_POINT,
+            activeOutsideIndex:outsideIndex,
+            activeInsideIndex:-1
         })
     }
 
@@ -927,7 +929,7 @@ class PointTable extends React.Component {
                                                             }}
                                                             onClick={(e) => {
                                                                 e.preventDefault();
-                                                                this.recordActiveParentPoint(point)
+                                                                this.recordActiveParentPoint(point,outsideIndex)
                                                             }}
                                                         >
                                                             <Row
