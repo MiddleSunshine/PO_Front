@@ -1,7 +1,23 @@
 import React from "react";
-import {Badge, Card, Tag, Timeline} from "antd";
+import {Badge, Button, Card, Col, Divider, Input, Row, Tag, Timeline} from "antd";
 import {requestApi} from "../config/functions";
 import config from "../config/setting";
+import Hotkeys from "react-hot-keys";
+import "../css/SubPointList.css"
+import Links from "./Links";
+import {
+    PlusCircleOutlined,
+    UnorderedListOutlined,
+    FormOutlined,
+    MinusCircleOutlined,
+    WindowsOutlined,
+    RightOutlined,
+    LeftOutlined,
+    CloseOutlined,
+    UnlockOutlined,
+    LockOutlined
+} from '@ant-design/icons';
+const CONNECTION_NOTE_WIDTH=4;
 
 class SubPointList extends React.Component{
     constructor(props) {
@@ -44,58 +60,95 @@ class SubPointList extends React.Component{
     }
 
     render() {
-        return <div className="container">
-            {
-                this.state.points.map((Point,outsideIndex)=>{
-                    return(
-                        <Badge.Ribbon
-                            text={Point.status}
-                            key={outsideIndex}
-                        >
-                            <Card
-                                title={
-                                    <a
-                                        href={"/pointTable/"+Point.ID}
-                                        target={"_blank"}
-                                    >
-                                        {Point.keyword}
-                                    </a>
-                                }
+        return <div className="container SubPointList">
+            <Hotkeys>
+                <Divider>
+                    <Button>
+                        New Point
+                    </Button>
+                </Divider>
+                {
+                    this.state.points.map((point,outsideIndex)=>{
+                        return(
+                            <div
+                                key={point.ID}
                             >
-                                {
-                                    Point.children.length>0
-                                    ?<Timeline>
-                                            {
-                                                Point.children.map((subPoint,insideIndex)=>{
-                                                    return(
-                                                        <Timeline.Item
-                                                            key={insideIndex}
-                                                            // style={{color:config.statusBackGroupColor[subPoint.status]}}
-                                                            dot={<Tag
-                                                                color={config.statusBackGroupColor[subPoint.status]}
+                                <Row
+
+                                >
+                                    <Col span={24}>
+                                        <Row
+                                            justify={"start"}
+                                            align={"middle"}
+                                        >
+                                            <Col span={CONNECTION_NOTE_WIDTH}>
+                                                <Input/>
+                                            </Col>
+                                            <Col span={1}>
+                                                <Button
+                                                    icon={<RightOutlined />}
+                                                    type={"link"}
+                                                >
+                                                </Button>
+                                            </Col>
+                                            <Col span={22-CONNECTION_NOTE_WIDTH}>
+                                                <Button>
+                                                    {point.keyword}
+                                                </Button>
+                                            </Col>
+                                            <Col span={1}>
+                                                <Links
+                                                    PID={point.ID}
+                                                    Color={config.statusBackGroupColor[point.status]}
+                                                    Label={point.SearchAble}
+                                                />
+                                            </Col>
+                                        </Row>
+                                        {
+                                            point.children.map((subPoint,insideIndex)=>{
+                                                return(
+                                                    <Row
+                                                        key={subPoint.ID}
+                                                        justify={"start"}
+                                                        align={"middle"}
+                                                        className={"SubRow"}
+                                                    >
+                                                        <Col span={CONNECTION_NOTE_WIDTH+1}>
+                                                            <Input
+                                                            />
+                                                        </Col>
+                                                        <Col span={1}>
+                                                            <Button
+                                                                icon={<RightOutlined />}
+                                                                type={"link"}
                                                             >
-                                                                {subPoint.status}
-                                                            </Tag>}
-                                                        >
-                                                            &nbsp;&nbsp;&nbsp;
-                                                            <a
-                                                                href={"/pointTable/"+subPoint.ID}
-                                                                target={"_blank"}
-                                                            >
+                                                            </Button>
+                                                        </Col>
+                                                        <Col span={21-CONNECTION_NOTE_WIDTH}>
+                                                            <Button>
                                                                 {subPoint.keyword}
-                                                            </a>
-                                                        </Timeline.Item>
-                                                    )
-                                                })
-                                            }
-                                        </Timeline>
-                                        :Point.note
-                                }
-                            </Card>
-                        </Badge.Ribbon>
-                    )
-                })
-            }
+                                                            </Button>
+                                                        </Col>
+                                                        <Col span={1}>
+                                                            <Links
+                                                                PID={subPoint.ID}
+                                                                Color={config.statusBackGroupColor[subPoint.status]}
+                                                                Label={subPoint.SearchAble}
+                                                            />
+                                                        </Col>
+                                                    </Row>
+                                                )
+                                            })
+                                        }
+                                    </Col>
+                                </Row>
+                                <Divider />
+                            </div>
+                        )
+                    })
+                }
+            </Hotkeys>
+
         </div>;
     }
 }

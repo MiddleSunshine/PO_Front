@@ -1,6 +1,8 @@
 import React from "react";
 import MenuList from "../component/MenuList";
 import PointEdit from "../component/PointEdit";
+import {Col, Divider, Row} from "antd";
+import SubPointList from "../component/SubPointList";
 
 class PointEditor extends React.Component {
     constructor(props) {
@@ -19,12 +21,19 @@ class PointEditor extends React.Component {
                 <div>
                     <MenuList />
                 </div>
-                <hr />
-                <div>
-                    <PointEdit
-                        ID={this.state.ID}
-                    />
-                </div>
+                <br />
+                <Row>
+                    <Col span={13}>
+                        <PointEdit
+                            ID={this.state.ID}
+                        />
+                    </Col>
+                    <Col span={11}>
+                        <SubPointList
+                            ID={this.state.ID}
+                        />
+                    </Col>
+                </Row>
             </div>
         );
     }

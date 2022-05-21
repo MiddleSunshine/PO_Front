@@ -863,7 +863,7 @@ class PointTable extends React.Component {
                                     Color={"#1890ff"}
                                 />
                             </Col>
-                            <Col span={2}>
+                            <Col span={6}>
                                 <Search
                                     DisplayFilter={false}
                                 />
