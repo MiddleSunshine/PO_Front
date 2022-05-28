@@ -819,7 +819,7 @@ class PointTable extends React.Component {
                                     }}
                                 ></Button>
                             </Col>
-                            <Col span={2}>
+                            <Col span={2} offset={1}>
                                 <Button
                                     type={"primary"}
                                     icon={<PlusCircleOutlined/>}
@@ -869,7 +869,7 @@ class PointTable extends React.Component {
                             {/*        Point List*/}
                             {/*    </Button>*/}
                             {/*</Col>*/}
-                            <Col span={2}>
+                            <Col span={2} offset={1}>
                                 <Links
                                     PID={this.state.id}
                                     Label={"Options"}

@@ -49,7 +49,7 @@ class Index extends React.Component {
                         justify={"center"}
                         align={"middle"}
                     >
-                        <Col span={10}>
+                        <Col span={14}>
                             <Search />
                         </Col>
                     </Row>
