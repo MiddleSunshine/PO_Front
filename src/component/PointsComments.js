@@ -1,7 +1,7 @@
 import React from "react";
 import {requestApi} from "../config/functions";
 import {Button, Comment, Form, Input, List, message, Modal, Tabs} from "antd";
-import SimpleMDE from "react-simplemde-editor";
+import MDEditor from '@uiw/react-md-editor';
 import MarkdownPreview from "@uiw/react-markdown-preview";
 
 class PointsComments extends React.Component{
@@ -188,8 +188,8 @@ class PointsComments extends React.Component{
                                                     }
                                                     content={
                                                         Item.EditMode
-                                                            ?<SimpleMDE
-                                                                spellChecker={false}
+                                                            ?<MDEditor
+                                                                preview={"edit"}
                                                                 value={Item.Md}
                                                                 onChange={(newValue)=>{
                                                                     this.update(Item.ID,'Md',newValue);
@@ -231,8 +231,8 @@ class PointsComments extends React.Component{
                             <Form.Item
                                 label={"Note"}
                             >
-                                <SimpleMDE
-                                    spellChecker={false}
+                                <MDEditor
+                                    preview={"edit"}
                                     value={this.state.newMd}
                                     onChange={(newValue)=>{
                                         this.setState({

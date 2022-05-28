@@ -5,7 +5,7 @@ import {
     PlusCircleOutlined,
     InfoCircleOutlined
 } from '@ant-design/icons';
-import SimpleMDE from "react-simplemde-editor";
+import MDEditor from '@uiw/react-md-editor';
 
 import "../css/PlanDetail.css"
 import moment from "moment";
@@ -342,8 +342,8 @@ class PlanDetail extends React.Component {
                         <Form.Item
                             label={"Note"}
                         >
-                            <SimpleMDE
-                                spellChecker={false}
+                            <MDEditor
+                                preview={"edit"}
                                 value={this.state.editPlan.Note}
                                 onChange={(value) => {
                                     this.handleModalChange('Note', value);

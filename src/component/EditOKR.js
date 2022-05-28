@@ -1,6 +1,6 @@
 import React from "react";
 import {Button, Col, Form, Input, message, Row, Select} from "antd";
-import SimpleMDE from "react-simplemde-editor";
+import MDEditor from '@uiw/react-md-editor';
 import MarkdownPreview from "@uiw/react-markdown-preview";
 import {requestApi} from "../config/functions";
 
@@ -164,8 +164,8 @@ class EditOKR extends React.Component{
                         <Form.Item>
                             {
                                 this.state.EditSummary
-                                    ?<SimpleMDE
-                                        spellChecker={false}
+                                    ?<MDEditor
+                                        preview={"edit"}
                                         value={this.state.OKR.Summary}
                                         onChange={(newValue)=>{
                                             this.handleChange('Summary',newValue)

@@ -2,7 +2,7 @@ import React from "react";
 import {requestApi} from "../config/functions";
 import {Button, DatePicker, Drawer, Form, message, Select} from "antd";
 import TextArea from "antd/es/input/TextArea";
-import SimpleMDE from "react-simplemde-editor";
+import MDEditor from '@uiw/react-md-editor';
 import MarkdownPreview from '@uiw/react-markdown-preview';
 import moment from "moment";
 import Label from "./Label";
@@ -193,8 +193,8 @@ class TodoItem extends React.Component{
                     >
                         {
                             this.state.editMode
-                            ?<SimpleMDE
-                                spellChecker={false}
+                            ?<MDEditor
+                                preview={"edit"}
                                 value={this.state.GTD.note}
                                 onChange={(newValue)=>{
                                     this.setState({

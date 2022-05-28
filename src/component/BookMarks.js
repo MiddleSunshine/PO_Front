@@ -1,6 +1,6 @@
 import React from "react";
 import {Button, Col, Comment, Divider, Drawer, Form, Input, List, message, Modal, Popconfirm, Row} from "antd";
-import SimpleMDE from "react-simplemde-editor";
+import MDEditor from '@uiw/react-md-editor';
 import {requestApi} from "../config/functions";
 import MarkdownPreview from "@uiw/react-markdown-preview";
 import {
@@ -342,8 +342,8 @@ export class NewBookMark extends React.Component{
                         />
                     </Form.Item>
                     <Form.Item>
-                        <SimpleMDE
-                            spellChecker={false}
+                        <MDEditor
+                            preview={"edit"}
                             value={this.state.Note}
                             onChange={(newValue)=>{
                                 this.setState({
