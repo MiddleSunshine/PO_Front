@@ -1,12 +1,11 @@
 import React from "react";
 import {Form, Input, Select, Button, message, Switch, Row, Col, Drawer, InputNumber, Badge} from "antd";
-import SimpleMDE from "react-simplemde-editor";
 import "easymde/dist/easymde.min.css";
 import config, {SEARCHABLE_POINT, SEARCHABLE_TITLE} from "../config/setting";
 import {openLocalMarkdownFile, requestApi} from "../config/functions";
 import MarkdownPreview from '@uiw/react-markdown-preview';
 import PointsComments from "./PointsComments";
-import {ClusterOutlined} from '@ant-design/icons';
+import MDEditor from '@uiw/react-md-editor';
 import TextArea from "antd/es/input/TextArea";
 import Links from "./Links";
 const {Option}=Select;
@@ -175,7 +174,7 @@ class PointEdit extends React.Component{
                     <Form.Item
                         label={
                             <Links
-                                PID={this.state.point.ID}
+                                PID={this.state.ID}
                                 Color={"#1890ff"}
                             />
                         }
@@ -303,8 +302,9 @@ class PointEdit extends React.Component{
                         >
                             {
                                 this.state.editFile
-                                    ?<SimpleMDE
-                                        spellChecker={false}
+                                    ?<MDEditor
+                                        height={400}
+                                        preview={"edit"}
                                         value={this.state.fileContent}
                                         onChange={(value)=>{
                                             let point={

@@ -1,7 +1,7 @@
 import React from "react";
 import {Button, DatePicker, Form, Input, message, Select} from "antd";
 import {requestApi} from "../config/functions";
-import SimpleMDE from "react-simplemde-editor";
+import MDEditor from '@uiw/react-md-editor';
 import MarkdownPreview from "@uiw/react-markdown-preview";
 
 var dateFormat = "YYYY-MM-DD HH:mm:ss";
@@ -139,8 +139,8 @@ class GTDCategory extends React.Component{
                     >
                         {
                             this.state.editMode
-                            ?<SimpleMDE
-                                spellChecker={false}
+                            ?<MDEditor
+                                preview={"edit"}
                                 value={this.state.Category.note}
                                 onChange={(newValue)=>{
                                     this.handleChange('note',newValue);

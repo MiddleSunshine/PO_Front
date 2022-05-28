@@ -37,7 +37,7 @@ import {PointMindMapRouter} from "./PointMindMap";
 import Search from "../component/Search";
 import PointNew, {NewPoint} from "../component/PointNew";
 import Links from "../component/Links";
-import SimpleMDE from "react-simplemde-editor";
+import MDEditor from '@uiw/react-md-editor';
 import MarkdownPreview from "@uiw/react-markdown-preview";
 import {deleteConnection, deleteConnectionCheck, updateConnectionNote} from "../component/PointConnection";
 
@@ -101,6 +101,8 @@ class PointTable extends React.Component {
             newPointCollector: "",
             collectorMode: POINT_COLLECTOR_MODE_LIST,
             //
+            pointEditPartWidth:0,
+            //
             pointConnectionId:0
         }
         this.getPointsByPID = this.getPointsByPID.bind(this);
@@ -152,7 +154,8 @@ class PointTable extends React.Component {
     openDrawer(Point, openDrawer = true) {
         this.setState({
             editPoint: Point,
-            editPartVisible: openDrawer
+            editPartVisible: openDrawer,
+            pointEditPartWidth:openDrawer?10:0
         });
     }
 
@@ -165,7 +168,8 @@ class PointTable extends React.Component {
                     pointListVisible: false,
                     newPointModalVisible: false,
                     editPoint: {},
-                    newPointPID:-1
+                    newPointPID:-1,
+                    pointEditPartWidth:0
                 })
             })
             .then(() => {
@@ -744,7 +748,8 @@ class PointTable extends React.Component {
                                                             <Col span={24}>
                                                                 {
                                                                     point.EditMode
-                                                                        ?<SimpleMDE
+                                                                        ?<MDEditor
+                                                                            preview={"edit"}
                                                                             spellChecker={false}
                                                                             value={point.point}
                                                                             onChange={(newValue) => {
@@ -773,7 +778,7 @@ class PointTable extends React.Component {
                                 </Row>
                         }
                     </Col>
-                    <Col span={24 -this.state.pointCollectorWidth}>
+                    <Col span={24 - this.state.pointEditPartWidth -this.state.pointCollectorWidth}>
                         <Row>
                             <Col span={24}>
                                 <MenuList/>
@@ -819,7 +824,7 @@ class PointTable extends React.Component {
                                     }}
                                 ></Button>
                             </Col>
-                            <Col span={2} offset={1}>
+                            <Col span={2}>
                                 <Button
                                     type={"primary"}
                                     icon={<PlusCircleOutlined/>}
@@ -869,14 +874,14 @@ class PointTable extends React.Component {
                             {/*        Point List*/}
                             {/*    </Button>*/}
                             {/*</Col>*/}
-                            <Col span={2} offset={1}>
+                            <Col span={2}>
                                 <Links
                                     PID={this.state.id}
                                     Label={"Options"}
                                     Color={"#1890ff"}
                                 />
                             </Col>
-                            <Col span={8}>
+                            <Col span={6}>
                                 <Search
                                     DisplayFilter={false}
                                 />
@@ -1178,6 +1183,8 @@ class PointTable extends React.Component {
                         <Favourite/>
                         <Row>
                             <Drawer
+                                maskClosable={false}
+                                mask={false}
                                 title={
                                     <Button
                                         type={"link"}
