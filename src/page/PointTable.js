@@ -994,7 +994,7 @@ class PointTable extends React.Component {
                                                                                         >
                                                                                         </Button>
                                                                                     </Col>
-                                                                                    <Col span={23-point.connection_note?11:0}>
+                                                                                    <Col span={23-(point.connection_note?11:0)}>
                                                                                         <Button
                                                                                             ghost={true}
                                                                                             onClick={() => {
@@ -1123,7 +1123,7 @@ class PointTable extends React.Component {
                                                                                             >
                                                                                             </Button>
                                                                                         </Col>
-                                                                                        <Col span={23-subPoint.connection_note?11:0}>
+                                                                                        <Col span={23-(subPoint.connection_note?11:0)}>
                                                                                             <span
                                                                                                 style={{
                                                                                                     fontSize: insideActive ? "16px" : "14px",
