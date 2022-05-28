@@ -343,6 +343,7 @@ export class NewBookMark extends React.Component{
                     </Form.Item>
                     <Form.Item>
                         <SimpleMDE
+                            spellChecker={false}
                             value={this.state.Note}
                             onChange={(newValue)=>{
                                 this.setState({

@@ -343,6 +343,7 @@ class PlanDetail extends React.Component {
                             label={"Note"}
                         >
                             <SimpleMDE
+                                spellChecker={false}
                                 value={this.state.editPlan.Note}
                                 onChange={(value) => {
                                     this.handleModalChange('Note', value);

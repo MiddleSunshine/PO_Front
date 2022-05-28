@@ -165,6 +165,7 @@ class EditOKR extends React.Component{
                             {
                                 this.state.EditSummary
                                     ?<SimpleMDE
+                                        spellChecker={false}
                                         value={this.state.OKR.Summary}
                                         onChange={(newValue)=>{
                                             this.handleChange('Summary',newValue)

@@ -304,6 +304,7 @@ class PointEdit extends React.Component{
                             {
                                 this.state.editFile
                                     ?<SimpleMDE
+                                        spellChecker={false}
                                         value={this.state.fileContent}
                                         onChange={(value)=>{
                                             let point={

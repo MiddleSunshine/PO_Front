@@ -140,6 +140,7 @@ class GTDCategory extends React.Component{
                         {
                             this.state.editMode
                             ?<SimpleMDE
+                                spellChecker={false}
                                 value={this.state.Category.note}
                                 onChange={(newValue)=>{
                                     this.handleChange('note',newValue);

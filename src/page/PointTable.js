@@ -101,8 +101,6 @@ class PointTable extends React.Component {
             newPointCollector: "",
             collectorMode: POINT_COLLECTOR_MODE_LIST,
             //
-            pointEditPartWidth:0,
-            //
             pointConnectionId:0
         }
         this.getPointsByPID = this.getPointsByPID.bind(this);
@@ -154,8 +152,7 @@ class PointTable extends React.Component {
     openDrawer(Point, openDrawer = true) {
         this.setState({
             editPoint: Point,
-            editPartVisible: openDrawer,
-            pointEditPartWidth:openDrawer?10:0
+            editPartVisible: openDrawer
         });
     }
 
@@ -168,8 +165,7 @@ class PointTable extends React.Component {
                     pointListVisible: false,
                     newPointModalVisible: false,
                     editPoint: {},
-                    newPointPID:-1,
-                    pointEditPartWidth:0
+                    newPointPID:-1
                 })
             })
             .then(() => {
@@ -777,7 +773,7 @@ class PointTable extends React.Component {
                                 </Row>
                         }
                     </Col>
-                    <Col span={24 - this.state.pointEditPartWidth -this.state.pointCollectorWidth}>
+                    <Col span={24 -this.state.pointCollectorWidth}>
                         <Row>
                             <Col span={24}>
                                 <MenuList/>
@@ -1182,8 +1178,6 @@ class PointTable extends React.Component {
                         <Favourite/>
                         <Row>
                             <Drawer
-                                maskClosable={false}
-                                mask={false}
                                 title={
                                     <Button
                                         type={"link"}

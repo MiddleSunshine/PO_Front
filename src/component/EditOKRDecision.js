@@ -187,6 +187,7 @@ class EditOKRDecision extends React.Component{
                                 {
                                     this.state.EditNode
                                         ?<SimpleMDE
+                                            spellChecker={false}
                                             value={this.state.OKR_Decision.note}
                                             onChange={(newNote)=>{
                                                 this.handleChange('note',newNote);

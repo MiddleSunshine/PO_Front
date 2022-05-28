@@ -194,6 +194,7 @@ class TodoItem extends React.Component{
                         {
                             this.state.editMode
                             ?<SimpleMDE
+                                spellChecker={false}
                                 value={this.state.GTD.note}
                                 onChange={(newValue)=>{
                                     this.setState({

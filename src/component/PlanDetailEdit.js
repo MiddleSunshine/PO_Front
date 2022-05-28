@@ -145,6 +145,7 @@ class PlanDetailEdit extends React.Component {
                     label={"Note"}
                 >
                     <SimpleMDE
+                        spellChecker={false}
                         value={this.state.plan.Note}
                         onChange={(value) => {
                             this.handleChange('Note', value)

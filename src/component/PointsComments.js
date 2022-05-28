@@ -189,6 +189,7 @@ class PointsComments extends React.Component{
                                                     content={
                                                         Item.EditMode
                                                             ?<SimpleMDE
+                                                                spellChecker={false}
                                                                 value={Item.Md}
                                                                 onChange={(newValue)=>{
                                                                     this.update(Item.ID,'Md',newValue);
@@ -231,6 +232,7 @@ class PointsComments extends React.Component{
                                 label={"Note"}
                             >
                                 <SimpleMDE
+                                    spellChecker={false}
                                     value={this.state.newMd}
                                     onChange={(newValue)=>{
                                         this.setState({

@@ -404,6 +404,7 @@ class Schedule extends React.Component {
                         label={"Note"}
                     >
                         <SimpleMDE
+                            spellChecker={false}
                             value={this.state.planItem.Note}
                             onChange={(value) => {
                                 this.handleModalInputChange('Note', value);
