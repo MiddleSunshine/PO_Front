@@ -2,7 +2,6 @@ import React from 'react'
 import {Tldraw} from "@tldraw/tldraw";
 import {requestApi} from "../config/functions";
 import {message} from "antd/es";
-import {Button} from "antd";
 
 class WhiteBoard extends React.Component{
     constructor(props) {
@@ -17,6 +16,7 @@ class WhiteBoard extends React.Component{
 
     componentDidMount() {
         this.getDocument(this.state.ProjectName);
+        window.document.title=this.state.ProjectName
     }
 
     getDocument(filePath){
@@ -30,7 +30,7 @@ class WhiteBoard extends React.Component{
             .then((res)=>{
                 res.json().then((json)=>{
                     if (json.Status==1){
-                        if (json.Data.document.length){
+                        if (json.Data.document){
                             this.setState({
                                 document:JSON.parse(json.Data.document)
                             });
@@ -39,19 +39,16 @@ class WhiteBoard extends React.Component{
                         message.warn(json.Message)
                     }
                 })
-                    .then(()=>{
-                        console.log(this.state.document)
-                    })
             })
     }
 
-    saveProject(){
+    saveProject(document){
         requestApi("/index.php?action=WhiteBoard&method=SaveProject",{
             mode:"cors",
             method:"post",
             body:JSON.stringify({
                 ProjectName:this.state.ProjectName,
-                document:this.state.document
+                document:document
             })
         })
             .then((res)=>{
@@ -66,29 +63,20 @@ class WhiteBoard extends React.Component{
     }
 
     render() {
+        console.log(this.state.document)
         return <div>
             {
-                this.state.document.length
+                this.state.document!={}
                     ? <Tldraw
                         document={this.state.document}
-                        onChange={(app)=>{
-                            this.setState({
-                                document:app.document
-                            })
-                        }}
                         onSaveProject={(app)=>{
-                            this.saveProject();
+                            this.saveProject(app.document);
                             return false;
                         }}
                     />
                     :<Tldraw
-                        onChange={(app)=>{
-                            this.setState({
-                                document:app.document
-                            })
-                        }}
-                        onSaveProject={()=>{
-                            this.saveProject();
+                        onSaveProject={(app)=>{
+                            this.saveProject(app.document);
                             return false;
                         }}
                     />
