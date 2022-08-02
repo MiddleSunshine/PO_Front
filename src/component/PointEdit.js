@@ -8,6 +8,7 @@ import PointsComments from "./PointsComments";
 import MDEditor from '@uiw/react-md-editor';
 import TextArea from "antd/es/input/TextArea";
 import Links from "./Links";
+import WhiteBoardList from "./WhiteBoardList";
 const {Option}=Select;
 
 // markdown 插件仓库位置
@@ -171,6 +172,13 @@ class PointEdit extends React.Component{
                     labelCol={{ span: 4 }}
                     wrapperCol={{ span: 16 }}
                 >
+                    <Form.Item
+                        label={"WhiteBoard"}
+                    >
+                        <WhiteBoardList
+                            PID={this.state.ID}
+                        />
+                    </Form.Item>
                     <Form.Item
                         label={
                             <Links

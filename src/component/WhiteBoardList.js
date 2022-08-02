@@ -26,6 +26,9 @@ class WhiteBoardList extends React.Component{
     }
 
     getProjects(PID){
+        if (!PID){
+            return false;
+        }
         requestApi("/index.php?action=WhiteBoard&mehtod=Projects&PID="+PID)
             .then((res)=>{
                 res.json().then((json)=>{
