@@ -29,7 +29,7 @@ class WhiteBoardList extends React.Component{
         if (!PID){
             return false;
         }
-        requestApi("/index.php?action=WhiteBoard&mehtod=Projects&PID="+PID)
+        requestApi("/index.php?action=WhiteBoard&method=Projects&PID="+PID)
             .then((res)=>{
                 res.json().then((json)=>{
                     if (json.Status==1){
@@ -123,7 +123,7 @@ class WhiteBoardList extends React.Component{
                                     actions={[
                                         <Button
                                             type={"link"}
-                                            href={"/WhiteBoard/"+project.FilePath}
+                                            href={"/WhiteBoard/"+project.FilePath.replace(/\//g,'=')}
                                             target={"_blank"}
                                             icon={<FormOutlined />}
                                         ></Button>,
@@ -136,7 +136,9 @@ class WhiteBoardList extends React.Component{
                                             }}
                                         ></Button>
                                     ]}
-                                />
+                                >
+                                    {project.FileName}
+                                </List.Item>
                             )
                         }}
                     />

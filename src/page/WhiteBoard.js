@@ -9,7 +9,7 @@ class WhiteBoard extends React.Component{
         super(props);
         this.state={
             document:{},
-            ProjectName:props.match.params.ProjectName
+            ProjectName:props.match.params.ProjectName.replace(/=/g,'/')
         }
         this.getDocument=this.getDocument.bind(this);
         this.saveProject=this.saveProject.bind(this);
@@ -30,13 +30,18 @@ class WhiteBoard extends React.Component{
             .then((res)=>{
                 res.json().then((json)=>{
                     if (json.Status==1){
-                        this.setState({
-                            document:JSON.parse(json.Data.document)
-                        });
+                        if (json.Data.document.length){
+                            this.setState({
+                                document:JSON.parse(json.Data.document)
+                            });
+                        }
                     }else{
                         message.warn(json.Message)
                     }
                 })
+                    .then(()=>{
+                        console.log(this.state.document)
+                    })
             })
     }
 
@@ -62,23 +67,34 @@ class WhiteBoard extends React.Component{
 
     render() {
         return <div>
-            <Button
-                type={"primary"}
-                onClick={()=>{
-                    this.saveProject();
-                }}
-            >
-                Save Project
-            </Button>
-            <hr/>
-            <Tldraw
-                document={this.state.document}
-                onChange={(app)=>{
-                    this.setState({
-                        document:app.document
-                    })
-                }}
-            />
+            {
+                this.state.document.length
+                    ? <Tldraw
+                        document={this.state.document}
+                        onChange={(app)=>{
+                            this.setState({
+                                document:app.document
+                            })
+                        }}
+                        onSaveProject={(app)=>{
+                            this.saveProject();
+                            return false;
+                        }}
+                    />
+                    :<Tldraw
+                        onChange={(app)=>{
+                            this.setState({
+                                document:app.document
+                            })
+                        }}
+                        onSaveProject={()=>{
+                            this.saveProject();
+                            return false;
+                        }}
+                    />
+
+            }
+
         </div>
     }
 }

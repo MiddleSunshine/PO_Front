@@ -173,13 +173,6 @@ class PointEdit extends React.Component{
                     wrapperCol={{ span: 16 }}
                 >
                     <Form.Item
-                        label={"WhiteBoard"}
-                    >
-                        <WhiteBoardList
-                            PID={this.state.ID}
-                        />
-                    </Form.Item>
-                    <Form.Item
                         label={
                             <Links
                                 PID={this.state.ID}
@@ -358,6 +351,13 @@ class PointEdit extends React.Component{
                                 )
                             })}
                         </Select>
+                    </Form.Item>
+                    <Form.Item
+                        label={"WhiteBoard"}
+                    >
+                        <WhiteBoardList
+                            PID={this.state.ID}
+                        />
                     </Form.Item>
                 </Form>
                 <Drawer
