@@ -7,7 +7,8 @@ class WhiteBoard extends React.Component{
     constructor(props) {
         super(props);
         this.state={
-            document:{},
+            document: {},
+            isInitDocument:false,
             ProjectName:props.match.params.ProjectName.replace(/=/g,'/')
         }
         this.getDocument=this.getDocument.bind(this);
@@ -30,11 +31,11 @@ class WhiteBoard extends React.Component{
             .then((res)=>{
                 res.json().then((json)=>{
                     if (json.Status==1){
-                        if (json.Data.document){
-                            this.setState({
-                                document:JSON.parse(json.Data.document)
-                            });
-                        }
+                        let document=json.Data.document?JSON.parse(json.Data.document):false;
+                        this.setState({
+                            document:document,
+                            isInitDocument:document==false?false:true
+                        });
                     }else{
                         message.warn(json.Message)
                     }
@@ -48,7 +49,7 @@ class WhiteBoard extends React.Component{
             method:"post",
             body:JSON.stringify({
                 ProjectName:this.state.ProjectName,
-                document:document
+                document:JSON.stringify(document)
             })
         })
             .then((res)=>{
@@ -63,10 +64,9 @@ class WhiteBoard extends React.Component{
     }
 
     render() {
-        console.log(this.state.document)
         return <div>
             {
-                this.state.document!={}
+                this.state.isInitDocument
                     ? <Tldraw
                         document={this.state.document}
                         onSaveProject={(app)=>{
