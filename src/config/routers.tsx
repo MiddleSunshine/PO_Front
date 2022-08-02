@@ -1,5 +1,4 @@
 import Index from '../page/index'
-import Collector from "../page/Collector";
 import Summary from "../page/Summary";
 import Report from "../page/Report";
 import Willing from "../page/Willing";
@@ -24,6 +23,7 @@ import PointsSang from "../page/PointsSang";
 import Actions from "../page/Actions";
 import PointMindMap from "../page/PointMindMap";
 import CommentList from "../page/CommentList";
+import WhiteBoard from "../page/WhiteBoard";
 
 interface router {
     path: string,
@@ -43,6 +43,10 @@ const routers: Array<router> = [
     {
         path: "/Psychotherapy/CheckList",
         component: CheckList
+    },
+    {
+        path:"/WhiteBoard/:ProjectName",
+        component:WhiteBoard
     },
     {
         path: "/PointSummaryEdit/:ID/:Edit",

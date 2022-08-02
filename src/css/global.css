@@ -9,3 +9,10 @@
 .ES_Enhance{
   color: #FF453A;
 }
+
+.ant-modal-content{
+  max-height: 800px;
+  overflow: scroll;
+  overflow-y: auto;
+  overflow-x: auto;
+}

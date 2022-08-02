@@ -1,7 +1,7 @@
 import React from "react";
 import {Button, Col, Form, message, Modal, Row, Select} from "antd";
 import TextArea from "antd/es/input/TextArea";
-import SimpleMDE from "react-simplemde-editor";
+import MDEditor from '@uiw/react-md-editor';
 import MarkdownPreview from "@uiw/react-markdown-preview";
 import {requestApi} from "../config/functions";
 
@@ -186,7 +186,8 @@ class EditOKRDecision extends React.Component{
                             <Form.Item>
                                 {
                                     this.state.EditNode
-                                        ?<SimpleMDE
+                                        ?<MDEditor
+                                            preview={"edit"}
                                             value={this.state.OKR_Decision.note}
                                             onChange={(newNote)=>{
                                                 this.handleChange('note',newNote);

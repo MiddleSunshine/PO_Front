@@ -1,7 +1,7 @@
 import React from "react";
 import { Form, Input, Select, Button, message } from 'antd';
 import config from "../config/setting";
-import SimpleMDE from "react-simplemde-editor";
+import MDEditor from '@uiw/react-md-editor';
 import { requestApi } from "../config/functions";
 import { TYPE_SUB_TITLE, TYPE_TITLE } from "../config/setting";
 
@@ -144,7 +144,8 @@ class PlanDetailEdit extends React.Component {
                 <Form.Item
                     label={"Note"}
                 >
-                    <SimpleMDE
+                    <MDEditor
+                        preview={"edit"}
                         value={this.state.plan.Note}
                         onChange={(value) => {
                             this.handleChange('Note', value)

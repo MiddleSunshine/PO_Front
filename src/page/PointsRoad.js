@@ -8,6 +8,7 @@ import PointEdit from "../component/PointEdit";
 // import {DownCircleOutlined,UpCircleOutlined} from '@ant-design/icons';
 import config from "../config/setting";
 import "../css/PointRoad.css";
+import Links from "../component/Links";
 
 const TOP_Key="top";
 const BOTTOM_Key="bottom";
@@ -103,7 +104,10 @@ class PointsRoad extends React.Component{
                                                             href={"/pointTable/"+point.Point.ID}
                                                             target={"_blank"}
                                                         >
-                                                            {point.Point.status}
+                                                            <Links
+                                                                PID={point.Point.ID}
+                                                                Label={point.Point.status}
+                                                            />
                                                         </a>
                                                         }
                                                         color={config.statusBackGroupColor[point.Point.status]}

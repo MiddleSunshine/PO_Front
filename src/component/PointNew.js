@@ -1,11 +1,18 @@
 import React from "react";
 import {requestApi} from "../config/functions";
-import {Button, Checkbox, Divider, Form, Input, message, Modal, Select} from "antd";
+import {Button, Checkbox, Divider, Form, Input, message, Modal, Select,Row,Col} from "antd";
 import config, { SEARCHABLE_POINT, SEARCHABLE_TITLE } from "../config/setting";
 import MarkdownPreview from "@uiw/react-markdown-preview";
+import "../css/PointNew.css";
+import {
+    CloseOutlined,
+    FormOutlined,
+    UnorderedListOutlined,
+    DeploymentUnitOutlined
+} from '@ant-design/icons';
+import Links from "./Links";
 
-
-export function NewPoint(PID,searchKeyword,newPointType,isTitle=false){
+export function NewPoint(PID,searchKeyword,newPointType,isTitle=false,connection_note=''){
     let newPoint = {
         keyword: searchKeyword,
         SearchAble: newPointType
@@ -19,7 +26,8 @@ export function NewPoint(PID,searchKeyword,newPointType,isTitle=false){
         mode: "cors",
         body: JSON.stringify({
             point: newPoint,
-            PID: PID
+            PID: PID,
+            connection_note:connection_note
         })
     })
         .then((res)=>{
@@ -35,8 +43,14 @@ export function NewPoint(PID,searchKeyword,newPointType,isTitle=false){
         })
 }
 
-export function NewPointConnection(PID,SubPID){
-    return requestApi("/index.php?action=PointsConnection&method=Update&PID="+PID+"&SubPID="+SubPID)
+export function NewPointConnection(PID,SubPID,note=''){
+    return requestApi("/index.php?action=PointsConnection&method=Update&PID="+PID+"&SubPID="+SubPID,{
+        mode:"cors",
+        method:"post",
+        body:JSON.stringify({
+            note:note
+        })
+    })
         .then((res)=>{
             res.json().then((json)=>{
                 if (json.Status==1){
@@ -48,14 +62,17 @@ export function NewPointConnection(PID,SubPID){
         })
 }
 
+const SELECT_UNCHECK_VALUE=-1;
+
 class PointNew extends React.Component{
     constructor(props) {
         super(props);
         this.state={
             PrePID:props.PID,
-            selectedPID:0,
+            selectedPID:SELECT_UNCHECK_VALUE,
             newPointID:0,
             newPointType:SEARCHABLE_POINT,
+            note:"",
             searchKeyword:"",
             SearchPointList:[]
         }
@@ -76,7 +93,7 @@ class PointNew extends React.Component{
         (async ()=>{})()
             .then(()=>{
                 this.setState({
-                    selectedPID:0,
+                    selectedPID:SELECT_UNCHECK_VALUE,
                     newPointID:0,
                     newPointType:SEARCHABLE_POINT,
                     searchKeyword:"",
@@ -90,20 +107,24 @@ class PointNew extends React.Component{
     }
 
     newPoint(){
-        if ((this.state.selectedPID-0)>0){
-            NewPointConnection(this.state.PrePID,this.state.selectedPID).then(()=>{
+        if ((this.state.selectedPID-0)!=SELECT_UNCHECK_VALUE){
+            NewPointConnection(this.state.PrePID,this.state.selectedPID,this.state.note).then(()=>{
                 this.closeModal();
             })
         }else{
-            NewPoint(this.state.PrePID,this.state.searchKeyword,this.state.newPointType,this.state.newPointType == SEARCHABLE_TITLE)
+            NewPoint(this.state.PrePID,this.state.searchKeyword,this.state.newPointType,this.state.newPointType == SEARCHABLE_TITLE,this.state.note)
                 .then(()=>{
                     this.closeModal();
                 })
        }
     }
 
-    searchPoint(keyword){
-        requestApi("/index.php?action=Points&method=GlobalSearch", {
+    searchPoint(keyword,isGlobal=true){
+        let url="Search";
+        if (isGlobal){
+            url="GlobalSearch";
+        }
+        requestApi("/index.php?action=Points&method="+url, {
             method: "post",
             mode: "cors",
             body: JSON.stringify({
@@ -114,7 +135,7 @@ class PointNew extends React.Component{
                 res.json().then((json) => {
                     if (json.Status==1){
                         this.setState({
-                            SearchPointList: json.Data.points
+                            SearchPointList: json.Data.hasOwnProperty('points')?json.Data.points:json.Data
                         })
                     }else{
                         message.warn(json.Message);
@@ -125,53 +146,98 @@ class PointNew extends React.Component{
 
     render() {
         return <Modal
+            className={"PointNew"}
             visible={(this.state.PrePID-0)>-1}
-            width={1000}
+            width={1300}
             onCancel={()=>{
                 this.closeModal();
             }}
             onOk={()=>{
                 this.newPoint();
             }}
+            footer={null}
         >
             <Form>
                 <Form.Item>
                     <Divider
                         orientation={"left"}
                     >
-                        <Select
-                            value={this.state.newPointType}
-                            onChange={(newValue)=>{
-                                this.setState({
-                                    newPointType:newValue
-                                })
+                        <Button
+                            type={"primary"}
+                            onClick={()=>{
+                                this.newPoint();
                             }}
                         >
-                            <Select.Option
-                                value={SEARCHABLE_POINT}
-                            >
-                                Point
-                            </Select.Option>
-                            <Select.Option
-                                value={SEARCHABLE_TITLE}
-                            >
-                                Title
-                            </Select.Option>
-                        </Select>
+                            Save
+                        </Button>
                     </Divider>
                 </Form.Item>
                 <Form.Item>
-                    <Input
-                        value={this.state.searchKeyword}
-                        onChange={(e)=>{
-                            this.setState({
-                                searchKeyword:e.target.value
-                            })
-                        }}
-                        onPressEnter={()=>{
-                            this.searchPoint(this.state.searchKeyword)
-                        }}
-                    />
+                    <Row>
+                        <Col span={23}>
+                            <Input
+                                placeholder={"please input the note"}
+                                value={this.state.note}
+                                onChange={(e)=>{
+                                    this.setState({
+                                        note:e.target.value
+                                    })
+                                }}
+                            />
+                        </Col>
+                    </Row>
+                    <br/>
+                    <Row>
+                        <Col span={3}>
+                            <Select
+                                value={this.state.newPointType}
+                                onChange={(newValue)=>{
+                                    this.setState({
+                                        newPointType:newValue
+                                    })
+                                }}
+                            >
+                                <Select.Option
+                                    value={SEARCHABLE_POINT}
+                                >
+                                    Point
+                                </Select.Option>
+                                <Select.Option
+                                    value={SEARCHABLE_TITLE}
+                                >
+                                    Title
+                                </Select.Option>
+                            </Select>
+                        </Col>
+                        <Col span={9} offset={1}>
+                            <Input
+                                placeholder={"Simple Search"}
+                                value={this.state.searchKeyword}
+                                onChange={(e)=>{
+                                    this.setState({
+                                        searchKeyword:e.target.value
+                                    })
+                                }}
+                                onPressEnter={()=>{
+                                    this.searchPoint(this.state.searchKeyword,false)
+                                }}
+                            />
+                        </Col>
+                        <Col span={9} offset={1}>
+                            <Input
+                                placeholder={"Global Search"}
+                                value={this.state.searchKeyword}
+                                onChange={(e)=>{
+                                    this.setState({
+                                        searchKeyword:e.target.value
+                                    })
+                                }}
+                                onPressEnter={()=>{
+                                    this.searchPoint(this.state.searchKeyword)
+                                }}
+                            />
+                        </Col>
+                    </Row>
                 </Form.Item>
                 <Form.Item>
                     <Divider
@@ -182,25 +248,44 @@ class PointNew extends React.Component{
                 </Form.Item>
                 {
                     this.state.SearchPointList.map((Point,index)=>{
+                        let style={};
+                        if (Point.keyword==this.state.searchKeyword){
+                            style.color="red";
+                            style.fontWeight="bolder";
+                        }
                         return(
                             <div
                                 key={index}
                             >
                                 <Form.Item>
-                                    <Checkbox
-                                        checked={this.state.selectedPID==Point.ID}
-                                        onChange={()=>{
-                                            this.setState({
-                                                selectedPID:Point.ID
-                                            })
-                                        }}
-                                    >
-                                        {Point.keyword}
-                                    </Checkbox>
+                                    <Row>
+                                        <Col span={20}>
+                                            <Checkbox
+                                                checked={this.state.selectedPID==Point.ID}
+                                                onChange={(e)=>{
+                                                    this.setState({
+                                                        selectedPID:e.target.checked?Point.ID:SELECT_UNCHECK_VALUE
+                                                    })
+                                                }}
+                                            >
+                                        <span style={style}>
+                                            {Point.keyword}
+                                        </span>
+                                            </Checkbox>
+                                        </Col>
+                                        <Col span={2}>
+                                            <Links
+                                                PID={Point.ID}
+                                                Color={"#1890ff"}
+                                            />
+                                        </Col>
+                                    </Row>
+
                                 </Form.Item>
                                 {
-                                    (Point.Highlight.note || Point.Highlight.markdown_content)
-                                        ?<Form.Item
+                                    Point.Highlight
+                                        ?(Point.Highlight.note || Point.Highlight.markdown_content)
+                                            ?<Form.Item
                                                 key={index}
                                             >
                                                 <MarkdownPreview
@@ -220,6 +305,7 @@ class PointNew extends React.Component{
                                                 />
                                             </Form.Item>
                                             :''
+                                        :''
                                 }
                             </div>
 

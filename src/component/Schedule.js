@@ -13,7 +13,7 @@ import {
     Tooltip,
     Timeline, Button
 } from 'antd';
-import SimpleMDE from "react-simplemde-editor";
+import MDEditor from '@uiw/react-md-editor';
 import moment from "moment";
 import { now, requestApi } from "../config/functions";
 import MenuList from './MenuList';
@@ -403,7 +403,8 @@ class Schedule extends React.Component {
                     <Form.Item
                         label={"Note"}
                     >
-                        <SimpleMDE
+                        <MDEditor
+                            preview={"edit"}
                             value={this.state.planItem.Note}
                             onChange={(value) => {
                                 this.handleModalInputChange('Note', value);

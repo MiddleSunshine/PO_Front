@@ -19,6 +19,9 @@
     padding: 10px 0px;
 }
 
+.Point_Table .point_collector{
+}
+
 .Point_Table .title{
     white-space: nowrap;
     overflow: hidden;

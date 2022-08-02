@@ -1,6 +1,6 @@
 import React from "react";
 import {Button, Comment, Divider, Input, Row, Col, Affix, InputNumber, message, Popconfirm, Drawer} from "antd";
-import SimpleMDE from "react-simplemde-editor";
+import MDEditor from '@uiw/react-md-editor';
 import MarkdownPreview from "@uiw/react-markdown-preview";
 import {requestApi} from "../config/functions";
 import {FormOutlined, SaveOutlined,DeleteOutlined} from '@ant-design/icons';

@@ -1,14 +1,14 @@
 import React from "react";
 import {Form, Input, Select, Button, message, Switch, Row, Col, Drawer, InputNumber, Badge} from "antd";
-import SimpleMDE from "react-simplemde-editor";
 import "easymde/dist/easymde.min.css";
 import config, {SEARCHABLE_POINT, SEARCHABLE_TITLE} from "../config/setting";
 import {openLocalMarkdownFile, requestApi} from "../config/functions";
 import MarkdownPreview from '@uiw/react-markdown-preview';
 import PointsComments from "./PointsComments";
-import {ClusterOutlined} from '@ant-design/icons';
+import MDEditor from '@uiw/react-md-editor';
 import TextArea from "antd/es/input/TextArea";
-import point from "./point";
+import Links from "./Links";
+import WhiteBoardList from "./WhiteBoardList";
 const {Option}=Select;
 
 // markdown 插件仓库位置
@@ -34,7 +34,7 @@ class PointEdit extends React.Component{
             },
             fileContent:"",
             localFilePath:'',
-            editFile:props.hasOwnProperty('EditFile')?props.EditFile:null,
+            editFile:false,
             fileChanged:false,
             disableEdieFile:false,
             editComment:false,
@@ -59,8 +59,7 @@ class PointEdit extends React.Component{
                 .then(()=>{
                     this.setState({
                         preID:nextProps.ID,
-                        ID:nextProps.ID,
-                        editFile:nextProps.hasOwnProperty('EditFile')?nextProps.EditFile:null
+                        ID:nextProps.ID
                     })
                 })
                 .then(()=>{
@@ -78,16 +77,10 @@ class PointEdit extends React.Component{
                     this.setState({
                         point:json.Data.Point?json.Data.Point:this.state.point,
                         fileContent:json.Data.FileContent,
-                        localFilePath:json.Data.LocalFilePath
+                        localFilePath:json.Data.LocalFilePath,
+                        editFile:json.Data.FileContent==0
                     })
                 })
-            })
-            .then(()=>{
-                if (this.state.editFile==null){
-                    this.setState({
-                        editFile:this.state.fileContent.length>0?false:true
-                    });
-                }
             })
             .then(()=>{
                 this.getCommentNumber(ID);
@@ -99,11 +92,15 @@ class PointEdit extends React.Component{
             message.error("Please set the file name !");
             return false;
         }
+        let point=this.state.point;
+        if (point.Favourite!=='Favourite'){
+            point.Favourite='';
+        }
         requestApi("/index.php?action=Points&method=SaveWithFile",{
             mode:"cors",
             method:"post",
             body:JSON.stringify({
-                point:this.state.point,
+                point:point,
                 FileContent:this.state.fileChanged?this.state.fileContent:''
             })
         }).then((res)=>{
@@ -177,13 +174,10 @@ class PointEdit extends React.Component{
                 >
                     <Form.Item
                         label={
-                            <Button
-                                type={"link"}
-                                icon={<ClusterOutlined />}
-                                href={"/pointTable/"+this.state.point.ID}
-                                target={"_blank"}
-                            >
-                            </Button>
+                            <Links
+                                PID={this.state.ID}
+                                Color={"#1890ff"}
+                            />
                         }
                     >
                         <Button
@@ -223,7 +217,7 @@ class PointEdit extends React.Component{
                                     value={this.state.point.Favourite=='Favourite'?'Favourite':'NotFavourite'}
                                     onChange={(newValue)=>{
                                         let point=this.state.point;
-                                        point.Favourite=newValue?'Favourite':'';
+                                        point.Favourite=newValue;
                                         this.setState({
                                             point:point
                                         });
@@ -309,7 +303,9 @@ class PointEdit extends React.Component{
                         >
                             {
                                 this.state.editFile
-                                    ?<SimpleMDE
+                                    ?<MDEditor
+                                        height={400}
+                                        preview={"edit"}
                                         value={this.state.fileContent}
                                         onChange={(value)=>{
                                             let point={
@@ -355,6 +351,13 @@ class PointEdit extends React.Component{
                                 )
                             })}
                         </Select>
+                    </Form.Item>
+                    <Form.Item
+                        label={"WhiteBoard"}
+                    >
+                        <WhiteBoardList
+                            PID={this.state.ID}
+                        />
                     </Form.Item>
                 </Form>
                 <Drawer
