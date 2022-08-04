@@ -112,38 +112,42 @@ class WhiteBoardList extends React.Component{
                     />
                 </Col>
             </Row>
-            <Row>
-                <Col span={24}>
-                    <List
-                        dataSource={this.state.Projects}
-                        renderItem={(project)=>{
-                            return(
-                                <List.Item
-                                    key={project.FileName}
-                                    actions={[
-                                        <Button
-                                            type={"link"}
-                                            href={"/WhiteBoard/"+project.FilePath.replace(/\//g,'=')}
-                                            target={"_blank"}
-                                            icon={<FormOutlined />}
-                                        ></Button>,
-                                        <Button
-                                            type={"link"}
-                                            danger={true}
-                                            icon={<DeleteOutlined />}
-                                            onClick={()=>{
-                                                this.deleteProject(project.FilePath)
-                                            }}
-                                        ></Button>
-                                    ]}
-                                >
-                                    {project.FileName}
-                                </List.Item>
-                            )
-                        }}
-                    />
-                </Col>
-            </Row>
+            {
+                this.state.Projects.length>0
+                    ?<Row>
+                        <Col span={24}>
+                            <List
+                                dataSource={this.state.Projects}
+                                renderItem={(project)=>{
+                                    return(
+                                        <List.Item
+                                            key={project.FileName}
+                                            actions={[
+                                                <Button
+                                                    type={"link"}
+                                                    danger={true}
+                                                    icon={<DeleteOutlined />}
+                                                    onClick={()=>{
+                                                        this.deleteProject(project.FilePath)
+                                                    }}
+                                                ></Button>
+                                            ]}
+                                        >
+                                            <Button
+                                                type={"link"}
+                                                href={"/WhiteBoard/"+project.FilePath.replace(/\//g,'=')}
+                                                target={"_blank"}
+                                            >
+                                                {project.FileName}
+                                            </Button>
+                                        </List.Item>
+                                    )
+                                }}
+                            />
+                        </Col>
+                    </Row>
+                    :""
+            }
         </div>
     }
 }

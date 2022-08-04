@@ -2,6 +2,7 @@ import React from 'react'
 import {Tldraw} from "@tldraw/tldraw";
 import {requestApi} from "../config/functions";
 import {message} from "antd/es";
+import {BUCKET_LONG_FILE, uploadFile} from "../component/imageUpload";
 
 class WhiteBoard extends React.Component{
     constructor(props) {
@@ -73,11 +74,17 @@ class WhiteBoard extends React.Component{
                             this.saveProject(app.document);
                             return false;
                         }}
+                        onAssetCreate={async (app,file,id)=>{
+                            return await uploadFile(BUCKET_LONG_FILE,file);
+                        }}
                     />
                     :<Tldraw
                         onSaveProject={(app)=>{
                             this.saveProject(app.document);
                             return false;
+                        }}
+                        onAssetCreate={async (app,file,id)=>{
+                            return await uploadFile(BUCKET_LONG_FILE,file);
                         }}
                     />
 
