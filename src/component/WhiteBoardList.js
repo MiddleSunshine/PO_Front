@@ -20,7 +20,7 @@ class WhiteBoardList extends React.Component{
     }
 
     componentWillReceiveProps(nextProps, nextContext) {
-        if (nextProps.PID!=this.state.PID){
+        if (nextProps.PID){
             this.getProjects(nextProps.PID);
         }
     }
