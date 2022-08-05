@@ -5,8 +5,8 @@ import { InboxOutlined } from '@ant-design/icons';
 import MenuList from "./MenuList";
 import Clipboard from 'clipboard';
 
-const BUCKET_LONG_FILE = 'oss-file-cache';
-const BUCKET_TEMP_FILE = 'cross-device';
+export const BUCKET_LONG_FILE = 'oss-file-cache';
+export const BUCKET_TEMP_FILE = 'cross-device';
 const BACK_URL = "OSS/index.php?method=Upload";
 
 class ImageUpload extends React.Component {
@@ -54,21 +54,12 @@ class ImageUpload extends React.Component {
     }
 
     uploadFile(file) {
-        let format = new FormData();
-        format.append("myfile", file);
-        requestApi(BACK_URL + "&bucket=" + this.state.bucket,
-            {
-                method: "post",
-                mode: "cors",
-                body: format
+        (async ()=>{
+            let url = await uploadFile(this.state.bucket,file);
+            this.setState({
+                imageUrl:url
             })
-            .then((res) => {
-                res.json().then((json) => {
-                    this.setState({
-                        imageUrl: json.Data.Url
-                    })
-                })
-            })
+        })()
     }
 
     render() {
@@ -172,3 +163,19 @@ class ImageUpload extends React.Component {
 }
 
 export default ImageUpload;
+
+export function uploadFile(bucket,file){
+    let format = new FormData();
+    format.append("myfile", file);
+    return requestApi(BACK_URL + "&bucket=" + bucket,
+        {
+            method: "post",
+            mode: "cors",
+            body: format
+        })
+        .then((res) => {
+            return  res.json().then((json) => {
+                return json.Data.Url;
+            })
+        })
+}

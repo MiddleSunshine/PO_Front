@@ -2,14 +2,16 @@ import React from 'react'
 import {Tldraw} from "@tldraw/tldraw";
 import {requestApi} from "../config/functions";
 import {message} from "antd/es";
-import {Button} from "antd";
+import {BUCKET_LONG_FILE, uploadFile} from "../component/imageUpload";
 
 class WhiteBoard extends React.Component{
     constructor(props) {
         super(props);
         this.state={
-            document:{},
-            ProjectName:props.match.params.ProjectName
+            patchAssert:false,
+            document: {},
+            isInitDocument:false,
+            ProjectName:props.match.params.ProjectName.replace(/=/g,'/')
         }
         this.getDocument=this.getDocument.bind(this);
         this.saveProject=this.saveProject.bind(this);
@@ -17,6 +19,7 @@ class WhiteBoard extends React.Component{
 
     componentDidMount() {
         this.getDocument(this.state.ProjectName);
+        window.document.title=this.state.ProjectName
     }
 
     getDocument(filePath){
@@ -30,8 +33,10 @@ class WhiteBoard extends React.Component{
             .then((res)=>{
                 res.json().then((json)=>{
                     if (json.Status==1){
+                        let document=json.Data.document?JSON.parse(json.Data.document):false;
                         this.setState({
-                            document:JSON.parse(json.Data.document)
+                            document:document,
+                            isInitDocument:document==false?false:true
                         });
                     }else{
                         message.warn(json.Message)
@@ -40,13 +45,13 @@ class WhiteBoard extends React.Component{
             })
     }
 
-    saveProject(){
+    saveProject(document){
         requestApi("/index.php?action=WhiteBoard&method=SaveProject",{
             mode:"cors",
             method:"post",
             body:JSON.stringify({
                 ProjectName:this.state.ProjectName,
-                document:this.state.document
+                document:JSON.stringify(document)
             })
         })
             .then((res)=>{
@@ -62,23 +67,47 @@ class WhiteBoard extends React.Component{
 
     render() {
         return <div>
-            <Button
-                type={"primary"}
-                onClick={()=>{
-                    this.saveProject();
-                }}
-            >
-                Save Project
-            </Button>
-            <hr/>
-            <Tldraw
-                document={this.state.document}
-                onChange={(app)=>{
-                    this.setState({
-                        document:app.document
-                    })
-                }}
-            />
+            {
+                this.state.isInitDocument
+                    ? <Tldraw
+                        onChangePage={(app)=>{
+                            if (!this.state.patchAssert){
+                                (async ()=>{})()
+                                    .then(()=>{
+                                        app.patchAssets(this.state.document.assets);
+                                    })
+                                    .then(()=>{
+                                        this.setState({
+                                            patchAssets:true
+                                        })
+                                    })
+                                    .then(()=>{
+                                        console.warn("Patch Success")
+                                        console.log(app.document)
+                                    })
+                            }
+                        }}
+                        document={this.state.document}
+                        onSaveProject={(app)=>{
+                            this.saveProject(app.document);
+                            return false;
+                        }}
+                        onAssetCreate={async (app,file,id)=>{
+                            return await uploadFile(BUCKET_LONG_FILE,file);
+                        }}
+                    />
+                    :<Tldraw
+                        onSaveProject={(app)=>{
+                            this.saveProject(app.document);
+                            return false;
+                        }}
+                        onAssetCreate={async (app,file,id)=>{
+                            return await uploadFile(BUCKET_LONG_FILE,file);
+                        }}
+                    />
+
+            }
+
         </div>
     }
 }

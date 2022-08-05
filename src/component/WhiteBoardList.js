@@ -29,7 +29,7 @@ class WhiteBoardList extends React.Component{
         if (!PID){
             return false;
         }
-        requestApi("/index.php?action=WhiteBoard&mehtod=Projects&PID="+PID)
+        requestApi("/index.php?action=WhiteBoard&method=Projects&PID="+PID)
             .then((res)=>{
                 res.json().then((json)=>{
                     if (json.Status==1){
@@ -112,36 +112,42 @@ class WhiteBoardList extends React.Component{
                     />
                 </Col>
             </Row>
-            <Row>
-                <Col span={24}>
-                    <List
-                        dataSource={this.state.Projects}
-                        renderItem={(project)=>{
-                            return(
-                                <List.Item
-                                    key={project.FileName}
-                                    actions={[
-                                        <Button
-                                            type={"link"}
-                                            href={"/WhiteBoard/"+project.FilePath}
-                                            target={"_blank"}
-                                            icon={<FormOutlined />}
-                                        ></Button>,
-                                        <Button
-                                            type={"link"}
-                                            danger={true}
-                                            icon={<DeleteOutlined />}
-                                            onClick={()=>{
-                                                this.deleteProject(project.FilePath)
-                                            }}
-                                        ></Button>
-                                    ]}
-                                />
-                            )
-                        }}
-                    />
-                </Col>
-            </Row>
+            {
+                this.state.Projects.length>0
+                    ?<Row>
+                        <Col span={24}>
+                            <List
+                                dataSource={this.state.Projects}
+                                renderItem={(project)=>{
+                                    return(
+                                        <List.Item
+                                            key={project.FileName}
+                                            actions={[
+                                                <Button
+                                                    type={"link"}
+                                                    danger={true}
+                                                    icon={<DeleteOutlined />}
+                                                    onClick={()=>{
+                                                        this.deleteProject(project.FilePath)
+                                                    }}
+                                                ></Button>
+                                            ]}
+                                        >
+                                            <Button
+                                                type={"link"}
+                                                href={"/WhiteBoard/"+project.FilePath.replace(/\//g,'=')}
+                                                target={"_blank"}
+                                            >
+                                                {project.FileName}
+                                            </Button>
+                                        </List.Item>
+                                    )
+                                }}
+                            />
+                        </Col>
+                    </Row>
+                    :""
+            }
         </div>
     }
 }
