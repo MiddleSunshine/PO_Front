@@ -15,6 +15,10 @@ class RecentPoints extends React.Component{
         this.getPoints=this.getPoints.bind(this);
     }
 
+    componentDidMount() {
+        this.getPoints(this.state.page,this.state.PageSize,this.state.SearchKeyWords)
+    }
+
     getPoints(page,pageSize,SearchKeyWords){
         if (page<=0){
             page=0;
@@ -23,7 +27,7 @@ class RecentPoints extends React.Component{
             mode:"cors",
             method:"post",
             body:JSON.stringify({
-                keyword:SearchKeyWords
+                keyword: SearchKeyWords
             })
         })
             .then((res)=>{
@@ -46,10 +50,12 @@ class RecentPoints extends React.Component{
     }
 
     render() {
-        return <div className="container">
+        return <div>
             <List
                 header={
-                <Form>
+                <Form
+                    layout={"inline"}
+                >
                     <Form.Item>
                         <Input
                             value={this.state.SearchKeyWords}
@@ -66,7 +72,9 @@ class RecentPoints extends React.Component{
                 </Form>
                 }
                 footer={
-                <Form>
+                <Form
+                    layout={"inline"}
+                >
                     <Form.Item>
                         <Button
                             onClick={()=>{
@@ -100,19 +108,22 @@ class RecentPoints extends React.Component{
                 renderItem={(point)=>{
                     return(
                         <List.Item.Meta
-                            avatar={point.SearchAble}
-                            key={point.ID}
-                            title={point.keyword}
-                            description={point.LastUpdateTime+"</br>"+point.note}
-                            extra={<Links
-                                PID={point.ID}
-                                Color={"#1890ff"}
-                            />}
-                        >
-                            {
-                                point.keyword
+                            avatar={
+                            !point.SearchAble?
+                                'Reward':
+                                <Links
+                                    PID={point.ID}
+                                    Color={"#1890ff"}
+                                    Label={point.SearchAble}
+                                />
                             }
-                        </List.Item.Meta>
+                            key={point.ID}
+                            title={
+                                point.keyword + " / "+point.LastUpdateTime
+                            }
+                            description={"Note: "+point.note}
+                            /
+                        >
                     )
                 }}
             />

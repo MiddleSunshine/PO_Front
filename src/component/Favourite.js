@@ -22,6 +22,7 @@ import MarkdownPreview from "@uiw/react-markdown-preview";
 import ActionSummary from "./ActionSummary";
 import WithoutConnectionPoints from "./WithoutConnectionPoints";
 import BookMarks from "./BookMarks";
+import RecentPoints from "./RecentPoints";
 
 class Favourite extends React.Component{
     constructor(props) {
@@ -42,7 +43,9 @@ class Favourite extends React.Component{
             //
             withoutConnectionPointsModalVisible:false,
             //
-            bookmarkDrawerVisible:false
+            bookmarkDrawerVisible:false,
+            //
+            recentPointModelVisible:true
         }
         this.getFavourite=this.getFavourite.bind(this);
         this.showFavouriteModal=this.showFavouriteModal.bind(this);
@@ -265,6 +268,15 @@ class Favourite extends React.Component{
                             </Button>
                         </Affix>
                     </Col>
+                </Row>
+                <Row>
+                    <Modal
+                        width={800}
+                        title={"Recent Points"}
+                        visible={this.state.recentPointModelVisible}
+                    >
+                        <RecentPoints />
+                    </Modal>
                 </Row>
                 <Row>
                     <Modal
