@@ -2,6 +2,7 @@ import React from "react";
 import {Button, Form, Input, List, message} from "antd";
 import Links from "./Links";
 import {requestApi} from "../config/functions";
+import config from "../config/setting";
 
 class RecentPoints extends React.Component{
     constructor(props) {
@@ -55,9 +56,11 @@ class RecentPoints extends React.Component{
                 header={
                 <Form
                     layout={"inline"}
+                    size={"small"}
                 >
                     <Form.Item>
                         <Input
+                            placeholder={"Search Keyword"}
                             value={this.state.SearchKeyWords}
                             onChange={(e)=>{
                                 this.setState({
@@ -69,28 +72,9 @@ class RecentPoints extends React.Component{
                             }}
                         />
                     </Form.Item>
-                </Form>
-                }
-                footer={
-                <Form
-                    layout={"inline"}
-                >
-                    <Form.Item>
-                        <Button
-                            onClick={()=>{
-                                this.getPoints(this.state.Page-1,this.state.PageSize,this.state.SearchKeyWords)
-                            }}
-                        >Pre</Button>
-                    </Form.Item>
-                    <Form.Item>
-                        <Button
-                            onClick={()=>{
-                                this.getPoints(this.state.Page+1,this.state.PageSize,this.state.SearchKeyWords)
-                            }}
-                        >Next</Button>
-                    </Form.Item>
                     <Form.Item>
                         <Input
+                            placeholder={"Page Size"}
                             value={this.state.PageSize}
                             onChange={(e)=>{
                                 this.setState({
@@ -101,6 +85,22 @@ class RecentPoints extends React.Component{
                                 this.getPoints(this.state.Page,this.state.PageSize,this.state.SearchKeyWords)
                             }}
                         />
+                    </Form.Item>
+                    <Form.Item>
+                        <Button
+                            type={"primary"}
+                            onClick={()=>{
+                                this.getPoints(this.state.Page-1,this.state.PageSize,this.state.SearchKeyWords)
+                            }}
+                        >Pre</Button>
+                    </Form.Item>
+                    <Form.Item>
+                        <Button
+                            type={"primary"}
+                            onClick={()=>{
+                                this.getPoints(this.state.Page+1,this.state.PageSize,this.state.SearchKeyWords)
+                            }}
+                        >Next</Button>
                     </Form.Item>
                 </Form>
                 }
@@ -119,11 +119,10 @@ class RecentPoints extends React.Component{
                             }
                             key={point.ID}
                             title={
-                                point.keyword + " / "+point.LastUpdateTime
+                                <span style={{color:config.statusBackGroupColor[point.status]}}>{point.keyword + " / "+point.LastUpdateTime}</span>
                             }
                             description={"Note: "+point.note}
-                            /
-                        >
+                        />
                     )
                 }}
             />

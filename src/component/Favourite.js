@@ -16,7 +16,7 @@ import {
     Tabs,
     Timeline
 } from "antd";
-import {BookOutlined,WarningOutlined,UnorderedListOutlined,FormOutlined, StarOutlined,DeleteOutlined,MessageOutlined,FieldTimeOutlined,ClockCircleOutlined} from '@ant-design/icons';
+import {BookOutlined,WarningOutlined,UnorderedListOutlined,FormOutlined, StarOutlined,DeleteOutlined,MessageOutlined,FieldTimeOutlined,ClockCircleOutlined,SnippetsOutlined} from '@ant-design/icons';
 import config from "../config/setting";
 import MarkdownPreview from "@uiw/react-markdown-preview";
 import ActionSummary from "./ActionSummary";
@@ -45,7 +45,7 @@ class Favourite extends React.Component{
             //
             bookmarkDrawerVisible:false,
             //
-            recentPointModelVisible:true
+            recentPointModelVisible:false
         }
         this.getFavourite=this.getFavourite.bind(this);
         this.showFavouriteModal=this.showFavouriteModal.bind(this);
@@ -190,6 +190,25 @@ class Favourite extends React.Component{
                                 type={"link"}
                                 ghost={true}
                                 shape={"circle"}
+                                icon={<SnippetsOutlined />}
+                                onClick={()=>{
+                                    this.setState({
+                                        recentPointModelVisible:true
+                                    })
+                                }}
+                            >
+
+                            </Button>
+                        </Affix>
+                    </Col>
+                    <Col span={1}>
+                        <Affix
+                            offsetBottom={true}
+                        >
+                            <Button
+                                type={"link"}
+                                ghost={true}
+                                shape={"circle"}
                                 icon={<BookOutlined />}
                                 onClick={()=>{
                                     this.setState({
@@ -271,6 +290,11 @@ class Favourite extends React.Component{
                 </Row>
                 <Row>
                     <Modal
+                        onCancel={()=>{
+                            this.setState({
+                                recentPointModelVisible:false
+                            })
+                        }}
                         width={800}
                         title={"Recent Points"}
                         visible={this.state.recentPointModelVisible}
