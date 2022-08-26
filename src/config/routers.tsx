@@ -24,6 +24,7 @@ import Actions from "../page/Actions";
 import PointMindMap from "../page/PointMindMap";
 import CommentList from "../page/CommentList";
 import WhiteBoard from "../page/WhiteBoard";
+import ClockInMobile from '../mobile/ClockIn';
 
 interface router {
     path: string,
@@ -32,6 +33,10 @@ interface router {
 }
 
 const routers: Array<router> = [
+    {
+        path:"/Mobile/ClockIn",
+        component:ClockInMobile
+    },
     {
         path:"/Actions",
         component:Actions
