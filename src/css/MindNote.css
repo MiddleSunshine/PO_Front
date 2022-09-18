@@ -1,0 +1,8 @@
+.MindNote{
+    width: 100vw;
+    height: 100vh;
+}
+
+.MindNote .ant-row{
+    height: 100%;
+}
