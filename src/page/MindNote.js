@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react'
 
-import MindNotes,{MindNotesTypes,MindNodeDragDataTransferKey,EffectiveComments,EffectiveCommentsTemplate} from './MindNotes';
+import MindNotes,{MindNotesTypes,MindNodeDragDataTransferKey,EffectiveComments,MindNotesTemplate} from './MindNotes';
 import { Col, Row } from 'antd';
-import ReactFlow, { Controls, ReactFlowProvider, MiniMap, useNodesState, useEdgesState,Position } from 'react-flow-renderer';
+import ReactFlow, { Controls, ReactFlowProvider, MiniMap, useNodesState, useEdgesState, Position, addEdge } from 'react-flow-renderer';
 
 import "../css/MindNote.css"
 
@@ -28,12 +28,20 @@ const MindNote = ()=>{
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
 
   useEffect(()=>{
-    setNodes([
-      {id:'1',type:'EffectiveComments',data:{Comment:"# markdownTest"},position:{x:637,y:350}}
-    ])
+    (async ()=>{})()
+      .then(()=>{
+        setNodes([
+          {id:'1',type:'EffectiveComments',data:{Comment:"# markdownTest"},position:{x:637,y:350}}
+        ])
+      })
+      .then(()=>{
+
+      })
+
   },[])
 
   const onInit=(rfi)=>setReactFlowInstance(rfi);
+  const onConnect=(params)=>setEdges((eds)=>addEdge(params,eds));
   /**
    * @param event DragEvent
    */
@@ -44,42 +52,47 @@ const MindNote = ()=>{
      */
     if (reactFlowInstance){
       let type=event.dataTransfer.getData(MindNodeDragDataTransferKey);
-      let position=reactFlowInstance.project({ x: event.clientX, y: event.clientY - 40 });
+      let position=reactFlowInstance.project({ x: event.clientX, y: event.clientY });
       let newNode={
         id:getId(type),
         type,
         position,
         data:{
-          ...EffectiveCommentsTemplate
+          ...MindNotesTemplate[type]
         }
       };
       setNodes((nds)=>nds.concat(newNode));
     }
   }
-  console.log(nodes);
   return(
-    <div className={"MindNote"}>
+    <div>
       <Row>
-        <Col span={2}>
+        <Col span={24}>
           <MindNotes />
         </Col>
-        <Col span={22}>
-          <ReactFlowProvider>
-            <ReactFlow
-              nodes={nodes}
-              edges={edges}
-              onNodesChange={onNodesChange}
-              onDrop={onDrop}
-              onDragOver={onDragOver}
-              onInit={onInit}
-              nodeTypes={MindNotesTypes}
-            >
-              <Controls/>
-              <MiniMap />
-            </ReactFlow>
-          </ReactFlowProvider>
-        </Col>
       </Row>
+      <div className={"MindNote"}>
+        <Row>
+          <Col span={24}>
+            <ReactFlowProvider>
+              <ReactFlow
+                nodes={nodes}
+                edges={edges}
+                onNodesChange={onNodesChange}
+                onEdgesChange={onEdgesChange}
+                onConnect={onConnect}
+                onDrop={onDrop}
+                onDragOver={onDragOver}
+                onInit={onInit}
+                nodeTypes={MindNotesTypes}
+              >
+                <Controls/>
+                <MiniMap />
+              </ReactFlow>
+            </ReactFlowProvider>
+          </Col>
+        </Row>
+      </div>
     </div>
   )
 }
