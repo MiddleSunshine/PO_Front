@@ -3,7 +3,10 @@ import { Button, Col, Input, Row } from 'antd';
 import "../css/MindNotes.css";
 import { Handle,Position } from 'react-flow-renderer';
 
-export const MindNodeDragDataTransferKey='MindNotesType';
+
+
+export const MindNodeDragDataTransferKey='MindNotes' +
+    'Type';
 
 const onDragStart=(event,noteType)=>{
   event.dataTransfer.setData(MindNodeDragDataTransferKey,noteType);
@@ -42,17 +45,20 @@ class Point extends React.Component{
 
 export const EffectivePoint=memo((data)=>{
   const [point,setPoint]=useState(data.data);
-  console.warn(point)
   return(
     <>
       <Handle type={"source"} position={Position.Left} />
       <Input
         value={point.Keyword}
         onChange={(e)=>{
-          setPoint({
+          let newData={
             ...point,
             Keyword:e.target.value
-          })
+          };
+          setPoint(newData);
+        }}
+        onPressEnter={()=>{
+          point.onChange(point,data.id);
         }}
       />
       <Handle type={"target"} position={Position.Right} />
@@ -80,11 +86,13 @@ export const EffectiveComments = memo((data)=>{
 
 export const MindNotesTemplate={
   EffectiveComments:{
+    table:"Comments",
     Comment:"",
     Md:""
   },
   EffectivePoint:{
-    Keyword:"Please Input The Keywords"
+    Keyword:"Please Input The Keywords",
+    table:"Points"
   }
 }
 

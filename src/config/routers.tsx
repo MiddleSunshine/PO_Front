@@ -35,7 +35,7 @@ interface router {
 
 const routers: Array<router> = [
     {
-        path:"/MindNote",
+        path:"/MindNote/:PID",
         component:MindNote
     },
     {
