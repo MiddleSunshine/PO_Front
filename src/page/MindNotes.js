@@ -47,7 +47,10 @@ export const EffectivePoint=memo((data)=>{
   const [point,setPoint]=useState(data.data);
   return(
     <>
-      <Handle type={"source"} position={Position.Left} />
+      <Handle
+          type={"target"}
+          position={Position.Left}
+      />
       <Input
         value={point.Keyword}
         onChange={(e)=>{
@@ -61,7 +64,7 @@ export const EffectivePoint=memo((data)=>{
           point.onChange(point,data.id);
         }}
       />
-      <Handle type={"target"} position={Position.Right} />
+      <Handle type={"source"} position={Position.Right} />
     </>
   )
 })
@@ -70,7 +73,7 @@ export const EffectiveComments = memo((data)=>{
   const [comment,setComment]=useState(data.data);
   return(
     <>
-      <Handle type={"source"} position={Position.Left} />
+      <Handle type={"target"} position={Position.Left} />
       <Input
         value={comment.Comment}
         onChange={(e)=>{
