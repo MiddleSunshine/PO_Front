@@ -1,12 +1,31 @@
 import React, {useState, memo} from 'react';
-import {Button, Checkbox, Col, Divider, Form, Input, message, Modal, Row, Select} from 'antd';
+import {
+    Badge,
+    Button,
+    Card,
+    Checkbox,
+    Col,
+    Divider,
+    Dropdown,
+    Form,
+    Input,
+    Menu,
+    message,
+    Modal,
+    Row,
+    Select, Space
+} from 'antd';
 import "../css/MindNotes.css";
 import {Handle, Position} from 'react-flow-renderer';
 import {requestApi} from "../config/functions";
 import {NewPoint} from "../component/PointNew";
 import config, {SEARCHABLE_POINT, SEARCHABLE_TITLE} from "../config/setting";
 import MarkdownPreview from "@uiw/react-markdown-preview";
-
+import {
+    CloseOutlined,
+    DoubleRightOutlined,
+    DoubleLeftOutlined
+} from '@ant-design/icons';
 
 export const MindNodeDragDataTransferKey = 'MindNotes' +
     'Type';
@@ -121,72 +140,137 @@ export const EffectivePoint = memo((data) => {
         })
     }
 
+    const updatePointWidth=(width)=>{
+        let newPoint=point;
+        newPoint.width=width;
+        (async ()=>{})()
+            .then(()=>{
+                setPoint(newPoint);
+            })
+            .then(()=>{
+                point.onChange(newPoint,data.id);
+            })
+    }
     return (
         <>
+            <Handle
+                type={"target"}
+                position={Position.Left}
+            />
             <div
-                style={{padding:"10px",backgroundColor:!point.hasOwnProperty('ID')?'gray':config.statusBackGroupColor[point.status]}}
-                onClick={()=>{
-                    (async ()=>{})()
-                        .then(()=>{
-                            setPoint({
-                                ...point,
-                                IsActiveNode:true
-                            });
-                        })
-                        .then(()=>{
-                            point.onChange(point,data.id);
-                        })
-                }}
+                style={{width:(point.hasOwnProperty('width')?point.width:300)+"px"}}
             >
-                <Row>
-                    {
-                        point.hasOwnProperty('ID')
-                            ? <Handle
-                                type={"target"}
-                                position={Position.Left}
-                            />
-                            : ''
+                <Badge.Ribbon
+                    color={!point.hasOwnProperty('ID')?'gray':config.statusBackGroupColor[point.status]}
+                    text={
+                    <Dropdown
+                        overlay={
+                        <Menu
+                            items={[
+                                {
+                                    key: '1',
+                                    label:<Button
+                                        icon={<CloseOutlined />}
+                                        size={"small"}
+                                        danger={true}
+                                        type={"link"}
+                                    >
+                                    </Button>
+                                },
+                                {
+                                    key:'2',
+                                    label: <Button
+                                        size={"small"}
+                                        type={"link"}
+                                        icon={<DoubleRightOutlined />}
+                                        onClick={()=>{
+                                            updatePointWidth(point.hasOwnProperty('width')?(point.width+50):350);
+                                        }}
+                                    ></Button>
+                                },
+                                {
+                                    key:'3',
+                                    label: <Button
+                                        icon={<DoubleLeftOutlined />}
+                                        size={"small"}
+                                        type={"link"}
+                                        onClick={()=>{
+                                            updatePointWidth(point.hasOwnProperty('width')?(point.width-50):250);
+                                        }}
+                                    >
+                                    </Button>
+                                }
+                            ]}
+                        />
+                        }
+                    >
+                        <Space>
+                            {point.hasOwnProperty('status')?point.status:'Empty'}
+                        </Space>
+                    </Dropdown>
                     }
-                    <Input
-                        value={point.keyword}
-                        onChange={(e) => {
-                            let newData = {
-                                ...point,
-                                keyword: e.target.value
-                            };
-                            setPoint(newData);
-                        }}
-                        onPressEnter={() => {
-                            if (point.hasOwnProperty('ID')) {
-                                updatePoint();
-                            } else {
-                                startSearchPoint();
-                            }
-                        }}
-                    />
-                    {
-                        point.hasOwnProperty('ID')
-                            ? <Handle type={"source"} position={Position.Right}/>
-                            : ''
-                    }
-                </Row>
-                {
-                    point.hasOwnProperty('note')
-                        ?<Row>
-                            {point.note}
-                        </Row>
-                        :''
-                }
-                {
-                    point.hasOwnProperty('FileContent')
-                        ?<Row>
-                            <MarkdownPreview
-                                source={point.FileContent}
+                >
+                    <Card
+                        size={"small"}
+                        title={
+                            <Input
+                                addonBefore={
+                                    <div
+                                        onClick={()=>{
+                                            (async ()=>{})()
+                                                .then(()=>{
+                                                    setPoint({
+                                                        ...point,
+                                                        IsActiveNode:true
+                                                    });
+                                                })
+                                                .then(()=>{
+                                                    point.onChange(point,data.id);
+                                                })
+                                        }}
+                                    >P</div>
+                                }
+                                value={point.keyword}
+                                onChange={(e) => {
+                                    let newData = {
+                                        ...point,
+                                        keyword: e.target.value
+                                    };
+                                    setPoint(newData);
+                                }}
+                                onPressEnter={() => {
+                                    if (point.hasOwnProperty('ID')) {
+                                        updatePoint();
+                                    } else {
+                                        startSearchPoint();
+                                    }
+                                }}
                             />
-                        </Row>
-                        :''
-                }
+                        }
+                    >
+                        {
+                            point.note
+                                ?<Row>
+                                    <Input
+                                        disabled={true}
+                                        value={point.note}
+                                    />
+                                </Row>
+                                :''
+                        }
+                        {
+                            point.FileContent
+                                ?<Row>
+                                    <MarkdownPreview
+                                        source={point.FileContent}
+                                    />
+                                </Row>
+                                :''
+                        }
+                    </Card>
+                </Badge.Ribbon>
             </div>
+            <Handle type={"source"} position={Position.Right}/>
             <Modal
                 width={1000}
                 visible={showModal}
@@ -194,6 +278,7 @@ export const EffectivePoint = memo((data) => {
                 onCancel={() => {
                     finishSearchPoint();
                 }}
+                footer={null}
             >
                 <Form>
                     <Form.Item>
@@ -201,6 +286,7 @@ export const EffectivePoint = memo((data) => {
                             orientation={"left"}
                         >
                             <Button
+                                type={"primary"}
                                 onClick={() => {
                                     savePoint();
                                 }}
@@ -302,12 +388,14 @@ export const MindNotesTemplate = {
         table: "Comments",
         Comment: "",
         Md: "",
-        SearchAble: SEARCHABLE_POINT
+        width:300
     },
     EffectivePoint: {
         keyword: "",
         table: "Points",
-        FileContent: ""
+        FileContent: "",
+        SearchAble: SEARCHABLE_POINT,
+        width:300
     }
 }
 

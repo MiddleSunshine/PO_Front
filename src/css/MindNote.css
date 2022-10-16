@@ -6,3 +6,11 @@
 .MindNote .ant-row{
     height: 100%;
 }
+
+.MindNote .ant-card-head{
+    padding:0px !important;
+}
+
+.MindNote .ant-card-body{
+    padding:0px !important;
+}

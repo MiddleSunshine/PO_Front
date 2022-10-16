@@ -20,7 +20,7 @@ import ReactFlow, {
 import "../css/MindNote.css"
 import {requestApi} from "../config/functions";
 import Hotkeys from "react-hot-keys";
-import PointNew, {NewPoint} from "../component/PointNew";
+import PointNew, {NewPoint, NewPointConnection} from "../component/PointNew";
 import {Draw} from "@tldraw/tldraw";
 import PointEdit from "../component/PointEdit";
 
@@ -170,8 +170,10 @@ const MindNote = (props) => {
     }, [])
 
     const onInit = (rfi) => setReactFlowInstance(rfi);
+
     const onConnect = (params) => {
-        let newEdges = addEdge(params, edges);
+        setEdges((eds) => addEdge(params, eds));
+
         let [sourceType,sourceId]=params.source.split('_');
         let [targetType,targetId]=params.target.split('_');
 
@@ -189,10 +191,10 @@ const MindNote = (props) => {
                 return node;
             });
             if (source.data.hasOwnProperty('ID') && target.data.hasOwnProperty('ID')){
-                NewPoint(source.data.ID,target.data.ID,'');
+                NewPointConnection(source.data.ID,target.data.ID,'');
             }
         }
-        setEdges(newEdges);
+
     };
 
 
