@@ -223,8 +223,9 @@ const MindNote = (props) => {
         }
     }
 
-    const onNodeDelete=(param)=>{
-        
+    const onNodeDelete=(deleteNode)=>{
+        // todo 如果删除的 node 是有ID的，则删除所有以此 node 作为 target 的connection
+        // 如果是没有ID的，则也是删除所有的connection
     }
 
     // let HotKeysMap=[];
