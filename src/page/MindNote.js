@@ -23,6 +23,7 @@ import Hotkeys from "react-hot-keys";
 import PointNew, {NewPoint, NewPointConnection} from "../component/PointNew";
 import {Draw} from "@tldraw/tldraw";
 import PointEdit from "../component/PointEdit";
+import MenuList from "../component/MenuList";
 
 /**
  * @param event DragEvent
@@ -208,7 +209,7 @@ const MindNote = (props) => {
          */
         if (reactFlowInstance) {
             let type = event.dataTransfer.getData(MindNodeDragDataTransferKey);
-            let position = reactFlowInstance.project({x: event.clientX, y: event.clientY});
+            let position = reactFlowInstance.project({x: event.clientX-100, y: event.clientY-100});
             let newNode = {
                 id: getId(type),
                 type,
@@ -220,6 +221,10 @@ const MindNote = (props) => {
             };
             setNodes((nds) => nds.concat(newNode));
         }
+    }
+
+    const onNodeDelete=(param)=>{
+        
     }
 
     // let HotKeysMap=[];
@@ -242,6 +247,7 @@ const MindNote = (props) => {
     return (
         <div
         >
+            <MenuList />
             <Hotkeys
                 keyName={hotkeys.join(',')}
                 onKeyDown={(keyName) => {
@@ -267,6 +273,7 @@ const MindNote = (props) => {
                                     onDragOver={onDragOver}
                                     onInit={onInit}
                                     nodeTypes={MindNotesTypes}
+                                    onNodesDelete={onNodeDelete}
                                 >
                                     <Controls
 
