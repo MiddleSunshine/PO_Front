@@ -20,7 +20,7 @@ import ReactFlow, {
 import "../css/MindNote.css"
 import {requestApi} from "../config/functions";
 import Hotkeys from "react-hot-keys";
-import {MindEdges} from "./MindEdges";
+import PointNew from "../component/PointNew";
 
 /**
  * @param event DragEvent
@@ -65,18 +65,20 @@ const MindNote = (props) => {
     const [nodes, setNodes, onNodesChange] = useNodesState([]);
     const [edges, setEdges, onEdgesChange] = useEdgesState([]);
 
+    const updateNodeItem = (data, id) => {
+        setNodes((nodes) => nodes.map((nds) => {
+            if (nds.id == id) {
+                nds.data = data;
+            }
+            return nds;
+        }));
+    }
+
     function InitMindNote(PID) {
         if (!PID) {
             return false;
         }
-        const updateNodeItem = (data, id) => {
-            setNodes((nodes) => nodes.map((nds) => {
-                if (nds.id == id) {
-                    nds.data = data;
-                }
-                return nds;
-            }));
-        }
+
         requestApi("/index.php?action=MindNote&method=Output&PID=" + PID)
             .then((res) => {
                 res.json().then((json) => {
@@ -112,7 +114,6 @@ const MindNote = (props) => {
     const onInit = (rfi) => setReactFlowInstance(rfi);
     const onConnect=(params)=>{
         let newEdges=addEdge(params,edges);
-        // todo 在这里可以修改edges的type
         setEdges(newEdges);
     };
 
@@ -133,7 +134,8 @@ const MindNote = (props) => {
                 type,
                 position,
                 data: {
-                    ...MindNotesTemplate[type]
+                    ...MindNotesTemplate[type],
+                    onChange:updateNodeItem
                 }
             };
             setNodes((nds) => nds.concat(newNode));
@@ -181,7 +183,6 @@ const MindNote = (props) => {
                                     onDragOver={onDragOver}
                                     onInit={onInit}
                                     nodeTypes={MindNotesTypes}
-                                    edgeTypes={MindEdges}
                                 >
                                     <Controls
 
@@ -191,6 +192,9 @@ const MindNote = (props) => {
                             </ReactFlowProvider>
                         </Col>
                     </Row>
+                </div>
+                <div>
+
                 </div>
             </Hotkeys>
         </div>
