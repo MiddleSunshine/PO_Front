@@ -2,8 +2,9 @@ import {message} from "antd";
 import moment from "moment";
 
 export var Authorization_Key = 'Authorization';
-    return fetch("http://"+document.domain+":8091"+"/PO_Back/"+api,option);
-    api+="&sign="+sessionStorage.getItem(Authorization_Key);
+
+export function requestApi(api,option={}){
+    return fetch("http://118.31.247.119/PO_Back_Dev/PO_Back/"+api,option);
 }
 
 export function LoginCheck(password) {
