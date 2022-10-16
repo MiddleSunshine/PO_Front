@@ -102,10 +102,14 @@ export const EffectivePoint = memo((data) => {
 
     return (
         <>
-            <Handle
-                type={"target"}
-                position={Position.Left}
-            />
+            {
+                point.hasOwnProperty('ID')
+                    ?<Handle
+                        type={"target"}
+                        position={Position.Left}
+                    />
+                    :''
+            }
             <Input
                 value={point.keyword}
                 onChange={(e) => {
@@ -118,13 +122,17 @@ export const EffectivePoint = memo((data) => {
                 onPressEnter={() => {
                     if (point.hasOwnProperty('ID')){
                         // todo 这里执行update操作
+                        // point.onChange(point, data.id);
                     }else{
                         startSearchPoint();
                     }
-                    point.onChange(point, data.id);
                 }}
             />
-            <Handle type={"source"} position={Position.Right}/>
+            {
+                point.hasOwnProperty('ID')
+                    ?<Handle type={"source"} position={Position.Right}/>
+                    :''
+            }
             <Modal
                 width={1000}
                 visible={showModal}

@@ -68,6 +68,10 @@ const MindNote = (props) => {
     const updateNodeItem = (data, id) => {
         setNodes((nodes) => nodes.map((nds) => {
             if (nds.id == id) {
+                data={
+                    ...MindNotesTemplate[nds.type],
+                    ...data
+                }
                 nds.data = data;
             }
             return nds;
