@@ -80,6 +80,26 @@ export const EffectivePoint = memo((data) => {
         }
     }
 
+    const updatePoint=()=>{
+        if (point.hasOwnProperty('ID')){
+            requestApi("/index.php?action=Points&method=UpdatePoint",{
+                method:"post",
+                mode:"cors",
+                body:JSON.stringify(point)
+            })
+                .then((res)=>{
+                    res.json().then((json)=>{
+                        if (json.Status==1){
+                            message.success("Update Success");
+                            point.onChange(point,data.id);
+                        }else{
+                            message.warn(json.Message);
+                        }
+                    })
+                })
+        }
+    }
+
     const search = (keyword) => {
         requestApi("/index.php?action=Points&method=Search", {
             method: "post",
@@ -121,8 +141,7 @@ export const EffectivePoint = memo((data) => {
                 }}
                 onPressEnter={() => {
                     if (point.hasOwnProperty('ID')){
-                        // todo 这里执行update操作
-                        // point.onChange(point, data.id);
+                        updatePoint();
                     }else{
                         startSearchPoint();
                     }
