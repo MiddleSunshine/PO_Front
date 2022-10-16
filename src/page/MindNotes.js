@@ -5,6 +5,7 @@ import {Handle, Position} from 'react-flow-renderer';
 import {requestApi} from "../config/functions";
 import {NewPoint} from "../component/PointNew";
 import config, {SEARCHABLE_POINT, SEARCHABLE_TITLE} from "../config/setting";
+import MarkdownPreview from "@uiw/react-markdown-preview";
 
 
 export const MindNodeDragDataTransferKey = 'MindNotes' +
@@ -49,13 +50,13 @@ export const EffectivePoint = memo((data) => {
     const [point, setPoint] = useState(data.data);
     const [searchPointList, updatePointList] = useState([]);
     const [showModal, switchModal] = useState(false);
-    const [selectedPoint,updateSelectedPoint]=useState({});
+    const [selectedPoint, updateSelectedPoint] = useState({});
 
     const startSearchPoint = () => {
         switchModal(true);
         updatePointList([]);
         updateSelectedPoint({});
-        if (point.keyword.length>0){
+        if (point.keyword.length > 0) {
             search(point.keyword);
         }
     };
@@ -65,34 +66,34 @@ export const EffectivePoint = memo((data) => {
         updatePointList([]);
     };
 
-    const savePoint=()=>{
-        if (selectedPoint.hasOwnProperty('ID')){
+    const savePoint = () => {
+        if (selectedPoint.hasOwnProperty('ID')) {
             setPoint(selectedPoint);
-            point.onChange(selectedPoint,data.id);
+            point.onChange(selectedPoint, data.id);
             finishSearchPoint();
-        }else{
-            NewPoint('',point.keyword,point.SearchAble,point.SearchAble==SEARCHABLE_TITLE)
-                .then((insertResult)=>{
-                    if (insertResult){
+        } else {
+            NewPoint('', point.keyword, point.SearchAble, point.SearchAble == SEARCHABLE_TITLE)
+                .then((insertResult) => {
+                    if (insertResult) {
                         finishSearchPoint();
                     }
                 })
         }
     }
 
-    const updatePoint=()=>{
-        if (point.hasOwnProperty('ID')){
-            requestApi("/index.php?action=Points&method=UpdatePoint",{
-                method:"post",
-                mode:"cors",
-                body:JSON.stringify(point)
+    const updatePoint = () => {
+        if (point.hasOwnProperty('ID')) {
+            requestApi("/index.php?action=Points&method=UpdatePoint", {
+                method: "post",
+                mode: "cors",
+                body: JSON.stringify(point)
             })
-                .then((res)=>{
-                    res.json().then((json)=>{
-                        if (json.Status==1){
+                .then((res) => {
+                    res.json().then((json) => {
+                        if (json.Status == 1) {
                             message.success("Update Success");
-                            point.onChange(point,data.id);
-                        }else{
+                            point.onChange(point, data.id);
+                        } else {
                             message.warn(json.Message);
                         }
                     })
@@ -122,36 +123,70 @@ export const EffectivePoint = memo((data) => {
 
     return (
         <>
-            {
-                point.hasOwnProperty('ID')
-                    ?<Handle
-                        type={"target"}
-                        position={Position.Left}
-                    />
-                    :''
-            }
-            <Input
-                value={point.keyword}
-                onChange={(e) => {
-                    let newData = {
-                        ...point,
-                        keyword: e.target.value
-                    };
-                    setPoint(newData);
+            <div
+                style={{padding:"10px",backgroundColor:!point.hasOwnProperty('ID')?'gray':config.statusBackGroupColor[point.status]}}
+                onClick={()=>{
+                    (async ()=>{})()
+                        .then(()=>{
+                            setPoint({
+                                ...point,
+                                IsActiveNode:true
+                            });
+                        })
+                        .then(()=>{
+                            point.onChange(point,data.id);
+                        })
                 }}
-                onPressEnter={() => {
-                    if (point.hasOwnProperty('ID')){
-                        updatePoint();
-                    }else{
-                        startSearchPoint();
+            >
+                <Row>
+                    {
+                        point.hasOwnProperty('ID')
+                            ? <Handle
+                                type={"target"}
+                                position={Position.Left}
+                            />
+                            : ''
                     }
-                }}
-            />
-            {
-                point.hasOwnProperty('ID')
-                    ?<Handle type={"source"} position={Position.Right}/>
-                    :''
-            }
+                    <Input
+                        value={point.keyword}
+                        onChange={(e) => {
+                            let newData = {
+                                ...point,
+                                keyword: e.target.value
+                            };
+                            setPoint(newData);
+                        }}
+                        onPressEnter={() => {
+                            if (point.hasOwnProperty('ID')) {
+                                updatePoint();
+                            } else {
+                                startSearchPoint();
+                            }
+                        }}
+                    />
+                    {
+                        point.hasOwnProperty('ID')
+                            ? <Handle type={"source"} position={Position.Right}/>
+                            : ''
+                    }
+                </Row>
+                {
+                    point.hasOwnProperty('note')
+                        ?<Row>
+                            {point.note}
+                        </Row>
+                        :''
+                }
+                {
+                    point.hasOwnProperty('FileContent')
+                        ?<Row>
+                            <MarkdownPreview
+                                source={point.FileContent}
+                            />
+                        </Row>
+                        :''
+                }
+            </div>
             <Modal
                 width={1000}
                 visible={showModal}
@@ -166,7 +201,7 @@ export const EffectivePoint = memo((data) => {
                             orientation={"left"}
                         >
                             <Button
-                                onClick={()=>{
+                                onClick={() => {
                                     savePoint();
                                 }}
                             >Save</Button>
@@ -174,35 +209,35 @@ export const EffectivePoint = memo((data) => {
                     </Form.Item>
                     <Form.Item
                         label={
-                        <Select
-                            defaultValue={'Point'}
-                            onChange={(newValue)=>{
-                                switch (newValue) {
-                                    case 'Point':
-                                        setPoint({
-                                            ...point,
-                                            SearchAble:SEARCHABLE_POINT
-                                        })
-                                        break;
-                                    default:
-                                        setPoint({
-                                            ...point,
-                                            SearchAble:SEARCHABLE_TITLE,
-                                            status:config.statusMap[2].value,
-                                            Point:0
-                                        })
-                                        break;
+                            <Select
+                                defaultValue={'Point'}
+                                onChange={(newValue) => {
+                                    switch (newValue) {
+                                        case 'Point':
+                                            setPoint({
+                                                ...point,
+                                                SearchAble: SEARCHABLE_POINT
+                                            })
+                                            break;
+                                        default:
+                                            setPoint({
+                                                ...point,
+                                                SearchAble: SEARCHABLE_TITLE,
+                                                status: config.statusMap[2].value,
+                                                Point: 0
+                                            })
+                                            break;
 
-                                }
-                            }}
-                        >
-                            <Select.Option value={"Point"}>
-                                Point
-                            </Select.Option>
-                            <Select.Option value={"Title"}>
-                                Title
-                            </Select.Option>
-                        </Select>
+                                    }
+                                }}
+                            >
+                                <Select.Option value={"Point"}>
+                                    Point
+                                </Select.Option>
+                                <Select.Option value={"Title"}>
+                                    Title
+                                </Select.Option>
+                            </Select>
                         }
                     >
                         <Input
@@ -226,8 +261,8 @@ export const EffectivePoint = memo((data) => {
                                     key={pointItem.ID}
                                     label={
                                         <Checkbox
-                                            checked={pointItem.ID==selectedPoint.ID}
-                                            onChange={()=>{
+                                            checked={pointItem.ID == selectedPoint.ID}
+                                            onChange={() => {
                                                 updateSelectedPoint(pointItem);
                                             }}
                                         />
@@ -267,12 +302,12 @@ export const MindNotesTemplate = {
         table: "Comments",
         Comment: "",
         Md: "",
-        SearchAble:SEARCHABLE_POINT
+        SearchAble: SEARCHABLE_POINT
     },
     EffectivePoint: {
         keyword: "",
         table: "Points",
-        FileContent:""
+        FileContent: ""
     }
 }
 
