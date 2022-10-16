@@ -65,6 +65,28 @@ const MindNote = (props) => {
     const [nodes, setNodes, onNodesChange] = useNodesState([]);
     const [edges, setEdges, onEdgesChange] = useEdgesState([]);
 
+    const GetPointDetail=(PID)=>{
+        requestApi("/index.php?action=Points&method=GetDetailWithFile&ID="+PID)
+            .then((res)=>{
+                res.json().then((json)=>{
+                    let type = 'EffectivePoint';
+                    let position = reactFlowInstance.project({x: 200, y: 200});
+                    let newNode = {
+                        id: getId(type),
+                        type,
+                        position,
+                        data: {
+                            ...MindNotesTemplate[type],
+                            ...json.Data.Point,
+                            FileContent:json.Data.FileContent,
+                            onChange:updateNodeItem
+                        }
+                    };
+                    setNodes((nds) => nds.concat(newNode));
+                })
+            })
+    }
+
     const updateNodeItem = (data, id) => {
         setNodes((nodes) => nodes.map((nds) => {
             if (nds.id == id) {
@@ -87,14 +109,20 @@ const MindNote = (props) => {
             .then((res) => {
                 res.json().then((json) => {
                     if (json.Status == 1) {
-                        setNodes(json.Data.nodes.map((item) => {
-                            item.data.onChange = updateNodeItem;
-                            return item;
-                        }));
-                        let edges=json.Data.edges.map((edge)=>{
-                            return edge;
-                        })
-                        setEdges(edges);
+                        if (json.Data.nodes){
+                            setNodes(json.Data.nodes.map((item) => {
+                                item.data.onChange = updateNodeItem;
+                                return item;
+                            }));
+                        }else{
+                            GetPointDetail(PID);
+                        }
+                        if (json.Data.edges){
+                            let edges=json.Data.edges.map((edge)=>{
+                                return edge;
+                            })
+                            setEdges(edges);
+                        }
                     } else {
                         message.warn(json.Message);
                     }

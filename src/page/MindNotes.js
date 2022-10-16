@@ -271,7 +271,8 @@ export const MindNotesTemplate = {
     },
     EffectivePoint: {
         keyword: "",
-        table: "Points"
+        table: "Points",
+        FileContent:""
     }
 }
 
