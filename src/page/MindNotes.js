@@ -26,6 +26,7 @@ import {
     DoubleRightOutlined,
     DoubleLeftOutlined
 } from '@ant-design/icons';
+import Links from "../component/Links";
 
 export const MindNodeDragDataTransferKey = 'MindNotes' +
     'Type';
@@ -159,6 +160,18 @@ export const EffectivePoint = memo((data) => {
             />
             <div
                 style={{width:(point.hasOwnProperty('width')?point.width:300)+"px"}}
+                onClick={()=>{
+                    (async ()=>{})()
+                        .then(()=>{
+                            setPoint({
+                                ...point,
+                                IsActiveNode:true
+                            });
+                        })
+                        .then(()=>{
+                            point.onChange(point,data.id);
+                        })
+                }}
             >
                 <Badge.Ribbon
                     color={!point.hasOwnProperty('ID')?'gray':config.statusBackGroupColor[point.status]}
@@ -215,20 +228,13 @@ export const EffectivePoint = memo((data) => {
                         title={
                             <Input
                                 addonBefore={
-                                    <div
-                                        onClick={()=>{
-                                            (async ()=>{})()
-                                                .then(()=>{
-                                                    setPoint({
-                                                        ...point,
-                                                        IsActiveNode:true
-                                                    });
-                                                })
-                                                .then(()=>{
-                                                    point.onChange(point,data.id);
-                                                })
-                                        }}
-                                    >P</div>
+                                    <div>
+                                        <Links
+                                            PID={point.ID}
+                                            Label={"P"}
+                                            Color={"#1890ff"}
+                                        />
+                                    </div>
                                 }
                                 value={point.keyword}
                                 onChange={(e) => {
