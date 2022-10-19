@@ -16,12 +16,14 @@ import {
     Tabs,
     Timeline
 } from "antd";
-import {BookOutlined,WarningOutlined,UnorderedListOutlined,FormOutlined, StarOutlined,DeleteOutlined,MessageOutlined,FieldTimeOutlined,ClockCircleOutlined} from '@ant-design/icons';
+import {BookOutlined,WarningOutlined,UnorderedListOutlined,FormOutlined, StarOutlined,DeleteOutlined,MessageOutlined,FieldTimeOutlined,ClockCircleOutlined,SnippetsOutlined} from '@ant-design/icons';
 import config from "../config/setting";
 import MarkdownPreview from "@uiw/react-markdown-preview";
 import ActionSummary from "./ActionSummary";
 import WithoutConnectionPoints from "./WithoutConnectionPoints";
 import BookMarks from "./BookMarks";
+import RecentPoints from "./RecentPoints";
+import Login from "./Login";
 
 class Favourite extends React.Component{
     constructor(props) {
@@ -42,7 +44,9 @@ class Favourite extends React.Component{
             //
             withoutConnectionPointsModalVisible:false,
             //
-            bookmarkDrawerVisible:false
+            bookmarkDrawerVisible:false,
+            //
+            recentPointModelVisible:false
         }
         this.getFavourite=this.getFavourite.bind(this);
         this.showFavouriteModal=this.showFavouriteModal.bind(this);
@@ -108,24 +112,24 @@ class Favourite extends React.Component{
     }
 
     showActionsModal(startTime='',endTime='',modalVisible=true){
-        requestApi("/index.php?action=Actions&method=List&StartTime="+startTime+"&EndTime="+endTime)
-            .then((res)=>{
-                res.json().then((json)=>{
-                    this.setState({
-                        actions:json.Data.Actions,
-                        actionModalVisible:modalVisible
-                    })
-                })
-            }).then(()=>{
-                requestApi("/index.php?action=Actions&method=DistinctActions")
-                    .then((res)=>{
-                        res.json().then((json)=>{
-                            this.setState({
-                                distinctActions:json.Data.Actions
-                            })
-                        })
-                    })
-        })
+        // requestApi("/index.php?action=Actions&method=List&StartTime="+startTime+"&EndTime="+endTime)
+        //     .then((res)=>{
+        //         res.json().then((json)=>{
+        //             this.setState({
+        //                 actions:json.Data.Actions,
+        //                 actionModalVisible:modalVisible
+        //             })
+        //         })
+        //     }).then(()=>{
+        //         requestApi("/index.php?action=Actions&method=DistinctActions")
+        //             .then((res)=>{
+        //                 res.json().then((json)=>{
+        //                     this.setState({
+        //                         distinctActions:json.Data.Actions
+        //                     })
+        //                 })
+        //             })
+        // })
     }
 
     newAction(){
@@ -179,6 +183,30 @@ class Favourite extends React.Component{
                 <Row
                     justify={"end"}
                 >
+                    <Col span={1}>
+                        <Affix offsetBottom={true}>
+                            <Login />
+                        </Affix>
+                    </Col>
+                    <Col span={1}>
+                        <Affix
+                            offsetBottom={true}
+                        >
+                            <Button
+                                type={"link"}
+                                ghost={true}
+                                shape={"circle"}
+                                icon={<SnippetsOutlined />}
+                                onClick={()=>{
+                                    this.setState({
+                                        recentPointModelVisible:true
+                                    })
+                                }}
+                            >
+
+                            </Button>
+                        </Affix>
+                    </Col>
                     <Col span={1}>
                         <Affix
                             offsetBottom={true}
@@ -247,24 +275,38 @@ class Favourite extends React.Component{
                             </Button>
                         </Affix>
                     </Col>
-                    <Col span={5}>
-                        <Affix
-                            offsetBottom={true}
-                        >
-                            <Button
-                                ghost={true}
-                                type={"link"}
-                                icon={<FieldTimeOutlined />}
-                                onClick={()=>{
-                                    this.showActionsModal(this.state.actionStartTime);
-                                }}
-                            >
-                                {
-                                    this.state.actions.length>0?(this.state.actions[0].Title+" ( "+this.state.actions[0].AddTime.substring(11,20)+" )"):''
-                                }
-                            </Button>
-                        </Affix>
-                    </Col>
+                    {/*<Col span={5}>*/}
+                    {/*    <Affix*/}
+                    {/*        offsetBottom={true}*/}
+                    {/*    >*/}
+                    {/*        <Button*/}
+                    {/*            ghost={true}*/}
+                    {/*            type={"link"}*/}
+                    {/*            icon={<FieldTimeOutlined />}*/}
+                    {/*            onClick={()=>{*/}
+                    {/*                this.showActionsModal(this.state.actionStartTime);*/}
+                    {/*            }}*/}
+                    {/*        >*/}
+                    {/*            {*/}
+                    {/*                this.state.actions.length>0?(this.state.actions[0].Title+" ( "+this.state.actions[0].AddTime.substring(11,20)+" )"):''*/}
+                    {/*            }*/}
+                    {/*        </Button>*/}
+                    {/*    </Affix>*/}
+                    {/*</Col>*/}
+                </Row>
+                <Row>
+                    <Modal
+                        onCancel={()=>{
+                            this.setState({
+                                recentPointModelVisible:false
+                            })
+                        }}
+                        width={800}
+                        title={"Recent Points"}
+                        visible={this.state.recentPointModelVisible}
+                    >
+                        <RecentPoints />
+                    </Modal>
                 </Row>
                 <Row>
                     <Modal

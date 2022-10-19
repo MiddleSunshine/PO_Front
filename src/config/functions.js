@@ -1,8 +1,29 @@
 import {message} from "antd";
 import moment from "moment";
 
+export var Authorization_Key = 'Authorization';
+
 export function requestApi(api,option={}){
-    return fetch("http://"+document.domain+":8091"+"/PO_Back/"+api,option);
+    return fetch("http://118.31.247.119/PO_Back_Dev/PO_Back/"+api,option);
+}
+
+export function LoginCheck(password) {
+    requestApi("index.php?action=Login&method=PasswordCheck", {
+        mode: "cors",
+        method: "post",
+        body: JSON.stringify({
+            password: password
+        })
+    })
+        .then((res) => {
+            res.json().then((json) => {
+                if (json.Status == 1) {
+                    sessionStorage.setItem(Authorization_Key,json.Data.Token)
+                } else {
+                    message.warn(json.Message);
+                }
+            })
+        })
 }
 
 export function now() {

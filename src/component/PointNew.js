@@ -31,7 +31,7 @@ export function NewPoint(PID,searchKeyword,newPointType,isTitle=false,connection
         })
     })
         .then((res)=>{
-            res.json().then((json)=>{
+            return res.json().then((json)=>{
                 if (json.Status==1){
                     message.success("New Point Success");
                     return true;

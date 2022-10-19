@@ -24,7 +24,9 @@ import Actions from "../page/Actions";
 import PointMindMap from "../page/PointMindMap";
 import CommentList from "../page/CommentList";
 import WhiteBoard from "../page/WhiteBoard";
-
+import ClockInMobile from '../mobile/ClockIn';
+import Debug from '../page/debug';
+import MindNote from '../page/MindNote';
 interface router {
     path: string,
     component: any,
@@ -32,6 +34,14 @@ interface router {
 }
 
 const routers: Array<router> = [
+    {
+        path:"/MindNote/:PID",
+        component:MindNote
+    },
+    {
+        path:"/Mobile/ClockIn",
+        component:ClockInMobile
+    },
     {
         path:"/Actions",
         component:Actions
@@ -72,10 +82,10 @@ const routers: Array<router> = [
         path: "/GTD",
         component: GTD
     },
-    // {
-    //     path: "/debug",
-    //     component: Debug
-    // },
+    {
+        path: "/debug",
+        component: Debug
+    },
     {
         path: "/clock_in",
         component: CheckIn

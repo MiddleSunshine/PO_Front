@@ -34,6 +34,15 @@ class Links extends React.Component{
                     </Menu.Item>
                     <Menu.Item>
                         <Button
+                            type={"link"}
+                            href={"/MindNote/"+this.state.PID}
+                            target={"_blank"}
+                        >
+                            White Board
+                        </Button>
+                    </Menu.Item>
+                    <Menu.Item>
+                        <Button
                             target={"_blank"}
                             href={"/pointRoad/"+this.state.PID}
                             type={"link"}

@@ -2,11 +2,13 @@ import React from 'react'
 import {Tldraw} from "@tldraw/tldraw";
 import {requestApi} from "../config/functions";
 import {message} from "antd/es";
+import {BUCKET_LONG_FILE, uploadFile} from "../component/imageUpload";
 
 class WhiteBoard extends React.Component{
     constructor(props) {
         super(props);
         this.state={
+            patchAssert:false,
             document: {},
             isInitDocument:false,
             ProjectName:props.match.params.ProjectName.replace(/=/g,'/')
@@ -68,16 +70,39 @@ class WhiteBoard extends React.Component{
             {
                 this.state.isInitDocument
                     ? <Tldraw
+                        onChangePage={(app)=>{
+                            if (!this.state.patchAssert){
+                                (async ()=>{})()
+                                    .then(()=>{
+                                        app.patchAssets(this.state.document.assets);
+                                    })
+                                    .then(()=>{
+                                        this.setState({
+                                            patchAssets:true
+                                        })
+                                    })
+                                    .then(()=>{
+                                        console.warn("Patch Success")
+                                        console.log(app.document)
+                                    })
+                            }
+                        }}
                         document={this.state.document}
                         onSaveProject={(app)=>{
                             this.saveProject(app.document);
                             return false;
+                        }}
+                        onAssetCreate={async (app,file,id)=>{
+                            return await uploadFile(BUCKET_LONG_FILE,file);
                         }}
                     />
                     :<Tldraw
                         onSaveProject={(app)=>{
                             this.saveProject(app.document);
                             return false;
+                        }}
+                        onAssetCreate={async (app,file,id)=>{
+                            return await uploadFile(BUCKET_LONG_FILE,file);
                         }}
                     />
 
