@@ -24,7 +24,8 @@ import {
     LeftOutlined,
     CloseOutlined,
     UnlockOutlined,
-    LockOutlined
+    LockOutlined,
+    CodeSandboxOutlined
 } from '@ant-design/icons';
 import "../css/PointTable.css"
 import config, {SEARCHABLE_POINT, SEARCHABLE_TITLE} from "../config/setting";
@@ -794,6 +795,17 @@ class PointTable extends React.Component {
                                 >
                                     {this.state.parentPoint.keyword}
                                 </span>
+                                        {
+                                            this.state.parentPoint.url>0
+                                                ?<Button
+                                                    target={"_blank"}
+                                                    href={this.state.parentPoint.url}
+                                                    type={"link"}
+                                                    icon={<CodeSandboxOutlined />}
+                                                ></Button>
+                                                :''
+                                        }
+
                                     </Tooltip>
                                 }
                                 // subTitle={"Status:" + this.state.parentPoint.status + " / Point:" + this.state.parentPoint.Point}
