@@ -24,6 +24,7 @@ import PointNew, {NewPoint, NewPointConnection} from "../component/PointNew";
 import {Draw} from "@tldraw/tldraw";
 import PointEdit from "../component/PointEdit";
 import MenuList from "../component/MenuList";
+import {deleteConnection} from "../component/PointConnection";
 
 /**
  * @param event DragEvent
@@ -223,9 +224,40 @@ const MindNote = (props) => {
         }
     }
 
-    const onNodeDelete=(deleteNode)=>{
-        // todo 如果删除的 node 是有ID的，则删除所有以此 node 作为 target 的connection
-        // 如果是没有ID的，则也是删除所有的connection
+    const onNodeDelete=(deleteNodes)=>{
+        let connections=[];
+        let edgesMap=[];
+        edges.map((edge)=>{
+            if (edgesMap.hasOwnProperty(edge.target)){
+                edgesMap[edge.target].push(edge.source);
+            }else{
+                edgesMap[edge.target]=[];
+                edgesMap[edge.target].push(edge.source);
+            }
+        })
+        let nodesMap=[];
+        nodes.map((node)=>{
+            nodesMap[node.id]=node;
+        });
+        deleteNodes.map((node)=>{
+            if (!node.data.hasOwnProperty('ID')){
+                return node;
+            }
+            if (edgesMap.hasOwnProperty(node.id)){
+                if (nodesMap.hasOwnProperty(edgesMap[node.id])){
+                    if (nodesMap[edgesMap[node.id]].data.hasOwnProperty('ID')){
+                        connections.push({
+                            'PID':nodesMap[edgesMap[node.id]].data.ID,
+                            'SubPID':node.data.ID
+                        });
+                    }
+                }
+            }
+            return node;
+        });
+        connections.map((connection)=>{
+            deleteConnection(connection.PID,connection.SubPID);
+        });
     }
 
     // let HotKeysMap=[];
