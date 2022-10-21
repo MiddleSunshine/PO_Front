@@ -7,7 +7,7 @@ export function requestApi(api,option={},checkLogin=true){
     if (checkLogin){
         Logined();
     }
-    return fetch("http://118.31.247.119/PO_Back_Dev/PO_Back/"+api,option);
+    return fetch("http://118.31.247.119/PO_Back_Dev/PO_Back/"+api+"&sign="+sessionStorage.getItem(Authorization_Key),option);
 }
 
 export function Logined(){
@@ -31,7 +31,13 @@ export function LoginCheck(username,password) {
         .then((res) => {
             res.json().then((json) => {
                 if (json.Status == 1) {
-                    sessionStorage.setItem(Authorization_Key,json.Data.Token);
+                    (async ()=>{})()
+                        .then(()=>{
+                            sessionStorage.setItem(Authorization_Key,json.Data.Token);
+                        })
+                        .then(()=>{
+                            window.location.href="/";
+                        })
                 } else {
                     message.warn(json.Message);
                 }
