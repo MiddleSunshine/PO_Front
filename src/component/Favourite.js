@@ -23,7 +23,7 @@ import ActionSummary from "./ActionSummary";
 import WithoutConnectionPoints from "./WithoutConnectionPoints";
 import BookMarks from "./BookMarks";
 import RecentPoints from "./RecentPoints";
-import Login from "./Login";
+// import Login from "./Login";
 
 class Favourite extends React.Component{
     constructor(props) {
@@ -183,11 +183,11 @@ class Favourite extends React.Component{
                 <Row
                     justify={"end"}
                 >
-                    <Col span={1}>
-                        <Affix offsetBottom={true}>
-                            <Login />
-                        </Affix>
-                    </Col>
+                    {/*<Col span={1}>*/}
+                    {/*    <Affix offsetBottom={true}>*/}
+                    {/*        <Login />*/}
+                    {/*    </Affix>*/}
+                    {/*</Col>*/}
                     <Col span={1}>
                         <Affix
                             offsetBottom={true}

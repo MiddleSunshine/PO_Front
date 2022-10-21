@@ -27,6 +27,8 @@ import WhiteBoard from "../page/WhiteBoard";
 import ClockInMobile from '../mobile/ClockIn';
 import Debug from '../page/debug';
 import MindNote from '../page/MindNote';
+import LoginIndex from "../page/LoginIndex";
+
 interface router {
     path: string,
     component: any,
@@ -41,6 +43,10 @@ const routers: Array<router> = [
     {
         path:"/Mobile/ClockIn",
         component:ClockInMobile
+    },
+    {
+        path:"/Login",
+        component:LoginIndex
     },
     {
         path:"/Actions",
