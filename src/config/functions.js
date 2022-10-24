@@ -3,22 +3,41 @@ import moment from "moment";
 
 export var Authorization_Key = 'Authorization';
 
-export function requestApi(api,option={}){
-    return fetch("http://118.31.247.119/PO_Back_Dev/PO_Back/"+api,option);
+export function requestApi(api,option={},checkLogin=true){
+    if (checkLogin){
+        Logined();
+    }
+    return fetch("http://118.31.247.119/PO_Back_Dev/PO_Back/"+api+"&sign="+sessionStorage.getItem(Authorization_Key),option);
 }
 
-export function LoginCheck(password) {
+export function Logined(){
+    let loginKey=sessionStorage.getItem(Authorization_Key)
+    if (!loginKey){
+        window.location.href="/Login";
+    }
+}
+
+export function LoginCheck(username,password) {
     requestApi("index.php?action=Login&method=PasswordCheck", {
         mode: "cors",
         method: "post",
         body: JSON.stringify({
-            password: password
+            UserName:username,
+            Password: password
         })
-    })
+    },
+        false
+    )
         .then((res) => {
             res.json().then((json) => {
                 if (json.Status == 1) {
-                    sessionStorage.setItem(Authorization_Key,json.Data.Token)
+                    (async ()=>{})()
+                        .then(()=>{
+                            sessionStorage.setItem(Authorization_Key,json.Data.Token);
+                        })
+                        .then(()=>{
+                            window.location.href="/";
+                        })
                 } else {
                     message.warn(json.Message);
                 }

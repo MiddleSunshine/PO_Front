@@ -24,43 +24,43 @@ import MarkdownPreview from "@uiw/react-markdown-preview";
 import {
     CloseOutlined,
     DoubleRightOutlined,
-    DoubleLeftOutlined
+    DoubleLeftOutlined,
+    SyncOutlined,
+    ApiOutlined
 } from '@ant-design/icons';
 import Links from "../component/Links";
+import MDEditor from "@uiw/react-md-editor";
 
-export const MindNodeDragDataTransferKey = 'MindNotes' +
-    'Type';
+export const MindNodeDragDataTransferKey = 'MindNotesType';
+
+const SourceHandleStyle={
+    backgroundColor:"#87d068",
+    width:"15px",
+    height: "15px"
+};
+const TargetHandleStyle={
+    width:"10px",
+    height:"10px",
+    backgroundColor: "cyan"
+};
 
 const onDragStart = (event, noteType) => {
     event.dataTransfer.setData(MindNodeDragDataTransferKey, noteType);
     event.dataTransfer.effectAllowed = 'move';
 }
 
-class Comments extends React.Component {
-    render() {
-        return <div
-            onDragStart={(event) => onDragStart(event, 'EffectiveComments')}
-            draggable
-        >
-            <Button
-                type={"primary"}
-            >
-                Comments
-            </Button>
-        </div>
-    }
-}
-
-class Point extends React.Component {
+class NodeTemplate extends React.Component{
     render() {
         return (
             <div
-                draggable
-                onDragStart={(event) => onDragStart(event, 'EffectivePoint')}
+                draggable={true}
+                onDragStart={(event)=>onDragStart(event,this.props.type)}
             >
                 <Button
                     type={"primary"}
-                >Point</Button>
+                >
+                    {this.props.label}
+                </Button>
             </div>
         )
     }
@@ -88,13 +88,21 @@ export const EffectivePoint = memo((data) => {
 
     const savePoint = () => {
         if (selectedPoint.hasOwnProperty('ID')) {
-            setPoint(selectedPoint);
+            setPoint({
+                ...selectedPoint,
+                ...point
+            });
             point.onChange(selectedPoint, data.id);
             finishSearchPoint();
         } else {
             NewPoint('', point.keyword, point.SearchAble, point.SearchAble == SEARCHABLE_TITLE)
-                .then((insertResult) => {
-                    if (insertResult) {
+                .then((newPoint) => {
+                    if (newPoint.hasOwnProperty('ID')) {
+                        point.onChange(newPoint,data.id);
+                        setPoint({
+                            ...newPoint,
+                            ...point
+                        });
                         finishSearchPoint();
                     }
                 })
@@ -155,6 +163,7 @@ export const EffectivePoint = memo((data) => {
     return (
         <>
             <Handle
+                style={TargetHandleStyle}
                 type={"target"}
                 position={Position.Left}
             />
@@ -180,16 +189,16 @@ export const EffectivePoint = memo((data) => {
                         overlay={
                         <Menu
                             items={[
-                                {
-                                    key: '1',
-                                    label:<Button
-                                        icon={<CloseOutlined />}
-                                        size={"small"}
-                                        danger={true}
-                                        type={"link"}
-                                    >
-                                    </Button>
-                                },
+                                // {
+                                //     key: '1',
+                                //     label:<Button
+                                //         icon={<CloseOutlined />}
+                                //         size={"small"}
+                                //         danger={true}
+                                //         type={"link"}
+                                //     >
+                                //     </Button>
+                                // },
                                 {
                                     key:'2',
                                     label: <Button
@@ -209,6 +218,23 @@ export const EffectivePoint = memo((data) => {
                                         type={"link"}
                                         onClick={()=>{
                                             updatePointWidth(point.hasOwnProperty('width')?(point.width-50):250);
+                                        }}
+                                    >
+                                    </Button>
+                                },
+                                {
+                                    key:'4',
+                                    label: <Button
+                                        icon={<SyncOutlined />}
+                                        size={"small"}
+                                        type={"link"}
+                                        onClick={()=>{
+                                            if (point.hasOwnProperty('onChange')){
+                                                point.onChange(point,data.id);
+                                                message.success("Sync Success");
+                                            }else{
+                                                message.warn("Data Error.Reload the page.")
+                                            }
                                         }}
                                     >
                                     </Button>
@@ -257,10 +283,7 @@ export const EffectivePoint = memo((data) => {
                         {
                             point.note
                                 ?<Row>
-                                    <Input
-                                        disabled={true}
-                                        value={point.note}
-                                    />
+                                    {point.note}
                                 </Row>
                                 :''
                         }
@@ -276,7 +299,7 @@ export const EffectivePoint = memo((data) => {
                     </Card>
                 </Badge.Ribbon>
             </div>
-            <Handle type={"source"} position={Position.Right}/>
+            <Handle style={SourceHandleStyle} type={"source"} position={Position.Right}/>
             <Modal
                 width={1000}
                 visible={showModal}
@@ -375,7 +398,7 @@ export const EffectiveComments = memo((data) => {
     const [comment, setComment] = useState(data.data);
     return (
         <>
-            <Handle type={"target"} position={Position.Left}/>
+            <Handle type={"target"} position={Position.Left} style={TargetHandleStyle}/>
             <Input
                 value={comment.Comment}
                 onChange={(e) => {
@@ -386,6 +409,108 @@ export const EffectiveComments = memo((data) => {
                 }}
             />
         </>
+    )
+})
+
+export const EffectiveLink=memo((linkNode)=>{
+    const [link,setLink]=useState(linkNode.data);
+    const [editLink,switchEditMode]=useState(link.link.length==0);
+    const finishInput=()=>{
+        link.onChange(link,linkNode.id);
+        switchEditMode(false);
+    }
+    return(
+        <div
+            style={{width:(link.hasOwnProperty('width')?link.with:'250')+"px",border:"1px solid"}}
+        >
+            {
+                editLink
+                    ?<div>
+                        <Input
+                            value={link.label}
+                            onChange={(e)=>{
+                                setLink({
+                                    ...link,
+                                    label:e.target.value
+                                })
+                            }}
+                            onPressEnter={()=>{
+                                finishInput();
+                            }}
+                        />
+                        <Input
+                            value={link.link}
+                            onChange={(e)=>{
+                                setLink({
+                                    ...link,
+                                    link:e.target.value
+                                })
+                            }}
+                            onPressEnter={()=>{
+                                finishInput();
+                            }}
+                        />
+                    </div>
+                    :<Button
+                        type={"link"}
+                        href={link.link}
+                        target={"_blank"}
+                        icon={<ApiOutlined
+                            onClick={(e)=>{
+                                e.preventDefault();
+                                switchEditMode(true);
+                            }}
+                        />}
+                    >
+                        {link.label}
+                    </Button>
+            }
+            <Handle type={"target"} position={Position.Right} style={TargetHandleStyle} />
+            <Handle type={"target"} position={Position.Left} style={TargetHandleStyle} />
+            <Handle type={"target"} position={Position.Top} style={TargetHandleStyle} />
+            <Handle type={"target"} position={Position.Bottom} style={TargetHandleStyle} />
+        </div>
+    )
+})
+
+export const EffectiveNote=memo((nodeObject)=>{
+    const [note,updateNote]=useState(nodeObject.data);
+    const [editMode,switchEditMode]=useState(note.md.length==0);
+    const finishInput=()=>{
+        switchEditMode(false)
+        note.onChange(note,nodeObject.id);
+    }
+    return(
+        <div>
+            <Button
+                onClick={()=>{
+                    if (editMode){
+                        finishInput();
+                    }
+                    switchEditMode(!editMode)
+                }}
+            >
+                {editMode?'Save':'Edit'}
+            </Button><br/>
+            {
+                editMode
+                    ?<MDEditor
+                        preview={"edit"}
+                        value={note.md}
+                        onChange={(newValue)=>{
+                            updateNote({
+                                ...note,
+                                md:newValue
+                            });
+                        }}
+                    />
+                    :<MarkdownPreview
+                        source={note.md}
+                    />
+            }
+            <Handle type={"source"} position={Position.Right} style={SourceHandleStyle} />
+            <Handle type={"target"} position={Position.Left} style={TargetHandleStyle} />
+        </div>
     )
 })
 
@@ -402,6 +527,13 @@ export const MindNotesTemplate = {
         FileContent: "",
         SearchAble: SEARCHABLE_POINT,
         width:300
+    },
+    EffectiveLink:{
+        label:"",
+        link:""
+    },
+    EffectiveNote:{
+        md:""
     }
 }
 
@@ -413,11 +545,26 @@ class MindNotes extends React.Component {
                 align={"top"}
                 justify={"center"}
             >
+                {/*<Col span={1}>*/}
+                {/*    <Comments/>*/}
+                {/*</Col>*/}
                 <Col span={1}>
-                    <Comments/>
+                    <NodeTemplate
+                        type={"EffectivePoint"}
+                        label={"Point"}
+                    />
                 </Col>
                 <Col span={1}>
-                    <Point/>
+                    <NodeTemplate
+                        type={"EffectiveLink"}
+                        label={"Link"}
+                    />
+                </Col>
+                <Col span={1}>
+                    <NodeTemplate
+                        type={"EffectiveNote"}
+                        label={"Note"}
+                    />
                 </Col>
             </Row>
         </div>
@@ -428,5 +575,7 @@ export default MindNotes
 
 export const MindNotesTypes = {
     EffectiveComments,
-    EffectivePoint
+    EffectivePoint,
+    EffectiveLink,
+    EffectiveNote
 }
