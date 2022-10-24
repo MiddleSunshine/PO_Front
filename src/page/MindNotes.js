@@ -24,7 +24,9 @@ import MarkdownPreview from "@uiw/react-markdown-preview";
 import {
     CloseOutlined,
     DoubleRightOutlined,
-    DoubleLeftOutlined
+    DoubleLeftOutlined,
+    SyncOutlined,
+    ApiOutlined
 } from '@ant-design/icons';
 import Links from "../component/Links";
 
@@ -63,6 +65,19 @@ class Point extends React.Component {
                 >Point</Button>
             </div>
         )
+    }
+}
+
+class Link extends React.Component{
+    render() {
+        return <div
+            draggable={true}
+            onDragStart={(event)=>onDragStart(event,'EffectiveLink')}
+        >
+            <Button
+                type={"primary"}
+            >Link</Button>
+        </div>
     }
 }
 
@@ -188,16 +203,16 @@ export const EffectivePoint = memo((data) => {
                         overlay={
                         <Menu
                             items={[
-                                {
-                                    key: '1',
-                                    label:<Button
-                                        icon={<CloseOutlined />}
-                                        size={"small"}
-                                        danger={true}
-                                        type={"link"}
-                                    >
-                                    </Button>
-                                },
+                                // {
+                                //     key: '1',
+                                //     label:<Button
+                                //         icon={<CloseOutlined />}
+                                //         size={"small"}
+                                //         danger={true}
+                                //         type={"link"}
+                                //     >
+                                //     </Button>
+                                // },
                                 {
                                     key:'2',
                                     label: <Button
@@ -217,6 +232,23 @@ export const EffectivePoint = memo((data) => {
                                         type={"link"}
                                         onClick={()=>{
                                             updatePointWidth(point.hasOwnProperty('width')?(point.width-50):250);
+                                        }}
+                                    >
+                                    </Button>
+                                },
+                                {
+                                    key:'4',
+                                    label: <Button
+                                        icon={<SyncOutlined />}
+                                        size={"small"}
+                                        type={"link"}
+                                        onClick={()=>{
+                                            if (point.hasOwnProperty('onChange')){
+                                                point.onChange(point,data.id);
+                                                message.success("Sync Success");
+                                            }else{
+                                                message.warn("Data Error.Reload the page.")
+                                            }
                                         }}
                                     >
                                     </Button>
@@ -397,6 +429,65 @@ export const EffectiveComments = memo((data) => {
     )
 })
 
+export const EffectiveLink=memo((linkNode)=>{
+    const [link,setLink]=useState(linkNode.data);
+    const [editLink,switchEditMode]=useState(link.link.length==0);
+    const finishInput=()=>{
+        link.onChange(link,linkNode.id);
+        switchEditMode(false);
+    }
+    return(
+        <div
+            style={{width:(link.hasOwnProperty('width')?link.with:'100')+"px"}}
+        >
+            {
+                editLink
+                    ?<div>
+                        <Input
+                            value={link.label}
+                            onChange={(e)=>{
+                                setLink({
+                                    ...link,
+                                    label:e.target.value
+                                })
+                            }}
+                            onPressEnter={()=>{
+                                finishInput();
+                            }}
+                        />
+                        <Input
+                            value={link.link}
+                            onChange={(e)=>{
+                                setLink({
+                                    ...link,
+                                    link:e.target.value
+                                })
+                            }}
+                            onPressEnter={()=>{
+                                finishInput();
+                            }}
+                        />
+                    </div>
+                    :<Button
+                        type={"link"}
+                        href={link.link}
+                        target={"_blank"}
+                        icon={<ApiOutlined
+                            onClick={(e)=>{
+                                e.preventDefault();
+                                switchEditMode(true);
+                            }}
+                        />}
+                    >
+                        {link.label}
+                    </Button>
+            }
+            <Handle type={"target"} position={Position.Top} />
+            <Handle type={"target"} position={Position.Bottom} />
+        </div>
+    )
+})
+
 export const MindNotesTemplate = {
     EffectiveComments: {
         table: "Comments",
@@ -410,6 +501,10 @@ export const MindNotesTemplate = {
         FileContent: "",
         SearchAble: SEARCHABLE_POINT,
         width:300
+    },
+    EffectiveLink:{
+        label:"",
+        link:""
     }
 }
 
@@ -421,11 +516,14 @@ class MindNotes extends React.Component {
                 align={"top"}
                 justify={"center"}
             >
-                <Col span={1}>
-                    <Comments/>
-                </Col>
+                {/*<Col span={1}>*/}
+                {/*    <Comments/>*/}
+                {/*</Col>*/}
                 <Col span={1}>
                     <Point/>
+                </Col>
+                <Col span={1}>
+                    <Link />
                 </Col>
             </Row>
         </div>
@@ -436,5 +534,6 @@ export default MindNotes
 
 export const MindNotesTypes = {
     EffectiveComments,
-    EffectivePoint
+    EffectivePoint,
+    EffectiveLink
 }

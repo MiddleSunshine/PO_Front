@@ -4,7 +4,8 @@ import MindNotes, {
     MindNotesTypes,
     MindNodeDragDataTransferKey,
     EffectiveComments,
-    MindNotesTemplate
+    MindNotesTemplate,
+    EffectiveLink
 } from './MindNotes';
 import {Col, Drawer, message, Row} from 'antd';
 import ReactFlow, {
