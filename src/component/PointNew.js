@@ -34,10 +34,10 @@ export function NewPoint(PID,searchKeyword,newPointType,isTitle=false,connection
             return res.json().then((json)=>{
                 if (json.Status==1){
                     message.success("New Point Success");
-                    return true;
+                    return json.Data.Point;
                 }else{
                     message.warn(json.Message)
-                    return false;
+                    return {};
                 }
             })
         })
