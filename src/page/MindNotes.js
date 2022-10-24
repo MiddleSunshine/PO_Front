@@ -26,21 +26,22 @@ import {
     DoubleRightOutlined,
     DoubleLeftOutlined,
     SyncOutlined,
-    ApiOutlined
+    ApiOutlined,
+    ShareAltOutlined
 } from '@ant-design/icons';
 import Links from "../component/Links";
 import MDEditor from "@uiw/react-md-editor";
 
 export const MindNodeDragDataTransferKey = 'MindNotesType';
 
-const SourceHandleStyle={
-    backgroundColor:"#87d068",
-    width:"15px",
+const SourceHandleStyle = {
+    backgroundColor: "#87d068",
+    width: "15px",
     height: "15px"
 };
-const TargetHandleStyle={
-    width:"10px",
-    height:"10px",
+const TargetHandleStyle = {
+    width: "10px",
+    height: "10px",
     backgroundColor: "cyan"
 };
 
@@ -49,12 +50,12 @@ const onDragStart = (event, noteType) => {
     event.dataTransfer.effectAllowed = 'move';
 }
 
-class NodeTemplate extends React.Component{
+class NodeTemplate extends React.Component {
     render() {
         return (
             <div
                 draggable={true}
-                onDragStart={(event)=>onDragStart(event,this.props.type)}
+                onDragStart={(event) => onDragStart(event, this.props.type)}
             >
                 <Button
                     type={"primary"}
@@ -98,7 +99,7 @@ export const EffectivePoint = memo((data) => {
             NewPoint('', point.keyword, point.SearchAble, point.SearchAble == SEARCHABLE_TITLE)
                 .then((newPoint) => {
                     if (newPoint.hasOwnProperty('ID')) {
-                        point.onChange(newPoint,data.id);
+                        point.onChange(newPoint, data.id);
                         setPoint({
                             ...newPoint,
                             ...point
@@ -149,156 +150,169 @@ export const EffectivePoint = memo((data) => {
         })
     }
 
-    const updatePointWidth=(width)=>{
-        let newPoint=point;
-        newPoint.width=width;
-        (async ()=>{})()
-            .then(()=>{
+    const updatePointWidth = (width) => {
+        let newPoint = point;
+        newPoint.width = width;
+        (async () => {
+        })()
+            .then(() => {
                 setPoint(newPoint);
             })
-            .then(()=>{
-                point.onChange(newPoint,data.id);
+            .then(() => {
+                point.onChange(newPoint, data.id);
             })
     }
     return (
-        <>
+        <div
+            onClick={() => {
+                (async () => {
+                })()
+                    .then(() => {
+                        setPoint({
+                            ...point,
+                            IsActiveNode: true
+                        });
+                    })
+                    .then(() => {
+                        point.onChange(point, data.id);
+                    })
+            }}
+        >
+            <div
+                style={{width: (point.hasOwnProperty('width') ? point.width : 300) + "px"}}
+            >
+                <div>
+                    <Input
+                        addonBefore={
+                            <div>
+                                <Links
+                                    PID={point.ID}
+                                    Label={"P"}
+                                    Color={"#1890ff"}
+                                />
+                            </div>
+                        }
+                        addonAfter={
+                            <Dropdown
+                                overlay={
+                                    <Menu
+                                        items={[
+                                            // {
+                                            //     key: '1',
+                                            //     label:<Button
+                                            //         icon={<CloseOutlined />}
+                                            //         size={"small"}
+                                            //         danger={true}
+                                            //         type={"link"}
+                                            //     >
+                                            //     </Button>
+                                            // },
+                                            {
+                                                key: '2',
+                                                label: <Button
+                                                    size={"small"}
+                                                    type={"link"}
+                                                    icon={<DoubleRightOutlined/>}
+                                                    onClick={() => {
+                                                        updatePointWidth(point.hasOwnProperty('width') ? (point.width + 50) : 350);
+                                                    }}
+                                                ></Button>
+                                            },
+                                            {
+                                                key: '3',
+                                                label: <Button
+                                                    icon={<DoubleLeftOutlined/>}
+                                                    size={"small"}
+                                                    type={"link"}
+                                                    onClick={() => {
+                                                        updatePointWidth(point.hasOwnProperty('width') ? (point.width - 50) : 250);
+                                                    }}
+                                                >
+                                                </Button>
+                                            },
+                                            {
+                                                key: '4',
+                                                label: <Button
+                                                    icon={<SyncOutlined/>}
+                                                    size={"small"}
+                                                    type={"link"}
+                                                    onClick={() => {
+                                                        if (point.hasOwnProperty('onChange')) {
+                                                            point.onChange(point, data.id);
+                                                            message.success("Sync Success");
+                                                        } else {
+                                                            message.warn("Data Error.Reload the page.")
+                                                        }
+                                                    }}
+                                                >
+                                                </Button>
+                                            }
+                                        ]}
+                                    />
+                                }
+                            >
+                                <Space>
+                                        <span
+                                            style={{color: point.hasOwnProperty('ID') ? config.statusBackGroupColor[point.status] : 'gray'}}
+                                        >
+                                            {point.hasOwnProperty('status') ? config.statusLabelMap[point.status] : 'Empty'}
+                                        </span>
+                                </Space>
+                            </Dropdown>
+                        }
+                        value={point.keyword}
+                        onChange={(e) => {
+                            let newData = {
+                                ...point,
+                                keyword: e.target.value
+                            };
+                            setPoint(newData);
+                        }}
+                        onPressEnter={() => {
+                            if (point.hasOwnProperty('ID')) {
+                                updatePoint();
+                            } else {
+                                startSearchPoint();
+                            }
+                        }}
+                    />
+                </div>
+                {
+                    point.url
+                        ? <div>
+                            <Button
+                                icon={<ShareAltOutlined/>}
+                                type={"link"}
+                                href={point.url}
+                                target={"_blank"}
+                            >
+                                White Bord
+                            </Button>
+                        </div>
+                        : ''
+                }
+                {
+                    point.note
+                        ? <div style={{padding: "10px"}}>
+                            {point.note}
+                        </div>
+                        : ''
+                }
+                {
+                    point.FileContent
+                        ? <div style={{padding: "10px"}}>
+                            <MarkdownPreview
+                                source={point.FileContent}
+                            />
+                        </div>
+                        : ''
+                }
+            </div>
             <Handle
                 style={TargetHandleStyle}
                 type={"target"}
                 position={Position.Left}
             />
-            <div
-                style={{width:(point.hasOwnProperty('width')?point.width:300)+"px"}}
-                onClick={()=>{
-                    (async ()=>{})()
-                        .then(()=>{
-                            setPoint({
-                                ...point,
-                                IsActiveNode:true
-                            });
-                        })
-                        .then(()=>{
-                            point.onChange(point,data.id);
-                        })
-                }}
-            >
-                <Badge.Ribbon
-                    color={!point.hasOwnProperty('ID')?'gray':config.statusBackGroupColor[point.status]}
-                    text={
-                    <Dropdown
-                        overlay={
-                        <Menu
-                            items={[
-                                // {
-                                //     key: '1',
-                                //     label:<Button
-                                //         icon={<CloseOutlined />}
-                                //         size={"small"}
-                                //         danger={true}
-                                //         type={"link"}
-                                //     >
-                                //     </Button>
-                                // },
-                                {
-                                    key:'2',
-                                    label: <Button
-                                        size={"small"}
-                                        type={"link"}
-                                        icon={<DoubleRightOutlined />}
-                                        onClick={()=>{
-                                            updatePointWidth(point.hasOwnProperty('width')?(point.width+50):350);
-                                        }}
-                                    ></Button>
-                                },
-                                {
-                                    key:'3',
-                                    label: <Button
-                                        icon={<DoubleLeftOutlined />}
-                                        size={"small"}
-                                        type={"link"}
-                                        onClick={()=>{
-                                            updatePointWidth(point.hasOwnProperty('width')?(point.width-50):250);
-                                        }}
-                                    >
-                                    </Button>
-                                },
-                                {
-                                    key:'4',
-                                    label: <Button
-                                        icon={<SyncOutlined />}
-                                        size={"small"}
-                                        type={"link"}
-                                        onClick={()=>{
-                                            if (point.hasOwnProperty('onChange')){
-                                                point.onChange(point,data.id);
-                                                message.success("Sync Success");
-                                            }else{
-                                                message.warn("Data Error.Reload the page.")
-                                            }
-                                        }}
-                                    >
-                                    </Button>
-                                }
-                            ]}
-                        />
-                        }
-                    >
-                        <Space>
-                            {point.hasOwnProperty('status')?point.status:'Empty'}
-                        </Space>
-                    </Dropdown>
-                    }
-                >
-                    <Card
-                        size={"small"}
-                        title={
-                            <Input
-                                addonBefore={
-                                    <div>
-                                        <Links
-                                            PID={point.ID}
-                                            Label={"P"}
-                                            Color={"#1890ff"}
-                                        />
-                                    </div>
-                                }
-                                value={point.keyword}
-                                onChange={(e) => {
-                                    let newData = {
-                                        ...point,
-                                        keyword: e.target.value
-                                    };
-                                    setPoint(newData);
-                                }}
-                                onPressEnter={() => {
-                                    if (point.hasOwnProperty('ID')) {
-                                        updatePoint();
-                                    } else {
-                                        startSearchPoint();
-                                    }
-                                }}
-                            />
-                        }
-                    >
-                        {
-                            point.note
-                                ?<Row>
-                                    {point.note}
-                                </Row>
-                                :''
-                        }
-                        {
-                            point.FileContent
-                                ?<Row>
-                                    <MarkdownPreview
-                                        source={point.FileContent}
-                                    />
-                                </Row>
-                                :''
-                        }
-                    </Card>
-                </Badge.Ribbon>
-            </div>
             <Handle style={SourceHandleStyle} type={"source"} position={Position.Right}/>
             <Modal
                 width={1000}
@@ -390,7 +404,7 @@ export const EffectivePoint = memo((data) => {
                     }
                 </Form>
             </Modal>
-        </>
+        </div>
     )
 })
 
@@ -412,51 +426,51 @@ export const EffectiveComments = memo((data) => {
     )
 })
 
-export const EffectiveLink=memo((linkNode)=>{
-    const [link,setLink]=useState(linkNode.data);
-    const [editLink,switchEditMode]=useState(link.link.length==0);
-    const finishInput=()=>{
-        link.onChange(link,linkNode.id);
+export const EffectiveLink = memo((linkNode) => {
+    const [link, setLink] = useState(linkNode.data);
+    const [editLink, switchEditMode] = useState(link.link.length == 0);
+    const finishInput = () => {
+        link.onChange(link, linkNode.id);
         switchEditMode(false);
     }
-    return(
+    return (
         <div
-            style={{width:(link.hasOwnProperty('width')?link.with:'250')+"px",border:"1px solid"}}
+            style={{width: (link.hasOwnProperty('width') ? link.with : '250') + "px", border: "1px solid"}}
         >
             {
                 editLink
-                    ?<div>
+                    ? <div>
                         <Input
                             value={link.label}
-                            onChange={(e)=>{
+                            onChange={(e) => {
                                 setLink({
                                     ...link,
-                                    label:e.target.value
+                                    label: e.target.value
                                 })
                             }}
-                            onPressEnter={()=>{
+                            onPressEnter={() => {
                                 finishInput();
                             }}
                         />
                         <Input
                             value={link.link}
-                            onChange={(e)=>{
+                            onChange={(e) => {
                                 setLink({
                                     ...link,
-                                    link:e.target.value
+                                    link: e.target.value
                                 })
                             }}
-                            onPressEnter={()=>{
+                            onPressEnter={() => {
                                 finishInput();
                             }}
                         />
                     </div>
-                    :<Button
+                    : <Button
                         type={"link"}
                         href={link.link}
                         target={"_blank"}
                         icon={<ApiOutlined
-                            onClick={(e)=>{
+                            onClick={(e) => {
                                 e.preventDefault();
                                 switchEditMode(true);
                             }}
@@ -465,51 +479,48 @@ export const EffectiveLink=memo((linkNode)=>{
                         {link.label}
                     </Button>
             }
-            <Handle type={"target"} position={Position.Right} style={TargetHandleStyle} />
-            <Handle type={"target"} position={Position.Left} style={TargetHandleStyle} />
-            <Handle type={"target"} position={Position.Top} style={TargetHandleStyle} />
-            <Handle type={"target"} position={Position.Bottom} style={TargetHandleStyle} />
+            <Handle type={"target"} position={Position.Left} style={TargetHandleStyle}/>
         </div>
     )
 })
 
-export const EffectiveNote=memo((nodeObject)=>{
-    const [note,updateNote]=useState(nodeObject.data);
-    const [editMode,switchEditMode]=useState(note.md.length==0);
-    const finishInput=()=>{
+export const EffectiveNote = memo((nodeObject) => {
+    const [note, updateNote] = useState(nodeObject.data);
+    const [editMode, switchEditMode] = useState(note.md.length == 0);
+    const finishInput = () => {
         switchEditMode(false)
-        note.onChange(note,nodeObject.id);
+        note.onChange(note, nodeObject.id);
     }
-    return(
+    return (
         <div>
             <Button
-                onClick={()=>{
-                    if (editMode){
+                onClick={() => {
+                    if (editMode) {
                         finishInput();
                     }
                     switchEditMode(!editMode)
                 }}
             >
-                {editMode?'Save':'Edit'}
+                {editMode ? 'Save' : 'Edit'}
             </Button><br/>
             {
                 editMode
-                    ?<MDEditor
+                    ? <MDEditor
                         preview={"edit"}
                         value={note.md}
-                        onChange={(newValue)=>{
+                        onChange={(newValue) => {
                             updateNote({
                                 ...note,
-                                md:newValue
+                                md: newValue
                             });
                         }}
                     />
-                    :<MarkdownPreview
+                    : <MarkdownPreview
                         source={note.md}
                     />
             }
-            <Handle type={"source"} position={Position.Right} style={SourceHandleStyle} />
-            <Handle type={"target"} position={Position.Left} style={TargetHandleStyle} />
+            <Handle type={"source"} position={Position.Right} style={SourceHandleStyle}/>
+            <Handle type={"target"} position={Position.Left} style={TargetHandleStyle}/>
         </div>
     )
 })
@@ -519,21 +530,22 @@ export const MindNotesTemplate = {
         table: "Comments",
         Comment: "",
         Md: "",
-        width:300
+        width: 300
     },
     EffectivePoint: {
         keyword: "",
         table: "Points",
         FileContent: "",
         SearchAble: SEARCHABLE_POINT,
-        width:300
+        width: 300,
+        url: ""
     },
-    EffectiveLink:{
-        label:"",
-        link:""
+    EffectiveLink: {
+        label: "",
+        link: ""
     },
-    EffectiveNote:{
-        md:""
+    EffectiveNote: {
+        md: ""
     }
 }
 
