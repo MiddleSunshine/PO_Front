@@ -297,10 +297,7 @@ export const EffectivePoint = memo((data) => {
                         {
                             point.note
                                 ?<Row>
-                                    <Input
-                                        disabled={true}
-                                        value={point.note}
-                                    />
+                                    {point.note}
                                 </Row>
                                 :''
                         }
@@ -438,7 +435,7 @@ export const EffectiveLink=memo((linkNode)=>{
     }
     return(
         <div
-            style={{width:(link.hasOwnProperty('width')?link.with:'100')+"px"}}
+            style={{width:(link.hasOwnProperty('width')?link.with:'250')+"px",border:"1px solid"}}
         >
             {
                 editLink
@@ -482,6 +479,8 @@ export const EffectiveLink=memo((linkNode)=>{
                         {link.label}
                     </Button>
             }
+            <Handle type={"target"} position={Position.Right} />
+            <Handle type={"target"} position={Position.Left} />
             <Handle type={"target"} position={Position.Top} />
             <Handle type={"target"} position={Position.Bottom} />
         </div>
