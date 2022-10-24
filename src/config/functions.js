@@ -4,9 +4,9 @@ import moment from "moment";
 export var Authorization_Key = 'Authorization';
 
 export function requestApi(api,option={},checkLogin=true){
-    if (checkLogin){
-        Logined();
-    }
+    // if (checkLogin){
+    //     Logined();
+    // }
     return fetch("http://118.31.247.119/PO_Back_Dev/PO_Back/"+api+"&sign="+sessionStorage.getItem(Authorization_Key),option);
 }
 
