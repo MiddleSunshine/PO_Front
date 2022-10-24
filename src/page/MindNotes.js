@@ -29,55 +29,40 @@ import {
     ApiOutlined
 } from '@ant-design/icons';
 import Links from "../component/Links";
+import MDEditor from "@uiw/react-md-editor";
 
-export const MindNodeDragDataTransferKey = 'MindNotes' +
-    'Type';
+export const MindNodeDragDataTransferKey = 'MindNotesType';
+
+const SourceHandleStyle={
+    backgroundColor:"#87d068",
+    width:"15px",
+    height: "15px"
+};
+const TargetHandleStyle={
+    width:"10px",
+    height:"10px",
+    backgroundColor: "cyan"
+};
 
 const onDragStart = (event, noteType) => {
     event.dataTransfer.setData(MindNodeDragDataTransferKey, noteType);
     event.dataTransfer.effectAllowed = 'move';
 }
 
-class Comments extends React.Component {
-    render() {
-        return <div
-            onDragStart={(event) => onDragStart(event, 'EffectiveComments')}
-            draggable
-        >
-            <Button
-                type={"primary"}
-            >
-                Comments
-            </Button>
-        </div>
-    }
-}
-
-class Point extends React.Component {
+class NodeTemplate extends React.Component{
     render() {
         return (
             <div
-                draggable
-                onDragStart={(event) => onDragStart(event, 'EffectivePoint')}
+                draggable={true}
+                onDragStart={(event)=>onDragStart(event,this.props.type)}
             >
                 <Button
                     type={"primary"}
-                >Point</Button>
+                >
+                    {this.props.label}
+                </Button>
             </div>
         )
-    }
-}
-
-class Link extends React.Component{
-    render() {
-        return <div
-            draggable={true}
-            onDragStart={(event)=>onDragStart(event,'EffectiveLink')}
-        >
-            <Button
-                type={"primary"}
-            >Link</Button>
-        </div>
     }
 }
 
@@ -178,6 +163,7 @@ export const EffectivePoint = memo((data) => {
     return (
         <>
             <Handle
+                style={TargetHandleStyle}
                 type={"target"}
                 position={Position.Left}
             />
@@ -313,7 +299,7 @@ export const EffectivePoint = memo((data) => {
                     </Card>
                 </Badge.Ribbon>
             </div>
-            <Handle type={"source"} position={Position.Right}/>
+            <Handle style={SourceHandleStyle} type={"source"} position={Position.Right}/>
             <Modal
                 width={1000}
                 visible={showModal}
@@ -412,7 +398,7 @@ export const EffectiveComments = memo((data) => {
     const [comment, setComment] = useState(data.data);
     return (
         <>
-            <Handle type={"target"} position={Position.Left}/>
+            <Handle type={"target"} position={Position.Left} style={TargetHandleStyle}/>
             <Input
                 value={comment.Comment}
                 onChange={(e) => {
@@ -479,10 +465,51 @@ export const EffectiveLink=memo((linkNode)=>{
                         {link.label}
                     </Button>
             }
-            <Handle type={"target"} position={Position.Right} />
-            <Handle type={"target"} position={Position.Left} />
-            <Handle type={"target"} position={Position.Top} />
-            <Handle type={"target"} position={Position.Bottom} />
+            <Handle type={"target"} position={Position.Right} style={TargetHandleStyle} />
+            <Handle type={"target"} position={Position.Left} style={TargetHandleStyle} />
+            <Handle type={"target"} position={Position.Top} style={TargetHandleStyle} />
+            <Handle type={"target"} position={Position.Bottom} style={TargetHandleStyle} />
+        </div>
+    )
+})
+
+export const EffectiveNote=memo((nodeObject)=>{
+    const [note,updateNote]=useState(nodeObject.data);
+    const [editMode,switchEditMode]=useState(note.md.length==0);
+    const finishInput=()=>{
+        switchEditMode(false)
+        note.onChange(note,nodeObject.id);
+    }
+    return(
+        <div>
+            <Button
+                onClick={()=>{
+                    if (editMode){
+                        finishInput();
+                    }
+                    switchEditMode(!editMode)
+                }}
+            >
+                {editMode?'Save':'Edit'}
+            </Button><br/>
+            {
+                editMode
+                    ?<MDEditor
+                        preview={"edit"}
+                        value={note.md}
+                        onChange={(newValue)=>{
+                            updateNote({
+                                ...note,
+                                md:newValue
+                            });
+                        }}
+                    />
+                    :<MarkdownPreview
+                        source={note.md}
+                    />
+            }
+            <Handle type={"source"} position={Position.Right} style={SourceHandleStyle} />
+            <Handle type={"target"} position={Position.Left} style={TargetHandleStyle} />
         </div>
     )
 })
@@ -504,6 +531,9 @@ export const MindNotesTemplate = {
     EffectiveLink:{
         label:"",
         link:""
+    },
+    EffectiveNote:{
+        md:""
     }
 }
 
@@ -519,10 +549,22 @@ class MindNotes extends React.Component {
                 {/*    <Comments/>*/}
                 {/*</Col>*/}
                 <Col span={1}>
-                    <Point/>
+                    <NodeTemplate
+                        type={"EffectivePoint"}
+                        label={"Point"}
+                    />
                 </Col>
                 <Col span={1}>
-                    <Link />
+                    <NodeTemplate
+                        type={"EffectiveLink"}
+                        label={"Link"}
+                    />
+                </Col>
+                <Col span={1}>
+                    <NodeTemplate
+                        type={"EffectiveNote"}
+                        label={"Note"}
+                    />
                 </Col>
             </Row>
         </div>
@@ -534,5 +576,6 @@ export default MindNotes
 export const MindNotesTypes = {
     EffectiveComments,
     EffectivePoint,
-    EffectiveLink
+    EffectiveLink,
+    EffectiveNote
 }
