@@ -186,13 +186,28 @@ export const EffectivePoint = memo((data) => {
                 <div>
                     <Input
                         addonBefore={
-                            <div>
-                                <Links
-                                    PID={point.ID}
-                                    Label={"P"}
-                                    Color={"#1890ff"}
-                                />
-                            </div>
+                            point.hasOwnProperty('ID')
+                                ?<div>
+                                    <Links
+                                        PID={point.ID}
+                                        Label={"P"}
+                                        Color={"#1890ff"}
+                                    />
+                                </div>
+                                :<Button
+                                    icon={<SyncOutlined/>}
+                                    size={"small"}
+                                    type={"link"}
+                                    onClick={() => {
+                                        if (point.hasOwnProperty('onChange')) {
+                                            point.onChange(point, data.id);
+                                            message.success("Sync Success");
+                                        } else {
+                                            message.warn("Data Error.Reload the page.")
+                                        }
+                                    }}
+                                >
+                                </Button>
                         }
                         addonAfter={
                             <Dropdown
@@ -511,6 +526,7 @@ export const EffectiveNote = memo((nodeObject) => {
             style={{border:"1px solid #d9d9d9",padding:"10px"}}
         >
             <Button
+                type={"link"}
                 onClick={() => {
                     if (editMode) {
                         finishInput();
@@ -574,11 +590,6 @@ class MindNotes extends React.Component {
                 align={"top"}
                 justify={"center"}
             >
-                <Col span={4}>
-                    <Search
-                        DisplayFilter={false}
-                    />
-                </Col>
                 <Col span={1}>
                     <NodeTemplate
                         type={"EffectivePoint"}
@@ -595,6 +606,11 @@ class MindNotes extends React.Component {
                     <NodeTemplate
                         type={"EffectiveNote"}
                         label={"Note"}
+                    />
+                </Col>
+                <Col span={10}>
+                    <Search
+                        DisplayFilter={false}
                     />
                 </Col>
             </Row>
