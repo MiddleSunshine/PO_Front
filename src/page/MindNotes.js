@@ -31,6 +31,7 @@ import {
 } from '@ant-design/icons';
 import Links from "../component/Links";
 import MDEditor from "@uiw/react-md-editor";
+import Search from "../component/Search";
 
 export const MindNodeDragDataTransferKey = 'MindNotesType';
 
@@ -164,6 +165,7 @@ export const EffectivePoint = memo((data) => {
     }
     return (
         <div
+            style={{border:'1px solid #d9d9d9',padding:"10px"}}
             onClick={() => {
                 (async () => {
                 })()
@@ -253,7 +255,7 @@ export const EffectivePoint = memo((data) => {
                             >
                                 <Space>
                                         <span
-                                            style={{color: point.hasOwnProperty('ID') ? config.statusBackGroupColor[point.status] : 'gray'}}
+                                            style={{color: point.hasOwnProperty('ID') ? config.statusBackGroupColor[point.status] : '#d9d9d9'}}
                                         >
                                             {point.hasOwnProperty('status') ? config.statusLabelMap[point.status] : 'Empty'}
                                         </span>
@@ -293,14 +295,18 @@ export const EffectivePoint = memo((data) => {
                 }
                 {
                     point.note
-                        ? <div style={{padding: "10px"}}>
+                        ? <div
+                            style={{borderTop:"1px solid #d9d9d9"}}
+                        >
                             {point.note}
                         </div>
                         : ''
                 }
                 {
                     point.FileContent
-                        ? <div style={{padding: "10px"}}>
+                        ? <div
+                            style={{borderTop:"1px solid #d9d9d9"}}
+                        >
                             <MarkdownPreview
                                 source={point.FileContent}
                             />
@@ -397,7 +403,16 @@ export const EffectivePoint = memo((data) => {
                                         />
                                     }
                                 >
-                                    {pointItem.keyword}
+                                    <Input
+                                        value={pointItem.keyword}
+                                        addonAfter={
+                                        <Links
+                                            PID={pointItem.ID}
+                                            Label={pointItem.status}
+                                            Color={config.statusBackGroupColor[pointItem.status]}
+                                        />
+                                        }
+                                    />
                                 </Form.Item>
                             )
                         })
@@ -435,7 +450,7 @@ export const EffectiveLink = memo((linkNode) => {
     }
     return (
         <div
-            style={{width: (link.hasOwnProperty('width') ? link.with : '250') + "px", border: "1px solid"}}
+            style={{width: (link.hasOwnProperty('width') ? link.with : '250') + "px", border: "1px solid #d9d9d9"}}
         >
             {
                 editLink
@@ -492,7 +507,9 @@ export const EffectiveNote = memo((nodeObject) => {
         note.onChange(note, nodeObject.id);
     }
     return (
-        <div>
+        <div
+            style={{border:"1px solid #d9d9d9",padding:"10px"}}
+        >
             <Button
                 onClick={() => {
                     if (editMode) {
@@ -557,9 +574,11 @@ class MindNotes extends React.Component {
                 align={"top"}
                 justify={"center"}
             >
-                {/*<Col span={1}>*/}
-                {/*    <Comments/>*/}
-                {/*</Col>*/}
+                <Col span={4}>
+                    <Search
+                        DisplayFilter={false}
+                    />
+                </Col>
                 <Col span={1}>
                     <NodeTemplate
                         type={"EffectivePoint"}
