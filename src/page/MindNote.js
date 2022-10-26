@@ -71,6 +71,7 @@ const MindNote = (props) => {
     const [edges, setEdges, onEdgesChange] = useEdgesState([]);
     const [activePointNode,updateActivePointNode]=useState({});
     const [editPointDrawVisible,switchEditPointDrawVisible]=useState(false);
+    const [optionMessage,updateOptionMessage]=useState("");
 
     const GetPointDetail = (PID) => {
         requestApi("/index.php?action=Points&method=GetDetailWithFile&ID=" + PID)
@@ -111,6 +112,10 @@ const MindNote = (props) => {
             return nds;
         }));
         updateActivePointNode(activePoint);
+        if (data.hasOwnProperty('keyword')){
+            updateOptionMessage("active node:"+data.keyword);
+        }
+
     }
 
     const updateEdgeItem = (data, id) => {
@@ -288,9 +293,16 @@ const MindNote = (props) => {
                     HotKeysMap[keyName]();
                 }}
             >
-                <Row>
-                    <Col span={24}>
+                <Row
+                    align={"middle"}
+                    justify={"start"}
+                    style={{borderBottom:"1px solid #d9d9d9",paddingBottom:"10px"}}
+                >
+                    <Col span={20}>
                         <MindNotes/>
+                    </Col>
+                    <Col span={4}>
+                        <span style={{color:"#d0d0d0"}}>{optionMessage}</span>
                     </Col>
                 </Row>
                 <div className={"MindNote"}>
