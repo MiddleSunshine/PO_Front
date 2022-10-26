@@ -1,6 +1,6 @@
 import React from "react";
-import {Button, Card, Col, Input, Menu, message, Row, Table} from "antd";
-import {requestApi} from "../config/functions";
+import { Button, Card, Col, Input, Menu, message, Row, Table } from "antd";
+import { requestApi } from "../config/functions";
 import MenuList from "../component/MenuList";
 import "../css/ClockIn.css"
 
@@ -23,7 +23,7 @@ class CheckIn extends React.Component {
     }
 
     getNow() {
-        requestApi("index.php?action=ClockIn&method=Now")
+        requestApi("index.php?action=ClockIn&method=Now", {}, false)
             .then((res) => {
                 res.json().then((json) => {
                     this.setState({
@@ -60,7 +60,7 @@ class CheckIn extends React.Component {
     }
 
     getTableData() {
-        requestApi("/index.php?action=ClockIn&method=List")
+        requestApi("/index.php?action=ClockIn&method=List", {}, false)
             .then((res) => {
                 res.json().then((json) => {
                     this.setState({
@@ -89,7 +89,7 @@ class CheckIn extends React.Component {
     }
 
     InitCalendar() {
-        requestApi("/index.php?action=Calendar&method=InitCalendar")
+        requestApi("/index.php?action=Calendar&method=InitCalendar", {}, false)
             .then((res) => {
                 res.json().then((json) => {
                     this.setState({
@@ -136,10 +136,10 @@ class CheckIn extends React.Component {
         return <div className="container ClockIn">
             <Row>
                 <Col span={24}>
-                    <MenuList/>
+                    <MenuList />
                 </Col>
             </Row>
-            <hr/>
+            <hr />
             <Row>
                 <Col span={3}>
                     <Button
@@ -162,13 +162,13 @@ class CheckIn extends React.Component {
                     </Button>
                 </Col>
             </Row>
-            <hr/>
+            <hr />
             <Row>
                 <Col span={24}>
                     <h3>Amount : {this.state.amount} mins / Now : {this.state.Now}</h3>
                 </Col>
             </Row>
-            <hr/>
+            <hr />
             <Row>
                 <Col span={3}>
                     <h3>Mon</h3>
@@ -231,7 +231,7 @@ class CheckIn extends React.Component {
                                                                                 :
                                                                                 <span>S:{this.state.dataSource[item.Date].working_hours ? this.state.dataSource[item.Date].working_hours.substring(10) : ""}</span>
                                                                         }
-                                                                        <hr/>
+                                                                        <hr />
                                                                         {
                                                                             this.state.dataSource[item.Date].EditMode
                                                                                 ? <Input
@@ -246,9 +246,9 @@ class CheckIn extends React.Component {
                                                                                 :
                                                                                 <span>E:{this.state.dataSource[item.Date].off_work_time ? this.state.dataSource[item.Date].off_work_time.substring(10) : ""}</span>
                                                                         }
-                                                                        <hr/>
+                                                                        <hr />
                                                                         R:{this.state.dataSource[item.Date].Result} min
-                                                                        <hr/>
+                                                                        <hr />
                                                                         {
                                                                             this.state.dataSource[item.Date].EditMode
                                                                                 ? <Input
