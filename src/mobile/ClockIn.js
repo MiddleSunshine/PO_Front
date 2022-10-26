@@ -19,7 +19,7 @@ class ClockInMobile extends React.Component {
   }
 
   startWork() {
-    requestApi("index.php?action=ClockIn&method=StartWork")
+    requestApi("index.php?action=ClockIn&method=StartWork",{},false)
       .then((res) => {
         res.json().then((json) => {
           if (json.Status == 1) {
@@ -39,7 +39,7 @@ class ClockInMobile extends React.Component {
   }
 
   endWork() {
-    requestApi("/index.php?action=ClockIn&method=FinishWork")
+    requestApi("/index.php?action=ClockIn&method=FinishWork",{},false)
       .then((res) => {
         res.json().then((json) => {
           if (json.Status == 1) {
