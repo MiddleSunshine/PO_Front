@@ -311,7 +311,7 @@ export const EffectivePoint = memo((data) => {
                 {
                     point.note
                         ? <div
-                            style={{borderTop:"1px solid #d9d9d9"}}
+                            style={{borderTop:"1px solid #d9d9d9",paddingTop:"10px"}}
                         >
                             {point.note}
                         </div>
@@ -320,7 +320,7 @@ export const EffectivePoint = memo((data) => {
                 {
                     point.FileContent
                         ? <div
-                            style={{borderTop:"1px solid #d9d9d9"}}
+                            style={{borderTop:"1px solid #d9d9d9",paddingTop:"10px"}}
                         >
                             <MarkdownPreview
                                 source={point.FileContent}
