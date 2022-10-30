@@ -532,7 +532,10 @@ export const EffectiveLink = memo((linkNode) => {
                         {link.label}
                     </Button>
             }
-            <Handle type={"target"} position={Position.Left} style={TargetHandleStyle}/>
+            <Handle type={"target"} position={Position.Left} style={TargetHandleStyle} id={linkNode.id+"_left"}/>
+            <Handle type={"target"} position={Position.Top} style={TargetHandleStyle} id={linkNode.id+"_top"}/>
+            <Handle type={"target"} position={Position.Right} style={TargetHandleStyle} id={linkNode.id+"_right"}/>
+            <Handle type={"target"} position={Position.Bottom} style={TargetHandleStyle} id={linkNode.id+"_bottom"}/>
         </div>
     )
 })
@@ -575,8 +578,10 @@ export const EffectiveNote = memo((nodeObject) => {
                         source={note.md}
                     />
             }
-            <Handle type={"source"} position={Position.Right} style={SourceHandleStyle}/>
-            <Handle type={"target"} position={Position.Left} style={TargetHandleStyle}/>
+            <Handle type={"source"} position={Position.Right} style={SourceHandleStyle} id={nodeObject.id+"_right"}/>
+            <Handle type={"source"} position={Position.Bottom} style={SourceHandleStyle} id={nodeObject.id+"_bottom"}/>
+            <Handle type={"target"} position={Position.Left} style={TargetHandleStyle} id={nodeObject.id+"_left"}/>
+            <Handle type={"target"} position={Position.Top} style={TargetHandleStyle} id={nodeObject.id+"_top"}/>
         </div>
     )
 })
