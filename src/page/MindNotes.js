@@ -91,13 +91,12 @@ export const EffectivePoint = memo((data) => {
     const savePoint = () => {
         if (selectedPoint.hasOwnProperty('ID')) {
             (async ()=>{
-                let newPoint={
+                var newPoint={
                     ...point,
                     ...selectedPoint
                 }
+                await point.onChange(selectedPoint, data.id);
                 await setPoint(newPoint);
-                debugger
-                point.onChange(selectedPoint, data.id);
             })()
                 .then(()=>{
                     finishSearchPoint();
@@ -172,22 +171,22 @@ export const EffectivePoint = memo((data) => {
     return (
         <div
             style={{border:'1px solid #d9d9d9',padding:"10px"}}
-            onClick={() => {
-                (async () => {
-                })()
-                    .then(() => {
-                        setPoint({
-                            ...point,
-                            IsActiveNode: true
-                        });
-                    })
-                    .then(() => {
-                        point.onChange(point, data.id);
-                    })
-            }}
         >
             <div
                 style={{width: (point.hasOwnProperty('width') ? point.width : 300) + "px"}}
+                onClick={() => {
+                    (async () => {
+                    })()
+                        .then(() => {
+                            setPoint({
+                                ...point,
+                                IsActiveNode: true
+                            });
+                        })
+                        .then(() => {
+                            point.onChange(point, data.id);
+                        })
+                }}
             >
                 <div>
                     <Input
@@ -338,9 +337,15 @@ export const EffectivePoint = memo((data) => {
             <Handle
                 style={TargetHandleStyle}
                 type={"target"}
+                position={Position.Top}
+            />
+            <Handle
+                style={TargetHandleStyle}
+                type={"target"}
                 position={Position.Left}
             />
             <Handle style={SourceHandleStyle} type={"source"} position={Position.Right}/>
+            <Handle style={SourceHandleStyle} type={"source"} position={Position.Bottom}/>
             <Modal
                 width={1000}
                 visible={showModal}
