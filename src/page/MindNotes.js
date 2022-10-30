@@ -90,12 +90,18 @@ export const EffectivePoint = memo((data) => {
 
     const savePoint = () => {
         if (selectedPoint.hasOwnProperty('ID')) {
-            setPoint({
-                ...selectedPoint,
-                ...point
-            });
-            point.onChange(selectedPoint, data.id);
-            finishSearchPoint();
+            (async ()=>{
+                let newPoint={
+                    ...point,
+                    ...selectedPoint
+                }
+                await setPoint(newPoint);
+                debugger
+                point.onChange(selectedPoint, data.id);
+            })()
+                .then(()=>{
+                    finishSearchPoint();
+                })
         } else {
             NewPoint('', point.keyword, point.SearchAble, point.SearchAble == SEARCHABLE_TITLE)
                 .then((newPoint) => {
