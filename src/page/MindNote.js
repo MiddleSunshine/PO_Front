@@ -7,6 +7,9 @@ import MindNotes, {
     MindNotesTemplate,
     EffectiveLink
 } from './MindNotes';
+import {
+    MindEdges
+} from './MindEdges'
 import {Col, Drawer, message, Row} from 'antd';
 import ReactFlow, {
     Controls,
@@ -319,6 +322,7 @@ const MindNote = (props) => {
                                     onDragOver={onDragOver}
                                     onInit={onInit}
                                     nodeTypes={MindNotesTypes}
+                                    edgeTypes={MindEdges}
                                     onNodesDelete={onNodeDelete}
                                 >
                                     <Controls
