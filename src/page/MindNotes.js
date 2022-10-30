@@ -337,14 +337,14 @@ export const EffectivePoint = memo((data) => {
             <Handle
                 style={TargetHandleStyle}
                 type={"target"}
-                position={Position.Top}
-                id={data.id+"_top"}
+                position={Position.Left}
+                id={data.id+"_left"}
             />
             <Handle
                 style={TargetHandleStyle}
                 type={"target"}
-                position={Position.Left}
-                id={data.id+"_left"}
+                position={Position.Top}
+                id={data.id+"_top"}
             />
             <Handle
                 style={SourceHandleStyle}

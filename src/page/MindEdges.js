@@ -1,8 +1,9 @@
 import React from 'react'
 import {EdgeProps, getBezierPath, EdgeText, getBezierEdgeCenter} from 'react-flow-renderer';
-import {Input} from "antd";
+import {Button, Input} from "antd";
 
-const CommentEdge = ({
+const CommentEdge = (
+    {
                          id,
                          sourceX,
                          sourceY,
@@ -11,17 +12,21 @@ const CommentEdge = ({
                          sourcePosition,
                          targetPosition,
                          data,
-                     }) => {
+                     }
+                     ) => {
     const edgePath = getBezierPath({ sourceX, sourceY, sourcePosition, targetX, targetY, targetPosition });
 
     return (
         <>
-            <path id={id} className="react-flow__edge-path" d={edgePath} />
-            <text>
-                <textPath href={`#${id}`} style={{ fontSize: '12px' }} startOffset="50%" textAnchor="middle">
-                    {data?data.text:""}
-                </textPath>
-            </text>
+            <path
+                style={{strokeWidth:"5px"}}
+                id={id}
+                className="react-flow__edge-path"
+                d={edgePath}
+                onClick={()=>{
+                    data.onChange(data,id);
+                }}
+            />
         </>
     );
 }
