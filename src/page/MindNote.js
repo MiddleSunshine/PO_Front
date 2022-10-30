@@ -7,6 +7,9 @@ import MindNotes, {
     MindNotesTemplate,
     EffectiveLink
 } from './MindNotes';
+import {
+    MindEdges
+} from './MindEdges'
 import {Col, Drawer, message, Row} from 'antd';
 import ReactFlow, {
     Controls,
@@ -70,6 +73,7 @@ const MindNote = (props) => {
     const [nodes, setNodes, onNodesChange] = useNodesState([]);
     const [edges, setEdges, onEdgesChange] = useEdgesState([]);
     const [activePointNode,updateActivePointNode]=useState({});
+    const [activeEdge,updateActiveEdge]=useState({});
     const [editPointDrawVisible,switchEditPointDrawVisible]=useState(false);
     const [optionMessage,updateOptionMessage]=useState("");
 
@@ -122,7 +126,12 @@ const MindNote = (props) => {
         setEdges((edges) => edges.map((edge) => {
             {
                 if (edge.id == id) {
-                    edge.data = data;
+                    updateActiveEdge(edge);
+                    updateOptionMessage("Active Edge");
+                    edge.data = {
+                        ...edge.data,
+                        ...data
+                    };
                 }
                 return edge;
             }
@@ -152,7 +161,11 @@ const MindNote = (props) => {
                         }
                         if (json.Data.edges) {
                             let edges = json.Data.edges.map((edge) => {
-                                edge.onChange = updateEdgeItem;
+                                edge.type="CommentEdge";
+                                edge.data={
+                                    ...edge,
+                                    onChange:updateEdgeItem
+                                }
                                 return edge;
                             })
                             setEdges(edges);
@@ -180,7 +193,13 @@ const MindNote = (props) => {
     const onInit = (rfi) => setReactFlowInstance(rfi);
 
     const onConnect = (params) => {
-        setEdges((eds) => addEdge(params, eds));
+        let newEdges=addEdge(params, edges);
+        newEdges[newEdges.length-1].type='CommentEdge';
+        newEdges[newEdges.length-1].data={
+            onChange:updateEdgeItem
+        };
+
+        setEdges(newEdges);
 
         let [sourceType,sourceId]=params.source.split('_');
         let [targetType,targetId]=params.target.split('_');
@@ -266,6 +285,40 @@ const MindNote = (props) => {
         });
     }
 
+    const deleteEdge=(deleteEdge)=>{
+        /**
+         * {
+         *     "source": "EffectivePoint_1667133165027",
+         *     "sourceHandle": "EffectivePoint_1667133165027_right",
+         *     "target": "EffectiveLink_1667133165028",
+         *     "targetHandle": "EffectiveLink_1667133165028_left",
+         *     "id": "reactflow__edge-EffectivePoint_1667133165027EffectivePoint_1667133165027_right-EffectiveLink_1667133165028EffectiveLink_1667133165028_left",
+         *     "type": "CommentEdge",
+         *     "data": {},
+         *     "selected": false
+         * }
+         */
+        let sourceNode,targetNode={};
+        nodes.map((node)=>{
+            if (node.id==deleteEdge.source){
+                sourceNode=node;
+            }
+            if (node.id==deleteEdge.target){
+                targetNode=node;
+            }
+        });
+        if (sourceNode.data.hasOwnProperty('ID') && targetNode.data.hasOwnProperty('ID')){
+            deleteConnection(sourceNode.data.ID,targetNode.data.ID);
+        }
+        let newEdges=[];
+        edges.map((edge)=>{
+            if (edge.id!=deleteEdge.id){
+                newEdges.push(edge);
+            }
+        });
+        setEdges(newEdges);
+    }
+
     // let HotKeysMap=[];
 
     const HotKeysMap = {
@@ -274,6 +327,9 @@ const MindNote = (props) => {
         },
         'shift+e':()=>{
             switchEditPointDrawVisible(true);
+        },
+        'shift+c':()=>{
+            deleteEdge(activeEdge);
         }
     }
 
@@ -319,6 +375,7 @@ const MindNote = (props) => {
                                     onDragOver={onDragOver}
                                     onInit={onInit}
                                     nodeTypes={MindNotesTypes}
+                                    edgeTypes={MindEdges}
                                     onNodesDelete={onNodeDelete}
                                 >
                                     <Controls

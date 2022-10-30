@@ -90,12 +90,17 @@ export const EffectivePoint = memo((data) => {
 
     const savePoint = () => {
         if (selectedPoint.hasOwnProperty('ID')) {
-            setPoint({
-                ...selectedPoint,
-                ...point
-            });
-            point.onChange(selectedPoint, data.id);
-            finishSearchPoint();
+            (async ()=>{
+                var newPoint={
+                    ...point,
+                    ...selectedPoint
+                }
+                await point.onChange(selectedPoint, data.id);
+                await setPoint(newPoint);
+            })()
+                .then(()=>{
+                    finishSearchPoint();
+                })
         } else {
             NewPoint('', point.keyword, point.SearchAble, point.SearchAble == SEARCHABLE_TITLE)
                 .then((newPoint) => {
@@ -166,22 +171,22 @@ export const EffectivePoint = memo((data) => {
     return (
         <div
             style={{border:'1px solid #d9d9d9',padding:"10px"}}
-            onClick={() => {
-                (async () => {
-                })()
-                    .then(() => {
-                        setPoint({
-                            ...point,
-                            IsActiveNode: true
-                        });
-                    })
-                    .then(() => {
-                        point.onChange(point, data.id);
-                    })
-            }}
         >
             <div
                 style={{width: (point.hasOwnProperty('width') ? point.width : 300) + "px"}}
+                onClick={() => {
+                    (async () => {
+                    })()
+                        .then(() => {
+                            setPoint({
+                                ...point,
+                                IsActiveNode: true
+                            });
+                        })
+                        .then(() => {
+                            point.onChange(point, data.id);
+                        })
+                }}
             >
                 <div>
                     <Input
@@ -333,8 +338,26 @@ export const EffectivePoint = memo((data) => {
                 style={TargetHandleStyle}
                 type={"target"}
                 position={Position.Left}
+                id={data.id+"_left"}
             />
-            <Handle style={SourceHandleStyle} type={"source"} position={Position.Right}/>
+            <Handle
+                style={TargetHandleStyle}
+                type={"target"}
+                position={Position.Top}
+                id={data.id+"_top"}
+            />
+            <Handle
+                style={SourceHandleStyle}
+                type={"source"}
+                position={Position.Right}
+                id={data.id+"_right"}
+            />
+            <Handle
+                style={SourceHandleStyle}
+                type={"source"}
+                position={Position.Bottom}
+                id={data.id+"_bottom"}
+            />
             <Modal
                 width={1000}
                 visible={showModal}
@@ -509,7 +532,10 @@ export const EffectiveLink = memo((linkNode) => {
                         {link.label}
                     </Button>
             }
-            <Handle type={"target"} position={Position.Left} style={TargetHandleStyle}/>
+            <Handle type={"target"} position={Position.Left} style={TargetHandleStyle} id={linkNode.id+"_left"}/>
+            <Handle type={"target"} position={Position.Top} style={TargetHandleStyle} id={linkNode.id+"_top"}/>
+            <Handle type={"target"} position={Position.Right} style={TargetHandleStyle} id={linkNode.id+"_right"}/>
+            <Handle type={"target"} position={Position.Bottom} style={TargetHandleStyle} id={linkNode.id+"_bottom"}/>
         </div>
     )
 })
@@ -552,8 +578,10 @@ export const EffectiveNote = memo((nodeObject) => {
                         source={note.md}
                     />
             }
-            <Handle type={"source"} position={Position.Right} style={SourceHandleStyle}/>
-            <Handle type={"target"} position={Position.Left} style={TargetHandleStyle}/>
+            <Handle type={"source"} position={Position.Right} style={SourceHandleStyle} id={nodeObject.id+"_right"}/>
+            <Handle type={"source"} position={Position.Bottom} style={SourceHandleStyle} id={nodeObject.id+"_bottom"}/>
+            <Handle type={"target"} position={Position.Left} style={TargetHandleStyle} id={nodeObject.id+"_left"}/>
+            <Handle type={"target"} position={Position.Top} style={TargetHandleStyle} id={nodeObject.id+"_top"}/>
         </div>
     )
 })
