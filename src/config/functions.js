@@ -7,11 +7,11 @@ export function requestApi(api, option = {}, checkLogin = true) {
     if (checkLogin) {
         Logined();
     }
-    return fetch("http://118.31.247.119/PO_Back_Git/" + api + "&sign=" + sessionStorage.getItem(Authorization_Key), option);
+    return fetch("http://118.31.247.119/PO_Back_Git/" + api + "&sign=" + localStorage.getItem(Authorization_Key), option);
 }
 
 export function Logined() {
-    let loginKey = sessionStorage.getItem(Authorization_Key)
+    let loginKey = localStorage.getItem(Authorization_Key)
     if (!loginKey) {
         window.location.href = "/Login";
     }
@@ -33,7 +33,7 @@ export function LoginCheck(username, password) {
                 if (json.Status == 1) {
                     (async () => { })()
                         .then(() => {
-                            sessionStorage.setItem(Authorization_Key, json.Data.Token);
+                            localStorage.setItem(Authorization_Key, json.Data.Token);
                         })
                         .then(() => {
                             window.location.href = "/";
