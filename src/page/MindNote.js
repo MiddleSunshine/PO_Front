@@ -285,7 +285,10 @@ const MindNote = (props) => {
         });
     }
 
-    const deleteEdge = (deleteEdge) => {
+
+
+
+    const deleteEdge = (deleteEdges) => {
         /**
          * {
          *     "source": "EffectivePoint_1667133165027",
@@ -298,26 +301,27 @@ const MindNote = (props) => {
          *     "selected": false
          * }
          */
-        // FIXME 这里有bug，下面的删除没有生效
-        let sourceNode, targetNode = {};
-        nodes.map((node) => {
-            if (node.id == deleteEdge.source) {
-                sourceNode = node;
+        deleteEdges.map((deleteEdge) => {
+            let sourceNode, targetNode = {};
+            nodes.map((node) => {
+                if (node.id == deleteEdge.source) {
+                    sourceNode = node;
+                }
+                if (node.id == deleteEdge.target) {
+                    targetNode = node;
+                }
+            });
+            if (sourceNode.data.hasOwnProperty('ID') && targetNode.data.hasOwnProperty('ID')) {
+                deleteConnection(sourceNode.data.ID, targetNode.data.ID);
             }
-            if (node.id == deleteEdge.target) {
-                targetNode = node;
-            }
-        });
-        if (sourceNode.data.hasOwnProperty('ID') && targetNode.data.hasOwnProperty('ID')) {
-            deleteConnection(sourceNode.data.ID, targetNode.data.ID);
-        }
-        let newEdges = [];
-        edges.map((edge) => {
-            if (edge.id != deleteEdge.id) {
-                newEdges.push(edge);
-            }
-        });
-        setEdges(newEdges);
+            let newEdges = [];
+            edges.map((edge) => {
+                if (edge.id != deleteEdge.id) {
+                    newEdges.push(edge);
+                }
+            });
+            setEdges(newEdges);
+        })
     }
 
     // let HotKeysMap=[];
@@ -328,9 +332,6 @@ const MindNote = (props) => {
         },
         'shift+e': () => {
             switchEditPointDrawVisible(true);
-        },
-        'shift+c': () => {
-            deleteEdge(activeEdge);
         }
     }
 
@@ -378,6 +379,7 @@ const MindNote = (props) => {
                                     nodeTypes={MindNotesTypes}
                                     edgeTypes={MindEdges}
                                     onNodesDelete={onNodeDelete}
+                                    onEdgesDelete={deleteEdge}
                                 >
                                     <Controls
 
