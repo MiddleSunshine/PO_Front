@@ -157,7 +157,7 @@ const MindNote = (props) => {
                                 return item;
                             }));
                         } else {
-                            GetPointDetail(PID);
+                            // GetPointDetail(PID);
                         }
                         if (json.Data.edges) {
                             let edges = json.Data.edges.map((edge) => {
@@ -174,6 +174,11 @@ const MindNote = (props) => {
                         message.warn(json.Message);
                     }
                 })
+                    .then(() => {
+                        if (nodes.length > 0 && nodes[0].data.hasOwnProperty('keyword')) {
+                            document.title = "W:" + nodes[0].data.keyword;
+                        }
+                    })
             })
     }
 
