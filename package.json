@@ -37,6 +37,7 @@
     "react-scripts": "5.0.1",
     "react-simplemde-editor": "^5.0.1",
     "react-xarrows": "^2.0.2",
+    "reactjs-pdf-reader": "^1.0.12",
     "redux": "^4.1.1",
     "redux-thunk": "^2.3.0",
     "typescript": "^4.4.2",
