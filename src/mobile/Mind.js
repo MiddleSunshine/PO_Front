@@ -22,7 +22,6 @@ class Mind extends React.Component {
     constructor(props) {
         super(props);
         this.state={
-            activeKey:-1,
             type:"",
             note:"",
             ImageUrl:[],
@@ -59,25 +58,13 @@ class Mind extends React.Component {
     }
 
     render() {
-        const TypeMap=[
-            {
-                component:<SmileOutline className={"Icon"} />,
-                type:"Happy"
-            },
-            {
-                component: <FrownOutline className={"Icon"} />,
-                type:"Unhappy"
-            },
-            {
-                component: <StarOutline className={"Icon"} />,
-                type:"Star"
-            },
-            {
-                component: <HeartOutline className={"Icon"} />,
-                type:"Important"
-            }
-        ];
-
+        let TypeMap=[];
+        for (let type in TypeIconMap){
+            TypeMap.push({
+                component:TypeIconMap[type].component,
+                type:TypeIconMap[type].type
+            })
+        }
         return (
             <div className={"container Mind"}>
                 <AutoCenter>
@@ -85,7 +72,9 @@ class Mind extends React.Component {
                     {
                         TypeMap.map((itemType)=>{
                             return(
-                                <Grid.Item>
+                                <Grid.Item
+                                    key={itemType.type}
+                                >
                                     <div
                                         onClick={()=>{
                                             this.updateType(itemType.type)
@@ -159,3 +148,23 @@ class Mind extends React.Component {
 }
 
 export default Mind
+
+export const TypeIconMap={
+    Happy:{
+        component:<SmileOutline className={"Icon"} />,
+        type:"Happy"
+    },
+    Unhappy:{
+        component: <FrownOutline className={"Icon"} />,
+        type:"Unhappy"
+    },
+    Star:{
+        component:<StarOutline className={"Icon"} />,
+        type:"Star"
+    },
+    Important:{
+        component:<HeartOutline className={"Icon"} />,
+        type:"Important"
+    }
+
+}

@@ -29,3 +29,15 @@
 .Mind .adm-divider-horizontal{
     margin: 20px 0px;
 }
+
+.Mind .MindList{
+
+}
+
+.Mind .MindList .adm-rate-star{
+    font-size: 20px;
+}
+
+.Mind .MindList .adm-list-item-content-main{
+    font-size: 20px;
+}
