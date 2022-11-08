@@ -28,6 +28,8 @@ import ClockInMobile from '../mobile/ClockIn';
 import Debug from '../page/debug';
 import MindNote from '../page/MindNote';
 import LoginIndex from "../page/LoginIndex";
+import Mind from "../mobile/Mind";
+import MindList from "../mobile/MindList";
 
 interface router {
     path: string,
@@ -39,6 +41,14 @@ const routers: Array<router> = [
     {
         path:"/MindNote/:PID",
         component:MindNote
+    },
+    {
+        path:"/Mobile/MindList",
+        component:MindList
+    },
+    {
+        path:"/Mobile/Mind",
+        component:Mind
     },
     {
         path:"/Mobile/ClockIn",
