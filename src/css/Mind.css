@@ -3,6 +3,29 @@
 }
 
 .Mind .Icon{
-    width: 90px;
-    height: 90px;
+    width: 70px;
+    height: 70px;
+}
+
+.Mind .adm-text-area-element{
+    font-size: 20px;
+}
+
+.Mind .Happy{
+    background-color: #87d068;
+}
+
+.Mind .Unhappy{
+    background-color: #108ee9;
+}
+
+.Mind .Star{
+    background-color: #ff8f1f;
+}
+
+.Mind .Important{
+    background-color: #ff3141;
+}
+.Mind .adm-divider-horizontal{
+    margin: 20px 0px;
 }
