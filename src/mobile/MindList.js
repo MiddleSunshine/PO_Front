@@ -1,7 +1,7 @@
 import {useEffect, useState} from 'react'
 import "../css/Mind.css";
-import {List, Rate, Toast} from "antd-mobile";
-import {PictureOutline} from 'antd-mobile-icons'
+import {Button, List, NavBar, Rate, Toast} from "antd-mobile";
+import {PictureOutline,StarOutline} from 'antd-mobile-icons'
 import {TypeIconMap} from "./Mind";
 import {requestApi} from "../config/functions";
 
@@ -12,7 +12,7 @@ const MindList = (props) => {
 
     useEffect(()=>{
         getMindList();
-    },[mindList])
+    },[])
 
     const getMindList=(StartTime='',EndTime='')=>{
         requestApi("/index.php?action=Feeling&method=List&StartTime"+StartTime+"&EndTime="+EndTime)
@@ -30,10 +30,13 @@ const MindList = (props) => {
             })
     }
 
-    return <div className={"container Mind"}>
+    return <div className={"Mind"}>
         <div
             className={"MindList"}
         >
+            <NavBar
+                back={null}
+            >Memory</NavBar>
             {
                 mindList.map((listItem) => {
                     return (
@@ -46,7 +49,7 @@ const MindList = (props) => {
                                     return (
                                         <List.Item
                                             extra={
-                                                mind.imageUrl.length > 0
+                                                mind.imageUrl
                                                     ? <PictureOutline/>
                                                     : ''
                                             }
