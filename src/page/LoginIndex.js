@@ -9,7 +9,7 @@ class LoginIndex extends React.Component{
                 justify={"center"}
                 align={"middle"}
             >
-                <Col span={5}>
+                <Col span={20}>
                     <Login />
                 </Col>
             </Row>

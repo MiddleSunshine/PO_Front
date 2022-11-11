@@ -10,13 +10,14 @@ import {
     ImageViewer,
     Mask, Rate,
     Space,
-    TextArea
+    TextArea, Toast
 } from "antd-mobile";
-import {SmileOutline,FrownOutline,StarOutline,HeartOutline,CameraOutline} from 'antd-mobile-icons';
+import {SmileOutline,FrownOutline,StarOutline,HeartOutline,CameraOutline,GiftOutline} from 'antd-mobile-icons';
 
 import "../css/Mind.css";
 import {ImageUploader} from "antd-mobile/2x";
 import {BUCKET_LONG_FILE, BUCKET_TEMP_FILE, uploadFile} from "../component/imageUpload";
+import {requestApi,Logined} from "../config/functions";
 
 class Mind extends React.Component {
     constructor(props) {
@@ -24,7 +25,7 @@ class Mind extends React.Component {
         this.state={
             type:"",
             note:"",
-            ImageUrl:[],
+            imageUrls:[],
             rate:0
         }
         this.HandleUpload=this.HandleUpload.bind(this);
@@ -32,14 +33,18 @@ class Mind extends React.Component {
         this.saveMind=this.saveMind.bind(this);
     }
 
+    componentDidMount() {
+        Logined();
+    }
+
     async HandleUpload(fileObject){
         let url=await uploadFile(BUCKET_TEMP_FILE,fileObject);
-        let imageUrls=this.state.ImageUrl;
+        let ImageUrls=this.state.imageUrls;
         if (url){
-            imageUrls.push(url)
+            ImageUrls.push(url)
         }
         this.setState({
-            ImageUrl:imageUrls
+            imageUrls:ImageUrls
         });
         return {
             url:url
@@ -54,7 +59,31 @@ class Mind extends React.Component {
     }
 
     saveMind(){
-        // todo 这里编写保存的效果
+        requestApi("/index.php?action=Feeling&method=Save",{
+            method:"post",
+            mode:"cors",
+            body:JSON.stringify({
+                type:this.state.type,
+                note:this.state.note,
+                imageUrls:this.state.imageUrls,
+                rate:this.state.rate
+            })
+        })
+            .then((res)=>{
+                res.json().then((json)=>{
+                    if (json.Status==1){
+                        Toast.show({
+                            content:"我会珍藏这份记忆的",
+                            icon:<GiftOutline />
+                        })
+                    }else{
+                        Toast.show({
+                            content:json.Message,
+                            icon:"fail"
+                        })
+                    }
+                })
+            })
     }
 
     render() {
