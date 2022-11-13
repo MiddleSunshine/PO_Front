@@ -73,16 +73,26 @@ class Mind extends React.Component {
                 res.json().then((json)=>{
                     if (json.Status==1){
                         Toast.show({
-                            content:"我会珍藏这份记忆的",
+                            content:"Thanks",
                             icon:<GiftOutline />
                         })
+                        return true;
                     }else{
                         Toast.show({
                             content:json.Message,
                             icon:"fail"
                         })
+                        return false;
                     }
                 })
+                    .then(()=>{
+                        this.setState({
+                            type:"",
+                            note:"",
+                            imageUrls:[],
+                            rate:0
+                        });
+                    })
             })
     }
 

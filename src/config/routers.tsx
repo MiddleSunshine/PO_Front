@@ -30,6 +30,7 @@ import MindNote from '../page/MindNote';
 import LoginIndex from "../page/LoginIndex";
 import Mind from "../mobile/Mind";
 import MindList from "../mobile/MindList";
+import MobileIndex from '../mobile/mobileIndex'
 
 interface router {
     path: string,
@@ -53,6 +54,10 @@ const routers: Array<router> = [
     {
         path:"/Mobile/ClockIn",
         component:ClockInMobile
+    },
+    {
+        path:"/Mobile",
+        component:MobileIndex
     },
     {
         path:"/Login",

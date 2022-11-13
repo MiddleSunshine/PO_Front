@@ -5,6 +5,7 @@ import {
   LogoutOutlined
 } from '@ant-design/icons'
 import { requestApi } from '../config/functions';
+import TopBar from "./component/TopBar";
 
 class ClockInMobile extends React.Component {
   constructor(props) {
@@ -60,6 +61,9 @@ class ClockInMobile extends React.Component {
     return <div
       className="container"
     >
+      <TopBar
+        title={"Clock In"}
+      />
       <Row
         align={ "middle" }
         justify={ "center" }
