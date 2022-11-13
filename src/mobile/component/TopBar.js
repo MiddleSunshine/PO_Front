@@ -1,32 +1,23 @@
 import React from 'react'
-import {Modal, NavBar} from "antd-mobile";
+import {Modal, NavBar, Popup} from "antd-mobile";
 import MobileIndex, {actionList} from "../mobileIndex";
 
 class TopBar extends React.Component{
     constructor(props) {
         super(props);
+        this.state={
+            switchPopUp:false
+        }
     }
     render() {
-        let actions=[];
-        actionList.map((action)=>{
-            actions.push({
-                key:action.href,
-                text:<a
-                    href={action.href}
-                >
-                    {action.label}
-                </a>
-            })
-        })
         return <div>
             <NavBar
                 backArrow={false}
             >
                 <span
                     onClick={()=>{
-                        Modal.show({
-                            content:<a href={"/Mobile"}>PO Mobile</a>,
-                            actions:actions
+                        this.setState({
+                            switchPopUp:true
                         })
                     }}
                 >
@@ -35,6 +26,16 @@ class TopBar extends React.Component{
                     }
                 </span>
             </NavBar>
+            <Popup
+                onMaskClick={()=>{
+                    this.setState({
+                        switchPopUp:false
+                    })
+                }}
+                visible={this.state.switchPopUp}
+            >
+                <MobileIndex />
+            </Popup>
         </div>
     }
 }

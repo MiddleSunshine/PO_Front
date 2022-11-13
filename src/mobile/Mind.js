@@ -18,6 +18,7 @@ import "../css/Mind.css";
 import {ImageUploader} from "antd-mobile/2x";
 import {BUCKET_LONG_FILE, BUCKET_TEMP_FILE, uploadFile} from "../component/imageUpload";
 import {requestApi,Logined} from "../config/functions";
+import TopBar from "./component/TopBar";
 
 class Mind extends React.Component {
     constructor(props) {
@@ -106,6 +107,9 @@ class Mind extends React.Component {
         }
         return (
             <div className={"container Mind"}>
+                <TopBar
+                    title={"Feeling"}
+                />
                 <AutoCenter>
                 <Grid columns={4} gap={10}>
                     {
