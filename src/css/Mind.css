@@ -44,5 +44,8 @@
 
 .Mind .MindList .dateTitle{
     font-size: 20px;
+}
 
+.Mind .MindList .withImage{
+    color:white;
 }

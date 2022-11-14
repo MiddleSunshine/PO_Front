@@ -1,6 +1,6 @@
 import {useEffect, useState} from 'react'
 import "../css/Mind.css";
-import {Button, DatePicker, Divider, Ellipsis, Empty, List, NavBar, Rate, Toast} from "antd-mobile";
+import {Button, DatePicker, Divider, Ellipsis, Empty, ImageViewer, List, NavBar, Rate, Toast} from "antd-mobile";
 import {PictureOutline,StarOutline} from 'antd-mobile-icons'
 import {TypeIconMap} from "./Mind";
 import {requestApi} from "../config/functions";
@@ -12,7 +12,8 @@ const MindList = (props) => {
     const [startTime,updateStartTime]=useState('');
     const [endTime,updateEndTime]=useState('');
     const [startPickerDate,switchPickerDate]=useState(0);
-
+    const [previewImages,updatePreviewImages]=useState([]);
+    const [switchPreviewImages,switchPreview]=useState(false);
     useEffect(()=>{
         getMindList();
     },[])
@@ -31,6 +32,15 @@ const MindList = (props) => {
                     }
                 })
             })
+    }
+
+    const startPreview=(imagesUrls)=>{
+        if (imagesUrls){
+            if (imagesUrls.length>0){
+                updatePreviewImages(imagesUrls);
+                switchPreview(true)
+            }
+        }
     }
 
     return <div className={"Mind"}>
@@ -94,15 +104,13 @@ const MindList = (props) => {
                                 listItem.feelings.map((mind) => {
                                     return (
                                         <List.Item
-                                            extra={
-                                                mind.imageUrl
-                                                    ? <PictureOutline/>
-                                                    : ''
-                                            }
                                             key={mind.ID}
                                             prefix={
                                                 <div
-                                                    className={mind.type + " Icon"}
+                                                    className={mind.type + " Icon"+(mind.imageUrls.length>0?' withImage':'')}
+                                                    onClick={()=>{
+                                                        startPreview(mind.imageUrls);
+                                                    }}
                                                 >
                                                     {TypeIconMap[mind.type].component}
                                                 </div>
@@ -136,6 +144,13 @@ const MindList = (props) => {
                     />
             }
         </div>
+        <ImageViewer.Multi
+            images={previewImages}
+            visible={switchPreviewImages}
+            onClose={()=>{
+                switchPreview(false);
+            }}
+        />
     </div>
 }
 
