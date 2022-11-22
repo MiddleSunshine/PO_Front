@@ -10,7 +10,7 @@ import MindNotes, {
 import {
     MindEdges
 } from './MindEdges'
-import { Col, Drawer, message, Row } from 'antd';
+import {Col, Divider, Drawer, Input, message, Row} from 'antd';
 import ReactFlow, {
     Controls,
     ReactFlowProvider,
@@ -29,6 +29,9 @@ import { Draw } from "@tldraw/tldraw";
 import PointEdit from "../component/PointEdit";
 import MenuList from "../component/MenuList";
 import { deleteConnection } from "../component/PointConnection";
+import {SwatchesPicker} from "react-color";
+import Clipboard from 'clipboard';
+import {CopyOutlined} from '@ant-design/icons';
 
 /**
  * @param event DragEvent
@@ -76,6 +79,8 @@ const MindNote = (props) => {
     const [activeEdge, updateActiveEdge] = useState({});
     const [editPointDrawVisible, switchEditPointDrawVisible] = useState(false);
     const [optionMessage, updateOptionMessage] = useState("");
+    const [startPickerColor,switchPickerColor]=useState(false);
+    const [selectedColor,updateSelectedColor]=useState('');
 
     const GetPointDetail = (PID) => {
         requestApi("/index.php?action=Points&method=GetDetailWithFile&ID=" + PID)
@@ -119,7 +124,6 @@ const MindNote = (props) => {
         if (data.hasOwnProperty('keyword')) {
             updateOptionMessage("active node:" + data.keyword);
         }
-
     }
 
     const updateEdgeItem = (data, id) => {
@@ -190,7 +194,10 @@ const MindNote = (props) => {
                 InitMindNote(PID)
             })
             .then(() => {
-
+                const copy=new Clipboard('.imageUrl');
+                copy.on('success', e => {
+                    message.success('copy success');
+                });
             })
 
     }, [])
@@ -337,6 +344,9 @@ const MindNote = (props) => {
         },
         'shift+e': () => {
             switchEditPointDrawVisible(true);
+        },
+        'shift+c':()=>{
+            switchPickerColor(true)
         }
     }
 
@@ -406,6 +416,34 @@ const MindNote = (props) => {
                         <PointEdit
                             ID={activePointNode.ID}
                         />
+                    </Drawer>
+                </div>
+                <div>
+                    <Drawer
+                        width={300}
+                        visible={startPickerColor}
+                        onClose={()=>{
+                            switchPickerColor(false);
+                        }}
+                    >
+                        <SwatchesPicker
+                            onChangeComplete={(color)=>{
+                                updateSelectedColor(color.hex);
+                            }}
+                        />
+                        <Divider />
+                        <div
+                            style={{backgroundColor:selectedColor,padding:"10px"}}
+                        >
+                            <Input
+                                value={selectedColor}
+                                onChange={(e)=>updateSelectedColor(e.target.value)}
+                                addonAfter={<CopyOutlined
+                                    data-clipboard-text={selectedColor}
+                                    className="imageUrl"
+                                />}
+                            />
+                        </div>
                     </Drawer>
                 </div>
             </Hotkeys>
