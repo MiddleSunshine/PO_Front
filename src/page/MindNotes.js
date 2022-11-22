@@ -27,7 +27,8 @@ import {
     DoubleLeftOutlined,
     SyncOutlined,
     ApiOutlined,
-    ShareAltOutlined
+    ShareAltOutlined,
+    BgColorsOutlined
 } from '@ant-design/icons';
 import Links from "../component/Links";
 import MDEditor from "@uiw/react-md-editor";
@@ -73,6 +74,7 @@ export const EffectivePoint = memo((data) => {
     const [searchPointList, updatePointList] = useState([]);
     const [showModal, switchModal] = useState(false);
     const [selectedPoint, updateSelectedPoint] = useState({});
+    const [startInputColor,switchInputColor]=useState(false);
 
     const startSearchPoint = () => {
         switchModal(true);
@@ -170,7 +172,7 @@ export const EffectivePoint = memo((data) => {
     }
     return (
         <div
-            style={{border:'1px solid #d9d9d9',padding:"10px"}}
+            style={{border:'1px solid #d9d9d9',padding:"10px",backgroundColor:point.hasOwnProperty('color')?point.color:"white"}}
         >
             <div
                 style={{width: (point.hasOwnProperty('width') ? point.width : 300) + "px"}}
@@ -189,115 +191,142 @@ export const EffectivePoint = memo((data) => {
                 }}
             >
                 <div>
-                    <Input
-                        addonBefore={
-                            point.hasOwnProperty('ID')
-                                ?<div>
-                                    <Links
-                                        PID={point.ID}
-                                        Label={"P"}
-                                        Color={"#1890ff"}
-                                    />
-                                </div>
-                                :<Button
-                                    icon={<SyncOutlined/>}
-                                    size={"small"}
-                                    type={"link"}
-                                    onClick={() => {
-                                        if (point.hasOwnProperty('onChange')) {
-                                            point.onChange(point, data.id);
-                                            message.success("Sync Success");
-                                        } else {
-                                            message.warn("Data Error.Reload the page.")
-                                        }
-                                    }}
-                                >
-                                </Button>
-                        }
-                        addonAfter={
-                            <Dropdown
-                                overlay={
-                                    <Menu
-                                        items={[
-                                            // {
-                                            //     key: '1',
-                                            //     label:<Button
-                                            //         icon={<CloseOutlined />}
-                                            //         size={"small"}
-                                            //         danger={true}
-                                            //         type={"link"}
-                                            //     >
-                                            //     </Button>
-                                            // },
-                                            {
-                                                key: '2',
-                                                label: <Button
-                                                    size={"small"}
-                                                    type={"link"}
-                                                    icon={<DoubleRightOutlined/>}
-                                                    onClick={() => {
-                                                        updatePointWidth(point.hasOwnProperty('width') ? (point.width + 50) : 350);
-                                                    }}
-                                                ></Button>
-                                            },
-                                            {
-                                                key: '3',
-                                                label: <Button
-                                                    icon={<DoubleLeftOutlined/>}
-                                                    size={"small"}
-                                                    type={"link"}
-                                                    onClick={() => {
-                                                        updatePointWidth(point.hasOwnProperty('width') ? (point.width - 50) : 250);
-                                                    }}
-                                                >
-                                                </Button>
-                                            },
-                                            {
-                                                key: '4',
-                                                label: <Button
-                                                    icon={<SyncOutlined/>}
-                                                    size={"small"}
-                                                    type={"link"}
-                                                    onClick={() => {
-                                                        if (point.hasOwnProperty('onChange')) {
-                                                            point.onChange(point, data.id);
-                                                            message.success("Sync Success");
-                                                        } else {
-                                                            message.warn("Data Error.Reload the page.")
-                                                        }
-                                                    }}
-                                                >
-                                                </Button>
-                                            }
-                                        ]}
-                                    />
+                    {
+                        startInputColor
+                            ?<Input
+                                value={point.hasOwnProperty('color')?'':point.color}
+                                onChange={(e)=>{
+                                    let newPoint=point;
+                                    newPoint.color=e.target.value;
+                                    setPoint(newPoint);
+                                }}
+                                onPressEnter={()=>{
+                                    point.onChange(point, data.id);
+                                    switchInputColor(false);
+                                }}
+                            />
+                            :<Input
+                                addonBefore={
+                                    point.hasOwnProperty('ID')
+                                        ?<div>
+                                            <Links
+                                                PID={point.ID}
+                                                Label={"P"}
+                                                Color={"#1890ff"}
+                                            />
+                                        </div>
+                                        :<Button
+                                            icon={<SyncOutlined/>}
+                                            size={"small"}
+                                            type={"link"}
+                                            onClick={() => {
+                                                if (point.hasOwnProperty('onChange')) {
+                                                    point.onChange(point, data.id);
+                                                    message.success("Sync Success");
+                                                } else {
+                                                    message.warn("Data Error.Reload the page.")
+                                                }
+                                            }}
+                                        >
+                                        </Button>
                                 }
-                            >
-                                <Space>
+                                addonAfter={
+                                    <Dropdown
+                                        overlay={
+                                            <Menu
+                                                items={[
+                                                    // {
+                                                    //     key: '1',
+                                                    //     label:<Button
+                                                    //         icon={<CloseOutlined />}
+                                                    //         size={"small"}
+                                                    //         danger={true}
+                                                    //         type={"link"}
+                                                    //     >
+                                                    //     </Button>
+                                                    // },
+                                                    {
+                                                        key: '2',
+                                                        label: <Button
+                                                            size={"small"}
+                                                            type={"link"}
+                                                            icon={<DoubleRightOutlined/>}
+                                                            onClick={() => {
+                                                                updatePointWidth(point.hasOwnProperty('width') ? (point.width + 50) : 350);
+                                                            }}
+                                                        ></Button>
+                                                    },
+                                                    {
+                                                        key: '3',
+                                                        label: <Button
+                                                            icon={<DoubleLeftOutlined/>}
+                                                            size={"small"}
+                                                            type={"link"}
+                                                            onClick={() => {
+                                                                updatePointWidth(point.hasOwnProperty('width') ? (point.width - 50) : 250);
+                                                            }}
+                                                        >
+                                                        </Button>
+                                                    },
+                                                    {
+                                                        key: '4',
+                                                        label: <Button
+                                                            icon={<SyncOutlined/>}
+                                                            size={"small"}
+                                                            type={"link"}
+                                                            onClick={() => {
+                                                                if (point.hasOwnProperty('onChange')) {
+                                                                    point.onChange(point, data.id);
+                                                                    message.success("Sync Success");
+                                                                } else {
+                                                                    message.warn("Data Error.Reload the page.")
+                                                                }
+                                                            }}
+                                                        >
+                                                        </Button>
+                                                    },
+                                                    {
+                                                        key: '5',
+                                                        label: <Button
+                                                            icon={<BgColorsOutlined />}
+                                                            size={"small"}
+                                                            type={"link"}
+                                                            onClick={() => {
+                                                                switchInputColor(true);
+                                                            }}
+                                                        >
+                                                        </Button>
+                                                    }
+                                                ]}
+                                            />
+                                        }
+                                    >
+                                        <Space>
                                         <span
                                             style={{color: point.hasOwnProperty('ID') ? config.statusBackGroupColor[point.status] : '#d9d9d9'}}
                                         >
                                             {point.hasOwnProperty('status') ? config.statusLabelMap[point.status] : 'Empty'}
                                         </span>
-                                </Space>
-                            </Dropdown>
-                        }
-                        value={point.keyword}
-                        onChange={(e) => {
-                            let newData = {
-                                ...point,
-                                keyword: e.target.value
-                            };
-                            setPoint(newData);
-                        }}
-                        onPressEnter={() => {
-                            if (point.hasOwnProperty('ID')) {
-                                updatePoint();
-                            } else {
-                                startSearchPoint();
-                            }
-                        }}
-                    />
+                                        </Space>
+                                    </Dropdown>
+                                }
+                                value={point.keyword}
+                                onChange={(e) => {
+                                    let newData = {
+                                        ...point,
+                                        keyword: e.target.value
+                                    };
+                                    setPoint(newData);
+                                }}
+                                onPressEnter={() => {
+                                    if (point.hasOwnProperty('ID')) {
+                                        updatePoint();
+                                    } else {
+                                        startSearchPoint();
+                                    }
+                                }}
+                            />
+                    }
                 </div>
                 {
                     point.url
