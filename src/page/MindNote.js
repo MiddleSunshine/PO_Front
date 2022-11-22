@@ -151,6 +151,7 @@ const MindNote = (props) => {
             .then((res) => {
                 res.json().then((json) => {
                     if (json.Status == 1) {
+                        let colors=[];
                         if (json.Data.nodes) {
                             setNodes(json.Data.nodes.map((item) => {
                                 item.data = {
@@ -158,6 +159,7 @@ const MindNote = (props) => {
                                     ...item.data,
                                     onChange: updateNodeItem
                                 }
+                                colors[item.id]=item.data.hasOwnProperty('color')?item.data.color:'#90a4ae';
                                 return item;
                             }));
                         } else {
@@ -168,7 +170,8 @@ const MindNote = (props) => {
                                 edge.type = "CommentEdge";
                                 edge.data = {
                                     ...edge,
-                                    onChange: updateEdgeItem
+                                    onChange: updateEdgeItem,
+                                    color:colors.hasOwnProperty(edge.source)?colors[edge.source]:'#90a4ae'
                                 }
                                 return edge;
                             })
