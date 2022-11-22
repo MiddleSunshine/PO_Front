@@ -1,31 +1,31 @@
 import React from "react";
 import Hotkeys from "react-hot-keys";
-import {Badge, Button, Card, Col, Comment, Descriptions, Divider, Drawer, Form, Input, message, Modal, Row} from "antd";
-import {requestApi} from "../config/functions";
+import { Badge, Button, Card, Col, Comment, Descriptions, Divider, Drawer, Form, Input, message, Modal, Row } from "antd";
+import { requestApi } from "../config/functions";
 import Xarrow from "react-xarrows";
-import config,{POINT_MIND_MAP_COLUMN,POINT_MIND_MAP_ROW} from "../config/setting";
-import {PlusOutlined,MinusOutlined,RightOutlined,RedoOutlined,UndoOutlined,DownOutlined } from '@ant-design/icons';
+import config, { POINT_MIND_MAP_COLUMN, POINT_MIND_MAP_ROW } from "../config/setting";
+import { PlusOutlined, MinusOutlined, RightOutlined, RedoOutlined, UndoOutlined, DownOutlined } from '@ant-design/icons';
 import MenuList from "../component/MenuList";
 
 import "../css/PointMindMap.css";
 import PointEdit from "../component/PointEdit";
 import PointNew from "../component/PointNew";
 import PointConnection from "../component/PointConnection";
-import BookMarks, {NewBookMark} from "../component/BookMarks";
-import {pick} from "echarts-for-react/lib/helper/pick";
+import BookMarks, { NewBookMark } from "../component/BookMarks";
+import { pick } from "echarts-for-react/lib/helper/pick";
 import Favourite from "../component/Favourite";
 import Links from "../component/Links";
 
-const ROW_TOP='top_';
-const ROW_BOTTOM='bottom_';
+const ROW_TOP = 'top_';
+const ROW_BOTTOM = 'bottom_';
 
-const COLUMN_LEFT='left_';
-const COLUMN_RIGHT='right_';
+const COLUMN_LEFT = 'left_';
+const COLUMN_RIGHT = 'right_';
 
-class ConnectionItem extends React.Component{
+class ConnectionItem extends React.Component {
     render() {
-        let ids=this.props.id.split('_');
-        return(
+        let ids = this.props.id.split('_');
+        return (
             <Button
                 id={this.props.id}
                 icon={
@@ -43,50 +43,50 @@ class ConnectionItem extends React.Component{
     }
 }
 
-class PointItem extends React.Component{
+class PointItem extends React.Component {
     constructor(props) {
         super(props);
-        this.state={
-            Point:props.Point,
-            IsActive:props.IsActive,
-            IsIndex:props.IsIndex
+        this.state = {
+            Point: props.Point,
+            IsActive: props.IsActive,
+            IsIndex: props.IsIndex
         }
     }
 
     componentWillReceiveProps(nextProps, nextContext) {
         this.setState({
-            IsActive:nextProps.IsActive,
-            IsIndex:nextProps.IsIndex
+            IsActive: nextProps.IsActive,
+            IsIndex: nextProps.IsIndex
         });
     }
 
     render() {
-        let style={
-            color:config.statusBackGroupColor[this.state.Point.status]
+        let style = {
+            color: config.statusBackGroupColor[this.state.Point.status]
         }
-        if (this.state.IsActive){
-            style.color="gray";
-            style.fontWeight="bolder";
+        if (this.state.IsActive) {
+            style.color = "gray";
+            style.fontWeight = "bolder";
         }
-        if (this.state.IsIndex){
-            style.textDecoration="underline";
+        if (this.state.IsIndex) {
+            style.textDecoration = "underline";
         }
-        if ((this.state.Point.Deleted-1)==1){
-            style.textDecoration="line-through";
+        if ((this.state.Point.Deleted - 1) == 1) {
+            style.textDecoration = "line-through";
         }
         return (
             <div
                 className={"PointItem"}
             >
                 <Card
-                    bodyStyle={{display:this.state.Point.note?"normal":"none"}}
+                    bodyStyle={{ display: this.state.Point.note ? "normal" : "none" }}
                     extra={
                         <Badge
                             count={this.state.Point.Comments.length}
                         >
                         </Badge>
                     }
-                    onClick={(e)=>{
+                    onClick={(e) => {
                         this.props.activePoint(this.state.Point);
                     }}
                     title={
@@ -95,7 +95,7 @@ class PointItem extends React.Component{
                             target={"_blank"}
                             title={this.state.Point.keyword}
                         >
-                            <span style={style}>{this.state.Point.keyword}</span>
+                            <span style={style}>{this.state.Point.url ? 'W:' : ''}{this.state.Point.keyword}</span>
                         </a>
 
                     }
@@ -108,119 +108,119 @@ class PointItem extends React.Component{
 
 }
 
-class PointMindMap extends React.Component{
+class PointMindMap extends React.Component {
     constructor(props) {
         super(props);
-        this.state={
-            IndexPoint:{},
-            Points:[],
-            PID:props.match.params.pid,
-            mode:props.match.params.mode,
-            connections:[],
-            ParentLevel:props.match.params.parentLevel,
-            SubLevel:props.match.params.subLevel,
+        this.state = {
+            IndexPoint: {},
+            Points: [],
+            PID: props.match.params.pid,
+            mode: props.match.params.mode,
+            connections: [],
+            ParentLevel: props.match.params.parentLevel,
+            SubLevel: props.match.params.subLevel,
             //
-            editPoint:{},
+            editPoint: {},
             //
-            editConnectionPoint:{},
+            editConnectionPoint: {},
             //
-            activePoint:{},
+            activePoint: {},
             //
-            startNewPoint:false,
+            startNewPoint: false,
             //
-            bookmarkVisible:false,
-            newBookmarkVisible:false
+            bookmarkVisible: false,
+            newBookmarkVisible: false
         }
-        this.getPoints=this.getPoints.bind(this);
-        this.updateLevel=this.updateLevel.bind(this);
-        this.getAPoint=this.getAPoint.bind(this);
+        this.getPoints = this.getPoints.bind(this);
+        this.updateLevel = this.updateLevel.bind(this);
+        this.getAPoint = this.getAPoint.bind(this);
     }
 
     componentDidMount() {
-        this.getPoints(this.state.PID,this.state.SubLevel,this.state.ParentLevel);
+        this.getPoints(this.state.PID, this.state.SubLevel, this.state.ParentLevel);
     }
 
-    updateLevel(SubLevel,ParentLevel,mode,newWindow=false){
-        let url=window.origin+PointMindMapRouter(this.state.PID,SubLevel,ParentLevel,mode);
-        if (newWindow){
-            window.open(url,"__blank");
-        }else{
-            window.location=url;
+    updateLevel(SubLevel, ParentLevel, mode, newWindow = false) {
+        let url = window.origin + PointMindMapRouter(this.state.PID, SubLevel, ParentLevel, mode);
+        if (newWindow) {
+            window.open(url, "__blank");
+        } else {
+            window.location = url;
         }
     }
 
-    hidePoint(PID){
-        
+    hidePoint(PID) {
+
     }
 
-    getAPoint(PID){
-        requestApi("/index.php?action=Points&method=GetAPoint&id="+PID)
-            .then((res)=>{
-                res.json().then((json)=>{
+    getAPoint(PID) {
+        requestApi("/index.php?action=Points&method=GetAPoint&id=" + PID)
+            .then((res) => {
+                res.json().then((json) => {
                     this.setState({
-                        IndexPoint:json.Data
+                        IndexPoint: json.Data
                     })
-                }).then(()=>{
-                    document.title=this.state.IndexPoint.keyword
+                }).then(() => {
+                    document.title = this.state.IndexPoint.keyword
                 })
             })
     }
 
-    getPoints(PID,SubLevel=1,ParentLevel=1){
-        requestApi("/index.php?action=Points&method=MindMapPoint&PID="+PID+"&SubLevel="+SubLevel+"&ParentLevel="+ParentLevel)
-            .then((res)=>{
-                res.json().then((json)=>{
-                    let statusMap=[];
-                    json.Data.Points.map((points)=>{
-                        points.map((point)=>{
-                            statusMap[point.ID]=point.status
+    getPoints(PID, SubLevel = 1, ParentLevel = 1) {
+        requestApi("/index.php?action=Points&method=MindMapPoint&PID=" + PID + "&SubLevel=" + SubLevel + "&ParentLevel=" + ParentLevel)
+            .then((res) => {
+                res.json().then((json) => {
+                    let statusMap = [];
+                    json.Data.Points.map((points) => {
+                        points.map((point) => {
+                            statusMap[point.ID] = point.status
                         });
                     })
-                    let webConnections=[];
-                    let connections=json.Data.Connection;
-                    for (let prePID in connections){
-                        connections[prePID].map((subPID)=>{
+                    let webConnections = [];
+                    let connections = json.Data.Connection;
+                    for (let prePID in connections) {
+                        connections[prePID].map((subPID) => {
                             webConnections.push({
-                                start:prePID,
-                                stop:subPID,
-                                status:statusMap[prePID]
+                                start: prePID,
+                                stop: subPID,
+                                status: statusMap[prePID]
                             })
                         })
                     }
                     this.setState({
-                        Points:json.Data.Points,
-                        connections:webConnections
+                        Points: json.Data.Points,
+                        connections: webConnections
                     })
                 })
             })
-            .then(()=>{
+            .then(() => {
                 this.getAPoint(PID);
             })
     }
 
     render() {
-        let span=24/this.state.Points.length;
-        span=span.toFixed(0);
-        if ((span*this.state.Points.length)>24){
-            span-=1;
+        let span = 24 / this.state.Points.length;
+        span = span.toFixed(0);
+        if ((span * this.state.Points.length) > 24) {
+            span -= 1;
         }
 
-        let contentPart=<div></div>
-        if (this.state.mode==POINT_MIND_MAP_ROW){
-            contentPart=<div>
+        let contentPart = <div></div>
+        if (this.state.mode == POINT_MIND_MAP_ROW) {
+            contentPart = <div>
                 {
-                    this.state.Points.map((points,outsideIndex)=>{
-                        let subSpan=24/points.length;
-                        if (subSpan<0){
-                            subSpan=2;
+                    this.state.Points.map((points, outsideIndex) => {
+                        let subSpan = 24 / points.length;
+                        if (subSpan < 0) {
+                            subSpan = 2;
                         }
-                        if (subSpan*points.length>24){
-                            subSpan-=1;
+                        if (subSpan * points.length > 24) {
+                            subSpan -= 1;
                         }
-                        if (subSpan>2){
-                            subSpan=4;
+                        if (subSpan > 2) {
+                            subSpan = 4;
                         }
-                        return(
+                        return (
                             <div>
                                 <Row
                                     justify={"space-around"}
@@ -228,14 +228,14 @@ class PointMindMap extends React.Component{
                                     key={outsideIndex}
                                 >
                                     {
-                                        points.map((point,insideIndex)=>{
-                                            return(
+                                        points.map((point, insideIndex) => {
+                                            return (
                                                 <Col span={subSpan}>
                                                     <Row
                                                         justify={"center"}
                                                     >
                                                         <ConnectionItem
-                                                            id={ROW_TOP+point.ID}
+                                                            id={ROW_TOP + point.ID}
                                                             icon={<DownOutlined />}
                                                         />
                                                     </Row>
@@ -243,11 +243,11 @@ class PointMindMap extends React.Component{
                                                         justify={"center"}
                                                     >
                                                         <PointItem
-                                                            IsIndex={this.state.IndexPoint.ID==point.ID}
-                                                            IsActive={this.state.activePoint.ID==point.ID}
-                                                            activePoint={(point)=>{
+                                                            IsIndex={this.state.IndexPoint.ID == point.ID}
+                                                            IsActive={this.state.activePoint.ID == point.ID}
+                                                            activePoint={(point) => {
                                                                 this.setState({
-                                                                    activePoint:point
+                                                                    activePoint: point
                                                                 })
                                                             }}
                                                             Point={point}
@@ -258,7 +258,7 @@ class PointMindMap extends React.Component{
                                                     >
                                                         <ConnectionItem
                                                             icon={<DownOutlined />}
-                                                            id={ROW_BOTTOM+point.ID}
+                                                            id={ROW_BOTTOM + point.ID}
                                                         />
                                                     </Row>
                                                 </Col>
@@ -266,61 +266,61 @@ class PointMindMap extends React.Component{
                                         })
                                     }
                                 </Row>
-                                <div style={{minHeight:"30px"}}></div>
+                                <div style={{ minHeight: "30px" }}></div>
                             </div>
                         )
                     })
                 }
                 {
-                    this.state.connections.map((Item,index)=>{
-                        return(
+                    this.state.connections.map((Item, index) => {
+                        return (
                             <Xarrow
                                 key={index}
-                                start={ROW_BOTTOM+Item.start}
-                                end={ROW_TOP+Item.stop}
+                                start={ROW_BOTTOM + Item.start}
+                                end={ROW_TOP + Item.stop}
                                 showHead={false}
                             />
                         )
                     })
                 }
             </div>
-        }else{
+        } else {
             // column
-            contentPart=<div>
+            contentPart = <div>
                 <Row
                     justify={"start"}
                     align={"middle"}
                 >
                     {
-                        this.state.Points.map((points,outsideIndex)=>{
-                            return(
+                        this.state.Points.map((points, outsideIndex) => {
+                            return (
                                 <Col
                                     span={span}
                                     key={outsideIndex}
                                 >
                                     {
-                                        points.map((point,insideIndex)=>{
-                                            return(
+                                        points.map((point, insideIndex) => {
+                                            return (
                                                 <Row
                                                     key={point.ID}
                                                     wrap={false}
                                                     align={"middle"}
-                                                    style={{marginBottom:"10px"}}
+                                                    style={{ marginBottom: "10px" }}
                                                 >
                                                     <Col span={1}>
                                                         <ConnectionItem
-                                                            id={COLUMN_LEFT+point.ID}
+                                                            id={COLUMN_LEFT + point.ID}
                                                             icon={<RightOutlined />}
                                                         />
                                                     </Col>
                                                     <Col span={12}>
                                                         <PointItem
-                                                            IsIndex={this.state.IndexPoint.ID==point.ID}
-                                                            IsActive={this.state.activePoint.ID==point.ID}
+                                                            IsIndex={this.state.IndexPoint.ID == point.ID}
+                                                            IsActive={this.state.activePoint.ID == point.ID}
                                                             Point={point}
-                                                            activePoint={(point)=>{
+                                                            activePoint={(point) => {
                                                                 this.setState({
-                                                                    activePoint:point
+                                                                    activePoint: point
                                                                 })
                                                             }}
                                                         />
@@ -328,7 +328,7 @@ class PointMindMap extends React.Component{
                                                     <Col span={1}>
                                                         <ConnectionItem
                                                             icon={<RightOutlined />}
-                                                            id={COLUMN_RIGHT+point.ID}
+                                                            id={COLUMN_RIGHT + point.ID}
                                                         />
                                                     </Col>
                                                 </Row>
@@ -341,13 +341,13 @@ class PointMindMap extends React.Component{
                     }
                 </Row>
                 {
-                    this.state.connections.map((Item,index)=>{
-                        return(
+                    this.state.connections.map((Item, index) => {
+                        return (
                             <Xarrow
                                 key={index}
                                 color={config.statusBackGroupColor[Item.status]}
-                                start={COLUMN_RIGHT+Item.start}
-                                end={COLUMN_LEFT+Item.stop}
+                                start={COLUMN_RIGHT + Item.start}
+                                end={COLUMN_LEFT + Item.stop}
                                 showHead={false}
                             />
                         )
@@ -355,39 +355,39 @@ class PointMindMap extends React.Component{
                 }
             </div>
         }
-        let hotkeysOption={};
-        hotkeysOption['shift+n']=(()=>{
+        let hotkeysOption = {};
+        hotkeysOption['shift+n'] = (() => {
             this.setState({
-                startNewPoint:true
+                startNewPoint: true
             })
         });
-        hotkeysOption['shift+e']=(()=>{
+        hotkeysOption['shift+e'] = (() => {
             this.setState({
-                editPoint:this.state.activePoint
+                editPoint: this.state.activePoint
             })
         })
-        hotkeysOption['shift+d']=(()=>{
+        hotkeysOption['shift+d'] = (() => {
             this.setState({
-                editConnectionPoint:this.state.activePoint
+                editConnectionPoint: this.state.activePoint
             })
         })
-        hotkeysOption['shift+s']=(()=>{
+        hotkeysOption['shift+s'] = (() => {
             this.setState({
-                newBookmarkVisible:true
+                newBookmarkVisible: true
             })
         })
-        hotkeysOption['shift+b']=(()=>{
+        hotkeysOption['shift+b'] = (() => {
             this.setState({
-                bookmarkVisible:true
+                bookmarkVisible: true
             })
         })
-        let hotkeys=[];
-        for (let hotkey in hotkeysOption){
+        let hotkeys = [];
+        for (let hotkey in hotkeysOption) {
             hotkeys.push(hotkey);
         }
         return <Hotkeys
             keyName={hotkeys.join(",")}
-            onKeyDown={(keyName,e,handler)=>{
+            onKeyDown={(keyName, e, handler) => {
                 hotkeysOption[keyName]();
             }}
         >
@@ -398,16 +398,16 @@ class PointMindMap extends React.Component{
                         <Button
                             icon={<PlusOutlined />}
                             type={"primary"}
-                            onClick={()=>{
-                                this.updateLevel(this.state.SubLevel,this.state.ParentLevel-0+1,this.state.mode);
+                            onClick={() => {
+                                this.updateLevel(this.state.SubLevel, this.state.ParentLevel - 0 + 1, this.state.mode);
                             }}
                         >
                         </Button>
                         <Button
                             icon={<MinusOutlined />}
                             type={"primary"}
-                            onClick={()=>{
-                                this.updateLevel(this.state.SubLevel,this.state.ParentLevel-1,this.state.mode);
+                            onClick={() => {
+                                this.updateLevel(this.state.SubLevel, this.state.ParentLevel - 1, this.state.mode);
                             }}
                         >
                         </Button>
@@ -417,16 +417,16 @@ class PointMindMap extends React.Component{
                         <Button
                             icon={<PlusOutlined />}
                             type={"primary"}
-                            onClick={()=>{
-                                this.updateLevel(this.state.SubLevel-0+1,this.state.ParentLevel,this.state.mode);
+                            onClick={() => {
+                                this.updateLevel(this.state.SubLevel - 0 + 1, this.state.ParentLevel, this.state.mode);
                             }}
                         >
                         </Button>
                         <Button
                             icon={<MinusOutlined />}
                             type={"primary"}
-                            onClick={()=>{
-                                this.updateLevel(this.state.SubLevel-1,this.state.ParentLevel,this.state.mode);
+                            onClick={() => {
+                                this.updateLevel(this.state.SubLevel - 1, this.state.ParentLevel, this.state.mode);
                             }}
                         >
                         </Button>
@@ -436,13 +436,13 @@ class PointMindMap extends React.Component{
                         <Button
                             type={"primary"}
                             icon={
-                                this.state.mode==POINT_MIND_MAP_COLUMN
-                                    ?<RedoOutlined />
-                                    :<UndoOutlined />
+                                this.state.mode == POINT_MIND_MAP_COLUMN
+                                    ? <RedoOutlined />
+                                    : <UndoOutlined />
                             }
-                            onClick={()=>{
-                                this.updateLevel(this.state.SubLevel,this.state.ParentLevel,
-                                    this.state.mode==POINT_MIND_MAP_ROW?POINT_MIND_MAP_COLUMN:POINT_MIND_MAP_ROW
+                            onClick={() => {
+                                this.updateLevel(this.state.SubLevel, this.state.ParentLevel,
+                                    this.state.mode == POINT_MIND_MAP_ROW ? POINT_MIND_MAP_COLUMN : POINT_MIND_MAP_ROW
                                 );
                             }}
                         >
@@ -461,9 +461,9 @@ class PointMindMap extends React.Component{
                         placement={"right"}
                         width={1000}
                         visible={this.state.editPoint.ID}
-                        onClose={()=>{
+                        onClose={() => {
                             this.setState({
-                                editPoint:{}
+                                editPoint: {}
                             })
                         }}
                     >
@@ -474,47 +474,47 @@ class PointMindMap extends React.Component{
                 </div>
             </div>
             <PointNew
-                PID={this.state.startNewPoint?this.state.activePoint.ID:-1}
-                closeModal={()=>{
-                    (async ()=>{})()
-                        .then(()=>{
+                PID={this.state.startNewPoint ? this.state.activePoint.ID : -1}
+                closeModal={() => {
+                    (async () => { })()
+                        .then(() => {
                             this.setState({
-                                startNewPoint:false
+                                startNewPoint: false
                             })
                         })
-                        .then(()=>{
-                            this.getPoints(this.state.PID,this.state.SubLevel,this.state.ParentLevel)
+                        .then(() => {
+                            this.getPoints(this.state.PID, this.state.SubLevel, this.state.ParentLevel)
                         })
 
                 }}
             />
             <PointConnection
                 Point={this.state.editConnectionPoint}
-                afterUpdateConnection={()=>{
-                    (async ()=>{})()
-                        .then(()=>{
+                afterUpdateConnection={() => {
+                    (async () => { })()
+                        .then(() => {
                             this.setState({
-                                editConnectionPoint:{}
+                                editConnectionPoint: {}
                             })
                         })
-                        .then(()=>{
-                            this.getPoints(this.state.PID,this.state.SubLevel,this.state.ParentLevel)
+                        .then(() => {
+                            this.getPoints(this.state.PID, this.state.SubLevel, this.state.ParentLevel)
                         })
                 }}
             />
             <BookMarks
                 Visible={this.state.bookmarkVisible}
-                afterCloseDrawer={()=>{
+                afterCloseDrawer={() => {
                     this.setState({
-                        bookmarkVisible:false
+                        bookmarkVisible: false
                     })
                 }}
             />
             <NewBookMark
                 Visible={this.state.newBookmarkVisible}
-                afterCloseModal={()=>{
+                afterCloseModal={() => {
                     this.setState({
-                        newBookmarkVisible:false
+                        newBookmarkVisible: false
                     })
                 }}
             />
@@ -525,9 +525,9 @@ class PointMindMap extends React.Component{
 
 export default PointMindMap
 
-export function PointMindMapRouter(PID,SubLevel=0,ParentLevel=0,Mode=''){
-    if (Mode==''){
-        Mode=POINT_MIND_MAP_COLUMN
+export function PointMindMapRouter(PID, SubLevel = 0, ParentLevel = 0, Mode = '') {
+    if (Mode == '') {
+        Mode = POINT_MIND_MAP_COLUMN
     }
-    return "/pointMindMap/"+PID+"/"+SubLevel+"/"+ParentLevel+"/"+Mode
+    return "/pointMindMap/" + PID + "/" + SubLevel + "/" + ParentLevel + "/" + Mode
 }
