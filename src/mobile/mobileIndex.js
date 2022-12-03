@@ -1,6 +1,6 @@
 import React from 'react'
 import {List} from "antd-mobile";
-import {ScanCodeOutline,FaceRecognitionOutline,ContentOutline,EnvironmentOutline} from 'antd-mobile-icons'
+import {ScanCodeOutline,FaceRecognitionOutline,ContentOutline,EnvironmentOutline,UserOutline} from 'antd-mobile-icons'
 
 class MobileIndex extends React.Component {
     render() {
@@ -50,5 +50,10 @@ export const actionList=[
         href:"/Mobile/MindList",
         label:"Memory List",
         icon:<ContentOutline />
+    },
+    {
+        href: "/Mobile/ScareList/0",
+        label: "Me",
+        icon: <UserOutline />
     }
 ]
