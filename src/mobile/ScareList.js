@@ -73,7 +73,7 @@ class ScareList extends React.Component{
                                             <div>
                                                 <Ellipsis
                                                     key={explain.ID}
-                                                    content={explain.Explain}
+                                                    content={explain.ExplainData}
                                                     rows={1}
                                                     expandText={'more'}
                                                     collapseText={'less'}
