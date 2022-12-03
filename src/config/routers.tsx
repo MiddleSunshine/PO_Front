@@ -31,6 +31,8 @@ import LoginIndex from "../page/LoginIndex";
 import Mind from "../mobile/Mind";
 import MindList from "../mobile/MindList";
 import MobileIndex from '../mobile/mobileIndex'
+import ScareList from '../mobile/ScareList'
+import NewScare from '../mobile/NewScare'
 
 interface router {
     path: string,
@@ -39,6 +41,14 @@ interface router {
 }
 
 const routers: Array<router> = [
+    {
+        path:"/Mobile/NewScare/:ScareID",
+        component:NewScare
+    },
+    {
+        path:"/Mobile/ScareList/:ScareID",
+        component:ScareList
+    },
     {
         path:"/MindNote/:PID",
         component:MindNote
