@@ -1,6 +1,6 @@
 import React from 'react'
 import TopBar from "./component/TopBar";
-import {Divider} from "antd-mobile";
+import {Collapse, Divider, Ellipsis} from "antd-mobile";
 import {requestApi} from "../config/functions";
 
 class ScareList extends React.Component{
@@ -40,6 +40,46 @@ class ScareList extends React.Component{
                     New Reason
                 </a>
             </Divider>
+            <Collapse>
+                {
+                    this.state.ScareList.map((scare)=>{
+                        return (
+                            <Collapse.Panel
+                                key={scare.ID}
+                                title={
+                                    <div>
+                                        <Ellipsis
+                                            content={scare.Scare}
+                                            rows={1}
+                                        />
+                                    </div>
+                                }
+                            >
+                                <a href={"/Mobile/ScareList/"+scare.ID}>
+                                    Sub Scare
+                                </a>
+                                <Divider />
+                                {
+                                    scare.Explains.map((explain)=>{
+                                        return (
+                                            <div>
+                                                <Ellipsis
+                                                    key={explain.ID}
+                                                    content={explain.Explain}
+                                                    rows={1}
+                                                    expandText={'more'}
+                                                    collapseText={'less'}
+                                                />
+                                                <Divider />
+                                            </div>
+                                        )
+                                    })
+                                }
+                            </Collapse.Panel>
+                        )
+                    })
+                }
+            </Collapse>
 
         </div>
     }
