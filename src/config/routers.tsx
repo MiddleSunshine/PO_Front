@@ -33,6 +33,7 @@ import MindList from "../mobile/MindList";
 import MobileIndex from '../mobile/mobileIndex'
 import ScareList from '../mobile/ScareList'
 import NewScare from '../mobile/NewScare'
+import NewExplain from '../mobile/NewExplain'
 
 interface router {
     path: string,
@@ -41,6 +42,10 @@ interface router {
 }
 
 const routers: Array<router> = [
+    {
+        path:"/Mobile/NewExplain/:ScareID",
+        component:NewExplain
+    },
     {
         path:"/Mobile/NewScare/:ScareID",
         component:NewScare

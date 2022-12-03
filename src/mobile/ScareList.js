@@ -36,8 +36,16 @@ class ScareList extends React.Component{
                 title={"Life"}
             />
             <Divider>
-                <a href={"/Mobile/NewScare/"+this.state.ScarePID}>
-                    New Reason
+                <a
+                    href={"/Mobile/NewScare/"+this.state.ScarePID}
+                >
+                    Reason
+                </a>
+                &nbsp;&nbsp;/&nbsp;&nbsp;
+                <a
+                    href={"/Mobile/NewExplain/"+this.state.ScarePID}
+                >
+                    Explain
                 </a>
             </Divider>
             <Collapse>
