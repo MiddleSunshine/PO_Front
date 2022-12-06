@@ -2,6 +2,7 @@ import React from 'react'
 import TopBar from "./component/TopBar";
 import {Collapse, Divider, Ellipsis} from "antd-mobile";
 import {requestApi} from "../config/functions";
+imp
 
 class ScareList extends React.Component{
     constructor(props) {
@@ -39,13 +40,7 @@ class ScareList extends React.Component{
                 <a
                     href={"/Mobile/NewScare/"+this.state.ScarePID}
                 >
-                    Reason
-                </a>
-                &nbsp;&nbsp;/&nbsp;&nbsp;
-                <a
-                    href={"/Mobile/NewExplain/"+this.state.ScarePID}
-                >
-                    Explain
+                   New Reason
                 </a>
             </Divider>
             <Collapse>
@@ -59,14 +54,25 @@ class ScareList extends React.Component{
                                         <Ellipsis
                                             content={scare.Scare}
                                             rows={1}
+                                            expandText={'...'}
+                                            collapseText={'less'}
                                         />
                                     </div>
                                 }
                             >
-                                <a href={"/Mobile/ScareList/"+scare.ID}>
-                                    Sub Scare
-                                </a>
-                                <Divider />
+                                <Divider>
+                                    <a href={"/Mobile/ScareList/"+scare.ID}>
+                                        Sub Scare
+                                    </a>
+                                    &nbsp;&nbsp;&nbsp;
+                                    <a href={"/Mobile/NewScare/"+scare.ID}>
+                                        New Scare
+                                    </a>
+                                    &nbsp;&nbsp;&nbsp;
+                                    <a href={"/Mobile/NewExplain/"+scare.ID}>
+                                        New Explain
+                                    </a>
+                                </Divider>
                                 {
                                     scare.Explains.map((explain)=>{
                                         return (
