@@ -1,4 +1,9 @@
-.ScareList{
+.ScareList {}
 
+.ScareList .adm-ellipsis {
+    font-size: 14px;
 }
 
+.ScareList .sub_a {
+    font-size: 14px;
+}

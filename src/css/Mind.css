@@ -1,51 +1,52 @@
-.Mind{
+.Mind {}
 
-}
-
-.Mind .Icon{
+.Mind .Icon {
     width: 70px;
     height: 70px;
 }
 
-.Mind .adm-text-area-element{
+.Mind .adm-text-area-element {
     font-size: 20px;
 }
 
-.Mind .Happy{
+.Mind .Happy {
     background-color: #87d068;
 }
 
-.Mind .Unhappy{
+.Mind .Unhappy {
     background-color: #108ee9;
 }
 
-.Mind .Star{
+.Mind .Star {
     background-color: #ff8f1f;
 }
 
-.Mind .Important{
+.Mind .Important {
     background-color: #ff3141;
 }
-.Mind .adm-divider-horizontal{
+
+.Mind .adm-divider-horizontal {
     margin: 20px 0px;
 }
 
-.Mind .MindList{
+.Mind .MindList {}
 
-}
-
-.Mind .MindList .adm-rate-star{
+.Mind .MindList .adm-rate-star {
     font-size: 20px;
 }
 
-.Mind .MindList .adm-list-item-content-main{
+.Mind .MindList .adm-list-item-content-main {
     font-size: 20px;
 }
 
-.Mind .MindList .dateTitle{
+.Mind .MindList .dateTitle {
     font-size: 20px;
 }
 
-.Mind .MindList .withImage{
-    color:white;
+.Mind .MindList .withImage {
+    color: white;
+}
+
+.Mind .adm-ellipsis {
+    font-size: 14px;
 }

@@ -61,15 +61,15 @@ class ScareList extends React.Component {
                                 }
                             >
                                 <Divider>
-                                    <a href={"/Mobile/ScareList/" + scare.ID}>
+                                    <a className={"sub_a"} href={"/Mobile/ScareList/" + scare.ID}>
                                         Sub Scare
                                     </a>
                                     &nbsp;&nbsp;&nbsp;
-                                    <a href={"/Mobile/NewScare/" + scare.ID}>
+                                    <a className={"sub_a"} href={"/Mobile/NewScare/" + scare.ID}>
                                         New Scare
                                     </a>
                                     &nbsp;&nbsp;&nbsp;
-                                    <a href={"/Mobile/NewExplain/" + scare.ID}>
+                                    <a className={"sub_a"} href={"/Mobile/NewExplain/" + scare.ID}>
                                         New Explain
                                     </a>
                                 </Divider>
