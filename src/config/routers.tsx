@@ -43,44 +43,44 @@ interface router {
 
 const routers: Array<router> = [
     {
-        path:"/Mobile/NewExplain/:ScareID",
-        component:NewExplain
+        path: "/Mobile/NewExplain/:ScareID",
+        component: NewExplain
     },
     {
-        path:"/Mobile/NewScare/:ScareID",
-        component:NewScare
+        path: "/Mobile/NewScare/:ScareID",
+        component: NewScare
     },
     {
-        path:"/Mobile/ScareList/:ScareID",
-        component:ScareList
+        path: "/Mobile/ScareList/:ScareID",
+        component: ScareList
     },
     {
-        path:"/MindNote/:PID",
-        component:MindNote
+        path: "/MindNote/:PID",
+        component: MindNote
     },
     {
-        path:"/Mobile/MindList",
-        component:MindList
+        path: "/Mobile/MindList",
+        component: MindList
     },
     {
-        path:"/Mobile/Mind",
-        component:Mind
+        path: "/Mobile/Mind",
+        component: Mind
     },
     {
-        path:"/Mobile/ClockIn",
-        component:ClockInMobile
+        path: "/Mobile/ClockIn",
+        component: ClockInMobile
     },
     {
-        path:"/Mobile",
-        component:MobileIndex
+        path: "/Mobile",
+        component: MobileIndex
     },
     {
-        path:"/Login",
-        component:LoginIndex
+        path: "/Login",
+        component: LoginIndex
     },
     {
-        path:"/Actions",
-        component:Actions
+        path: "/Actions",
+        component: Actions
     },
     {
         path: "/Psychotherapy/CheckListHistory",
@@ -91,8 +91,8 @@ const routers: Array<router> = [
         component: CheckList
     },
     {
-        path:"/WhiteBoard/:ProjectName",
-        component:WhiteBoard
+        path: "/WhiteBoard/:ProjectName",
+        component: WhiteBoard
     },
     {
         path: "/PointSummaryEdit/:ID/:Edit",
@@ -139,8 +139,8 @@ const routers: Array<router> = [
         component: Image
     },
     {
-        path:"/comments",
-        component:CommentList
+        path: "/comments",
+        component: CommentList
     },
     {
         path: "/willing",
@@ -159,24 +159,24 @@ const routers: Array<router> = [
         component: PointEditor
     },
     {
-        path:"/pointMindMap/:pid/:subLevel/:parentLevel/:mode",
+        path: "/pointMindMap/:pid/:subLevel/:parentLevel/:mode",
         component: PointMindMap
     },
     {
-        path:"/pointTree/:pid",
-        component:PointTree
+        path: "/pointTree/:pid",
+        component: PointTree
     },
     {
-        path:"/pointHistory/:pid",
-        component:PointHistory
+        path: "/pointHistory/:pid",
+        component: PointHistory
     },
     {
         path: "/pointTable/:pid",
         component: PointTable
     },
     {
-        path:"/pointsSang/:pid",
-        component:PointsSang
+        path: "/pointsSang/:pid",
+        component: PointsSang
     },
     // {
     //     path: "/points/:pid",
