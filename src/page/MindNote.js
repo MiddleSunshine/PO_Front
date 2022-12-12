@@ -82,6 +82,27 @@ const MindNote = (props) => {
     const [startPickerColor, switchPickerColor] = useState(false);
     const [selectedColor, updateSelectedColor] = useState('');
 
+    const cutNode=()=>{
+        // todo 调试一下代码
+        let selectedNodes,selectedEdges={};
+        let newNodes=nodes;
+        let newEdges=edges;
+        newNodes.filter((node)=>{
+            if (node.selected){
+                selectedNodes[node.id]=node;
+            }
+            return !node.selected;
+        });
+        newEdges.filter((edge)=>{
+            if (selectedNodes.hasOwnProperty(edge.source) && selectedNodes.hasOwnProperty(edge.target)){
+                selectedEdges.push(edge);
+                return false;
+            }else{
+                return true;
+            }
+        })
+    }
+
     const GetPointDetail = (PID) => {
         requestApi("/index.php?action=Points&method=GetDetailWithFile&ID=" + PID)
             .then((res) => {
@@ -347,6 +368,9 @@ const MindNote = (props) => {
         },
         'shift+c': () => {
             switchPickerColor(true)
+        },
+        'shift+x':()=>{
+            cutNode();
         }
     }
 
