@@ -10,7 +10,7 @@ import MindNotes, {
 import {
     MindEdges
 } from './MindEdges'
-import {Col, Divider, Drawer, Input, message, Row} from 'antd';
+import { Col, Divider, Drawer, Input, message, Row } from 'antd';
 import ReactFlow, {
     Controls,
     ReactFlowProvider,
@@ -29,9 +29,9 @@ import { Draw } from "@tldraw/tldraw";
 import PointEdit from "../component/PointEdit";
 import MenuList from "../component/MenuList";
 import { deleteConnection } from "../component/PointConnection";
-import {SwatchesPicker} from "react-color";
+import { SwatchesPicker } from "react-color";
 import Clipboard from 'clipboard';
-import {CopyOutlined} from '@ant-design/icons';
+import { CopyOutlined } from '@ant-design/icons';
 
 /**
  * @param event DragEvent
@@ -79,8 +79,8 @@ const MindNote = (props) => {
     const [activeEdge, updateActiveEdge] = useState({});
     const [editPointDrawVisible, switchEditPointDrawVisible] = useState(false);
     const [optionMessage, updateOptionMessage] = useState("");
-    const [startPickerColor,switchPickerColor]=useState(false);
-    const [selectedColor,updateSelectedColor]=useState('');
+    const [startPickerColor, switchPickerColor] = useState(false);
+    const [selectedColor, updateSelectedColor] = useState('');
 
     const GetPointDetail = (PID) => {
         requestApi("/index.php?action=Points&method=GetDetailWithFile&ID=" + PID)
@@ -132,10 +132,7 @@ const MindNote = (props) => {
                 if (edge.id == id) {
                     updateActiveEdge(edge);
                     updateOptionMessage("Active Edge");
-                    edge.data = {
-                        ...edge.data,
-                        ...data
-                    };
+                    edge.data = data;
                 }
                 return edge;
             }
@@ -151,7 +148,7 @@ const MindNote = (props) => {
             .then((res) => {
                 res.json().then((json) => {
                     if (json.Status == 1) {
-                        let colors=[];
+                        let colors = [];
                         if (json.Data.nodes) {
                             setNodes(json.Data.nodes.map((item) => {
                                 item.data = {
@@ -159,7 +156,7 @@ const MindNote = (props) => {
                                     ...item.data,
                                     onChange: updateNodeItem
                                 }
-                                colors[item.id]=item.data.hasOwnProperty('color')?item.data.color:'#90a4ae';
+                                colors[item.id] = item.data.hasOwnProperty('color') ? item.data.color : '#90a4ae';
                                 return item;
                             }));
                         } else {
@@ -171,7 +168,7 @@ const MindNote = (props) => {
                                 edge.data = {
                                     ...edge,
                                     onChange: updateEdgeItem,
-                                    color:colors.hasOwnProperty(edge.source)?colors[edge.source]:'#90a4ae'
+                                    color: colors.hasOwnProperty(edge.source) ? colors[edge.source] : '#90a4ae'
                                 }
                                 return edge;
                             })
@@ -197,7 +194,7 @@ const MindNote = (props) => {
                 InitMindNote(PID)
             })
             .then(() => {
-                const copy=new Clipboard('.imageUrl');
+                const copy = new Clipboard('.imageUrl');
                 copy.on('success', e => {
                     message.success('copy success');
                 });
@@ -348,7 +345,7 @@ const MindNote = (props) => {
         'shift+e': () => {
             switchEditPointDrawVisible(true);
         },
-        'shift+c':()=>{
+        'shift+c': () => {
             switchPickerColor(true)
         }
     }
@@ -425,22 +422,22 @@ const MindNote = (props) => {
                     <Drawer
                         width={300}
                         visible={startPickerColor}
-                        onClose={()=>{
+                        onClose={() => {
                             switchPickerColor(false);
                         }}
                     >
                         <SwatchesPicker
-                            onChangeComplete={(color)=>{
+                            onChangeComplete={(color) => {
                                 updateSelectedColor(color.hex);
                             }}
                         />
                         <Divider />
                         <div
-                            style={{backgroundColor:selectedColor,padding:"10px"}}
+                            style={{ backgroundColor: selectedColor, padding: "10px" }}
                         >
                             <Input
                                 value={selectedColor}
-                                onChange={(e)=>updateSelectedColor(e.target.value)}
+                                onChange={(e) => updateSelectedColor(e.target.value)}
                                 addonAfter={<CopyOutlined
                                     data-clipboard-text={selectedColor}
                                     className="imageUrl"
