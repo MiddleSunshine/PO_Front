@@ -83,24 +83,24 @@ const MindNote = (props) => {
     const [selectedColor, updateSelectedColor] = useState('');
 
     const cutNode=()=>{
-        // todo 调试一下代码
-        let selectedNodes,selectedEdges={};
-        let newNodes=nodes;
-        let newEdges=edges;
-        newNodes.filter((node)=>{
+        // todo 调试一下代码，这里思考一下完整的代码逻辑
+        let selectedNodes={};
+        let selectedEdges={};
+        let newNodes=nodes.filter((node)=>{
             if (node.selected){
                 selectedNodes[node.id]=node;
             }
             return !node.selected;
-        });
-        newEdges.filter((edge)=>{
+        });;
+        let newEdges=edges.filter((edge)=>{
             if (selectedNodes.hasOwnProperty(edge.source) && selectedNodes.hasOwnProperty(edge.target)){
                 selectedEdges.push(edge);
                 return false;
             }else{
                 return true;
             }
-        })
+        });
+        debugger
     }
 
     const GetPointDetail = (PID) => {
@@ -169,7 +169,6 @@ const MindNote = (props) => {
             .then((res) => {
                 res.json().then((json) => {
                     if (json.Status == 1) {
-                        let colors = [];
                         if (json.Data.nodes) {
                             setNodes(json.Data.nodes.map((item) => {
                                 item.data = {
