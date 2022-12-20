@@ -177,7 +177,6 @@ const MindNote = (props) => {
                                     ...item.data,
                                     onChange: updateNodeItem
                                 }
-                                colors[item.id] = item.data.hasOwnProperty('color') ? item.data.color : '#90a4ae';
                                 return item;
                             }));
                         } else {
@@ -188,8 +187,7 @@ const MindNote = (props) => {
                                 edge.type = "CommentEdge";
                                 edge.data = {
                                     ...edge,
-                                    onChange: updateEdgeItem,
-                                    color: colors.hasOwnProperty(edge.source) ? colors[edge.source] : '#90a4ae'
+                                    onChange: updateEdgeItem
                                 }
                                 return edge;
                             })

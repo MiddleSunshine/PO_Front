@@ -19,7 +19,7 @@ const CommentEdge = (
     return (
         <>
             <path
-                style={{strokeWidth:"5px",stroke:data.hasOwnProperty('color')?data.color:"#90a4ae"}}
+                style={{strokeWidth:"5px"}}
                 id={id}
                 className="react-flow__edge-path"
                 d={edgePath}
