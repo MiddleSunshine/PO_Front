@@ -23,6 +23,7 @@ import ActionSummary from "./ActionSummary";
 import WithoutConnectionPoints from "./WithoutConnectionPoints";
 import BookMarks from "./BookMarks";
 import RecentPoints from "./RecentPoints";
+import Links from './Links'
 // import Login from "./Login";
 
 class Favourite extends React.Component{
@@ -367,9 +368,13 @@ class Favourite extends React.Component{
                                         ]}
                                     >
                                         <List.Item.Meta
-                                            avatar={<Avatar>
-                                                {Item.SearchAble}
-                                            </Avatar>}
+                                            avatar={
+                                            <Links
+                                                PID={Item.ID}
+                                                Label={Item.SearchAble}
+                                                Color={config.statusBackGroupColor[Item.status]}
+                                            />
+                                            }
                                             title={
                                                 <Button
                                                     style={{color: config.statusBackGroupColor[Item.status]}}
@@ -377,7 +382,7 @@ class Favourite extends React.Component{
                                                     href={"/pointTable/" + Item.ID}
                                                     target={"_blank"}
                                                 >
-                                                    {Item.keyword}
+                                                    {Item.url?'W:':''}{Item.keyword}
                                                 </Button>
                                             }
                                             description={Item.note}
